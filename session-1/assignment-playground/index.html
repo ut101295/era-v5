@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Axiom — Learning OS: Session 1 Assignments</title>
+  <!-- Chart.js for beautiful graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 100%);
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-cyan: #00f2fe;
+      --accent-magenta: #ff007f;
+      --accent-purple: #7928ca;
+      --accent-green: #10b981;
+      --accent-orange: #f59e0b;
+      --class-0-color: #ff5e62;
+      --class-1-color: #00c6ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1.25rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 2rem;
+      height: 2rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #0b0f19;
+      font-size: 1.1rem;
+    }
+
+    .logo-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #ffffff, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.25rem;
+      border-radius: 9999px;
+      border: 1px solid var(--card-border);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #0b0f19;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 242, 254, 0.25);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .intro-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .intro-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, var(--accent-cyan), var(--accent-magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .intro-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* Grid Layout for Interactive Workspaces */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Controls Panel */
+    .control-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      height: fit-content;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .control-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .control-group span.value-display {
+      font-family: 'Fira Code', monospace;
+      color: var(--accent-cyan);
+      font-size: 0.9rem;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 242, 254, 0.8);
+      transition: transform 0.1s;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #0b0f19;
+      box-shadow: 0 4px 12px rgba(0, 242, 254, 0.2);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .stats-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .stat-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+    }
+
+    /* Simulation Output Area */
+    .output-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .visualizer-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .visualizer-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+    }
+
+    .visualizer-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      width: 100%;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .visualizer-badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255, 0, 127, 0.15);
+      color: var(--accent-magenta);
+      border: 1px solid rgba(255, 0, 127, 0.3);
+    }
+
+    .visualizer-badge.cyan {
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+    }
+
+    canvas.boundary-canvas {
+      background: #0d131f;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      width: 320px;
+      height: 320px;
+    }
+
+    /* Charts Container */
+    .charts-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      height: 300px;
+      position: relative;
+    }
+
+    /* Tab specific additions */
+    /* Math Proof Collapsed weights layout */
+    .math-proof-box {
+      grid-column: 1 / -1;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .matrix-formula {
+      font-family: 'Fira Code', monospace;
+      font-size: 1.1rem;
+      color: var(--accent-cyan);
+      background: rgba(255, 255, 255, 0.02);
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+
+    .matrix-display-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .matrix-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .matrix-card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .matrix-table {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .matrix-table td {
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 0.25rem;
+      text-align: center;
+      width: 12.5%;
+    }
+
+    /* Embedded tokens list */
+    .word-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .word-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .word-badge.animal { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
+    .word-badge.verb { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+    .word-badge.fruit { background: rgba(236, 72, 153, 0.15); color: #ec4899; border-color: rgba(236, 72, 153, 0.3); }
+    .word-badge.eos { background: rgba(168, 85, 247, 0.15); color: #a855f7; border-color: rgba(168, 85, 247, 0.3); }
+    .word-badge:hover { transform: scale(1.05); }
+
+    .embedding-plot-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    canvas.embedding-canvas {
+      background: #0d131f;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      width: 500px;
+      height: 500px;
+      max-width: 100%;
+    }
+
+    /* Neighbor display list */
+    .neighbor-list {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      width: 100%;
+    }
+
+    /* Generalization Gap Chart */
+    .generalization-split-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .generalization-split-panels {
+        grid-template-columns: 1fr;
+      }
+      canvas.embedding-canvas {
+        width: 100%;
+        height: 350px;
+      }
+    }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      background: rgba(11, 15, 25, 0.5);
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <div class="logo-icon">Δ</div>
+      <div class="logo-title">Axiom — Learning OS</div>
+    </div>
+    
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab1')">S1-1: Activations</button>
+      <button class="tab-btn" onclick="switchTab('tab2')">S1-2: Depth Collapse</button>
+      <button class="tab-btn" onclick="switchTab('tab3')">S1-3: Embeddings</button>
+      <button class="tab-btn" onclick="switchTab('tab4')">S1-4: Generalization</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: ACTIVATIONS EXIST FOR A REASON -->
+    <div id="tab1" class="tab-content active">
+      <div class="intro-card">
+        <h2>S1-1 · Activations exist for a reason.</h2>
+        <p>
+          <strong>Claim:</strong> A model with no nonlinearity can only draw a straight boundary, failing to separate concentric rings. Adding just one ReLU hidden layer solves it.
+          <br>
+          <strong>Interactive Proof:</strong> Watch two models train in parallel on a concentric rings dataset: a simple linear model and a ReLU hidden layer network. Notice the linear model flatlining at ~50-55% accuracy, while the ReLU network wraps the boundary around the inner circle to ~99%+.
+        </p>
+      </div>
+
+      <div class="workspace-grid">
+        <div class="control-panel">
+          <button class="btn btn-primary" id="t1-train-btn" onclick="toggleT1Training()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Start Training
+          </button>
+          
+          <button class="btn btn-secondary" onclick="resetT1()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.27 15C19.86 19.33 15.65 22 11 22c-6.075 0-11-4.925-11-11S4.925 0 11 0c3.547 0 6.721 1.678 8.762 4.288L21 4" />
+            </svg>
+            Regenerate & Reset
+          </button>
+
+          <div class="control-group">
+            <label>Learning Rate: <span class="value-display" id="t1-lr-val">0.1</span></label>
+            <input type="range" class="slider" id="t1-lr" min="0.01" max="0.5" step="0.01" value="0.1" oninput="updateT1Lr(this.value)">
+          </div>
+
+          <div class="control-group">
+            <label>Hidden Neurons: <span class="value-display" id="t1-hidden-val">8</span></label>
+            <input type="range" class="slider" id="t1-hidden" min="2" max="16" step="1" value="8" oninput="updateT1Hidden(this.value)">
+          </div>
+
+          <div class="stats-panel">
+            <div class="stat-row">
+              <span class="stat-label">Epoch:</span>
+              <span class="stat-value" id="t1-epoch">0</span>
+            </div>
+            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 0;"></div>
+            <div class="stat-row">
+              <span class="stat-label">Linear Accuracy:</span>
+              <span class="stat-value" id="t1-linear-acc">50.0%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">ReLU Accuracy:</span>
+              <span class="stat-value text-cyan" id="t1-relu-acc" style="color: var(--accent-cyan);">50.0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-panel">
+          <div class="visualizer-card-grid">
+            <div class="visualizer-card">
+              <div class="visualizer-title">
+                Linear Classifier
+                <span class="visualizer-badge">No Activation</span>
+              </div>
+              <canvas id="t1-linear-canvas" class="boundary-canvas" width="300" height="300"></canvas>
+            </div>
+
+            <div class="visualizer-card">
+              <div class="visualizer-title">
+                ReLU Network
+                <span class="visualizer-badge cyan">1 Hidden Layer</span>
+              </div>
+              <canvas id="t1-relu-canvas" class="boundary-canvas" width="300" height="300"></canvas>
+            </div>
+          </div>
+
+          <div class="charts-container">
+            <canvas id="t1-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DEPTH WITHOUT NONLINEARITY -->
+    <div id="tab2" class="tab-content">
+      <div class="intro-card">
+        <h2>S1-2 · Depth without nonlinearity is a lie.</h2>
+        <p>
+          <strong>Claim:</strong> 5 stacked linear layers mathematically collapse into a single linear layer. They fail to solve the concentric rings. Inserting ReLUs between those same 5 layers breaks the collapse and solves the task.
+          <br>
+          <strong>Interactive Proof:</strong> Watch three models train side-by-side: a 1-layer Linear net, a 5-layer Linear net, and a 5-layer ReLU net. You will see both linear nets struggle with identical straight-line boundaries. Inspect the weights live and watch the matrix product W<sub>eff</sub> = W<sub>1</sub> W<sub>2</sub> W<sub>3</sub> W<sub>4</sub> W<sub>5</sub> collapse.
+        </p>
+      </div>
+
+      <div class="workspace-grid">
+        <div class="control-panel">
+          <button class="btn btn-primary" id="t2-train-btn" onclick="toggleT2Training()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Start Training
+          </button>
+          
+          <button class="btn btn-secondary" onclick="resetT2()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.27 15C19.86 19.33 15.65 22 11 22c-6.075 0-11-4.925-11-11S4.925 0 11 0c3.547 0 6.721 1.678 8.762 4.288L21 4" />
+            </svg>
+            Reset Simulation
+          </button>
+
+          <div class="control-group">
+            <label>Learning Rate: <span class="value-display" id="t2-lr-val">0.05</span></label>
+            <input type="range" class="slider" id="t2-lr" min="0.01" max="0.2" step="0.01" value="0.05" oninput="updateT2Lr(this.value)">
+          </div>
+
+          <div class="stats-panel">
+            <div class="stat-row">
+              <span class="stat-label">Epoch:</span>
+              <span class="stat-value" id="t2-epoch">0</span>
+            </div>
+            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 0;"></div>
+            <div class="stat-row">
+              <span class="stat-label">1-Layer Linear Acc:</span>
+              <span class="stat-value" id="t2-l1-acc">50.0%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">5-Layer Linear Acc:</span>
+              <span class="stat-value" id="t2-l5-acc">50.0%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">5-Layer ReLU Acc:</span>
+              <span class="stat-value" id="t2-r5-acc" style="color: var(--accent-cyan);">50.0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-panel">
+          <div class="visualizer-card-grid">
+            <div class="visualizer-card">
+              <div class="visualizer-title">
+                1-Layer Linear
+                <span class="visualizer-badge">1 Linear Layer</span>
+              </div>
+              <canvas id="t2-l1-canvas" class="boundary-canvas" width="300" height="300"></canvas>
+            </div>
+
+            <div class="visualizer-card">
+              <div class="visualizer-title">
+                5-Layer Linear
+                <span class="visualizer-badge">No Activations</span>
+              </div>
+              <canvas id="t2-l5-canvas" class="boundary-canvas" width="300" height="300"></canvas>
+            </div>
+
+            <div class="visualizer-card">
+              <div class="visualizer-title">
+                5-Layer ReLU
+                <span class="visualizer-badge cyan">ReLU Layers</span>
+              </div>
+              <canvas id="t2-r5-canvas" class="boundary-canvas" width="300" height="300"></canvas>
+            </div>
+          </div>
+
+          <!-- Mathematical Collapse Proof Dashboard -->
+          <div class="math-proof-box">
+            <div class="visualizer-title">
+              Mathematical Collapse Proof
+              <span class="visualizer-badge cyan">Real-Time Weight Multiplication</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+              The 5-layer linear network has weights W<sub>1</sub>, W<sub>2</sub>, W<sub>3</sub>, W<sub>4</sub>, W<sub>5</sub> mapping 2 &rarr; 8 &rarr; 8 &rarr; 8 &rarr; 8 &rarr; 1. We calculate their matrix product W<sub>eff</sub> = W<sub>1</sub> &times; W<sub>2</sub> &times; W<sub>3</sub> &times; W<sub>4</sub> &times; W<sub>5</sub> (size 2 &times; 1) and the effective bias b<sub>eff</sub> live. Notice how it behaves identically to a 1-layer linear map.
+            </p>
+            <div class="matrix-formula" id="matrix-math-equation">
+              W<sub>eff</sub> = W<sub>1</sub> &times; W<sub>2</sub> &times; W<sub>3</sub> &times; W<sub>4</sub> &times; W<sub>5</sub>
+            </div>
+            
+            <div class="matrix-display-grid">
+              <div class="matrix-card">
+                <div class="matrix-card-title">Computed Product W<sub>eff</sub> (2x1)</div>
+                <table class="matrix-table">
+                  <tr><td id="m-eff-w0">0.00</td></tr>
+                  <tr><td id="m-eff-w1">0.00</td></tr>
+                </table>
+                <div class="matrix-card-title" style="margin-top: 0.5rem;">Effective Bias b<sub>eff</sub></div>
+                <span class="stat-value" id="m-eff-b">0.00</span>
+              </div>
+
+              <div class="matrix-card">
+                <div class="matrix-card-title">1-Layer Model Weights W<sub>linear</sub> (2x1)</div>
+                <table class="matrix-table">
+                  <tr><td id="m-lin-w0">0.00</td></tr>
+                  <tr><td id="m-lin-w1">0.00</td></tr>
+                </table>
+                <div class="matrix-card-title" style="margin-top: 0.5rem;">Bias b<sub>linear</sub></div>
+                <span class="stat-value" id="m-lin-b">0.00</span>
+              </div>
+
+              <div class="matrix-card" style="grid-column: span 2;">
+                <div class="matrix-card-title">Output Check (Sample point [0.5, 0.5])</div>
+                <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.4rem; font-family: 'Fira Code', monospace;">
+                  <div>5-Layer raw output (pre-sigmoid): <span id="m-out-5l" style="color: var(--accent-cyan);">0.00</span></div>
+                  <div>x &middot; W<sub>eff</sub> + b<sub>eff</sub> product output: <span id="m-out-prod" style="color: var(--accent-magenta);">0.00</span></div>
+                  <div style="color: var(--accent-green);">Difference: <span id="m-out-diff">0.000000</span> (Matches exactly!)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mathematical Explanation Accordion -->
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem; margin-top: 0.5rem;">
+              <div class="visualizer-title" style="cursor: pointer; border: none; font-size: 0.9rem;" onclick="toggleMathExplanation()">
+                How the Collapse Math Works (Click to toggle)
+                <span id="math-toggle-icon" style="font-family: 'Fira Code', monospace; color: var(--accent-cyan); font-size: 1rem;">+</span>
+              </div>
+              <div id="math-explanation-content" style="display: none; flex-direction: column; gap: 0.75rem; color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; margin-top: 0.5rem; padding: 0.25rem;">
+                <p>For an input vector <strong>x</strong> (coordinate [x<sub>1</sub>, x<sub>2</sub>]), each layer in the 5-layer linear network computes its output directly as:</p>
+                <div style="font-family: 'Fira Code', monospace; background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; gap: 0.2rem;">
+                  <div>y<sub>1</sub> = x &middot; W<sub>1</sub> + b<sub>1</sub></div>
+                  <div>y<sub>2</sub> = y<sub>1</sub> &middot; W<sub>2</sub> + b<sub>2</sub> = x &middot; (W<sub>1</sub>W<sub>2</sub>) + (b<sub>1</sub>W<sub>2</sub> + b<sub>2</sub>)</div>
+                  <div>y<sub>3</sub> = y<sub>2</sub> &middot; W<sub>3</sub> + b<sub>3</sub></div>
+                  <div>...</div>
+                  <div>y<sub>5</sub> = y<sub>4</sub> &middot; W<sub>5</sub> + b<sub>5</sub></div>
+                </div>
+                <p>Substituting each equation into the next expands the final output to:</p>
+                <div style="font-family: 'Fira Code', monospace; background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.04); overflow-x: auto; white-space: nowrap;">
+                  y<sub>5</sub> = x &middot; (W<sub>1</sub>W<sub>2</sub>W<sub>3</sub>W<sub>4</sub>W<sub>5</sub>) + (((b<sub>1</sub>W<sub>2</sub> + b<sub>2</sub>)W<sub>3</sub> + b<sub>3</sub>)W<sub>4</sub> + b<sub>4</sub>)W<sub>5</sub> + b<sub>5</sub>
+                </div>
+                <p>We define the collapsed variables:</p>
+                <ul style="list-style-type: disc; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.2rem;">
+                  <li><strong>W<sub>eff</sub></strong> = W<sub>1</sub> &times; W<sub>2</sub> &times; W<sub>3</sub> &times; W<sub>4</sub> &times; W<sub>5</sub> (size 2 &times; 1)</li>
+                  <li><strong>b<sub>eff</sub></strong> = (((b<sub>1</sub>W<sub>2</sub> + b<sub>2</sub>)W<sub>3</sub> + b<sub>3</sub>)W<sub>4</sub> + b<sub>4</sub>)W<sub>5</sub> + b<sub>5</sub> (scalar bias)</li>
+                </ul>
+                <p>This reduces the entire 5-layer network calculation to a single linear layer: <strong style="color: var(--accent-cyan); font-family: 'Fira Code', monospace;">y<sub>5</sub> = x &middot; W<sub>eff</sub> + b<sub>eff</sub></strong>. Without non-linear activations (like ReLU) in between, the depth collapse is complete, and the network is mathematically restricted to drawing a straight line boundary.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: EMBEDDINGS LEARN SIMILARITY -->
+    <div id="tab3" class="tab-content">
+      <div class="intro-card">
+        <h2>S1-3 · Embeddings learn similarity from next-token predictions.</h2>
+        <p>
+          <strong>Claim:</strong> When trained solely to predict the next token in a synthetic grammar, the embedding table clusters related tokens automatically, even though word similarity was never explicit in the training loss.
+          <br>
+          <strong>Interactive Proof:</strong> Watch words from a toy language drift in 2D embedding space. As the next-token prediction model trains on sentence bigrams, words representing categories like <strong>Animals</strong>, <strong>Verbs</strong>, and <strong>Fruits</strong> will automatically cluster together.
+        </p>
+      </div>
+
+      <div class="workspace-grid">
+        <div class="control-panel">
+          <button class="btn btn-primary" id="t3-train-btn" onclick="toggleT3Training()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Train Embeddings
+          </button>
+          
+          <button class="btn btn-secondary" onclick="resetT3()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.27 15C19.86 19.33 15.65 22 11 22c-6.075 0-11-4.925-11-11S4.925 0 11 0c3.547 0 6.721 1.678 8.762 4.288L21 4" />
+            </svg>
+            Reset Embeddings
+          </button>
+
+          <div class="control-group">
+            <label>Learning Rate: <span class="value-display" id="t3-lr-val">0.2</span></label>
+            <input type="range" class="slider" id="t3-lr" min="0.05" max="0.5" step="0.05" value="0.2" oninput="updateT3Lr(this.value)">
+          </div>
+
+          <div class="stats-panel">
+            <div class="stat-row">
+              <span class="stat-label">Steps Trained:</span>
+              <span class="stat-value" id="t3-step">0</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Current loss:</span>
+              <span class="stat-value" id="t3-loss">0.000</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Vocabulary (Click to trace):</label>
+            <div class="word-list">
+              <span class="word-badge animal" onclick="highlightEmbeddingWord('cat')">cat</span>
+              <span class="word-badge animal" onclick="highlightEmbeddingWord('dog')">dog</span>
+              <span class="word-badge animal" onclick="highlightEmbeddingWord('cow')">cow</span>
+              <span class="word-badge verb" onclick="highlightEmbeddingWord('eat')">eat</span>
+              <span class="word-badge verb" onclick="highlightEmbeddingWord('chase')">chase</span>
+              <span class="word-badge verb" onclick="highlightEmbeddingWord('see')">see</span>
+              <span class="word-badge fruit" onclick="highlightEmbeddingWord('apple')">apple</span>
+              <span class="word-badge fruit" onclick="highlightEmbeddingWord('mango')">mango</span>
+              <span class="word-badge eos" onclick="highlightEmbeddingWord('&lt;EOS&gt;')">&lt;EOS&gt;</span>
+            </div>
+          </div>
+
+          <div class="control-group" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem;">
+            <label>Grammar Rules:</label>
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Fira Code', monospace; line-height: 1.4; display: flex; flex-direction: column; gap: 0.25rem;">
+              <div>[Animal] eat [Fruit] &lt;EOS&gt;</div>
+              <div>[Animal] chase [Animal] &lt;EOS&gt;</div>
+              <div>[Animal] see [Fruit/Animal] &lt;EOS&gt;</div>
+              <div>&lt;EOS&gt; &rarr; [Animal] (Start new)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-panel">
+          <div class="embedding-plot-container">
+            <div class="visualizer-title" style="width: 100%">
+              2D Word Embedding Projection Space
+              <span class="visualizer-badge cyan" id="embedding-selected-word">Click a word to inspect</span>
+            </div>
+            <canvas id="t3-embedding-canvas" class="embedding-canvas" width="500" height="500"></canvas>
+            
+            <div class="neighbor-list">
+              <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-main);">Nearest Neighbors Matrix (Cosine Similarity):</h4>
+              <div id="t3-neighbors-grid" style="font-family: 'Fira Code', monospace; font-size: 0.8rem; line-height: 1.5; color: var(--text-muted);">
+                Select/hover over a word badge or point in the graph to see its nearest semantic neighbors.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: MEMORIZATION VS GENERALIZATION -->
+    <div id="tab4" class="tab-content">
+      <div class="intro-card">
+        <h2>S1-4 · Memorization vs Generalization, and data closes the gap.</h2>
+        <p>
+          <strong>Claim:</strong> An over-parameterized model trained on tiny datasets quickly drives training loss to ~0 while test loss remains high (huge generalization gap). Growing the training dataset size closes this gap.
+          <br>
+          <strong>Interactive Proof:</strong> Train a high-capacity model (2 inputs -> 64 -> 32 -> 1 output) on three different training dataset sizes (N = 20, 200, 2000) drawn from a complex spiral distribution. See the boundary squiggle wildly to memorize 20 points, but generalize cleanly with 2000 points.
+        </p>
+      </div>
+
+      <div class="workspace-grid">
+        <div class="control-panel">
+          <div class="control-group">
+            <label>Dataset Size:</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-secondary active" id="btn-size-20" onclick="setT4DatasetSize(20)" style="flex: 1; border-color: var(--accent-magenta); color: var(--accent-magenta);">N=20</button>
+              <button class="btn btn-secondary" id="btn-size-200" onclick="setT4DatasetSize(200)" style="flex: 1;">N=200</button>
+              <button class="btn btn-secondary" id="btn-size-2000" onclick="setT4DatasetSize(2000)" style="flex: 1;">N=2000</button>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="t4-train-btn" onclick="toggleT4Training()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Train Network
+          </button>
+          
+          <button class="btn btn-secondary" onclick="resetT4()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.27 15C19.86 19.33 15.65 22 11 22c-6.075 0-11-4.925-11-11S4.925 0 11 0c3.547 0 6.721 1.678 8.762 4.288L21 4" />
+            </svg>
+            Reset Model
+          </button>
+
+          <div class="stats-panel">
+            <div class="stat-row">
+              <span class="stat-label">Dataset N:</span>
+              <span class="stat-value" id="t4-n-val">20</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Epoch:</span>
+              <span class="stat-value" id="t4-epoch">0</span>
+            </div>
+            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 0;"></div>
+            <div class="stat-row">
+              <span class="stat-label">Train Accuracy:</span>
+              <span class="stat-value" id="t4-train-acc">0.0%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Test Accuracy:</span>
+              <span class="stat-value" id="t4-test-acc">0.0%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Train Loss:</span>
+              <span class="stat-value" id="t4-train-loss">0.000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Test Loss:</span>
+              <span class="stat-value" id="t4-test-loss">0.000</span>
+            </div>
+            <div class="stat-row" style="color: var(--accent-magenta); font-weight: 700; margin-top: 0.5rem;">
+              <span class="stat-label" style="color: var(--accent-magenta);">Gen. Gap (Loss):</span>
+              <span class="stat-value" id="t4-gen-gap">0.000</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-panel">
+          <div class="generalization-split-panels">
+            <div class="visualizer-card">
+              <div class="visualizer-title">
+                Training Split (N = <span class="t4-n-label">20</span>)
+                <span class="visualizer-badge">Fitting Target</span>
+              </div>
+              <canvas id="t4-train-canvas" class="boundary-canvas" width="300" height="300"></canvas>
+            </div>
+
+            <div class="visualizer-card">
+              <div class="visualizer-title">
+                Test Split (N = 500)
+                <span class="visualizer-badge cyan">Unseen Generalization</span>
+              </div>
+              <canvas id="t4-test-canvas" class="boundary-canvas" width="300" height="300"></canvas>
+            </div>
+          </div>
+
+          <div class="charts-container" style="height: 320px;">
+            <canvas id="t4-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Axiom Learning OS — pair-programmed with Antigravity. Built with Vanilla CSS, Canvas API, and custom JS Neural Engine.</p>
+    <p style="margin-top: 0.25rem;">Deploy folder to <a href="https://app.netlify.com/drop" target="_blank">Netlify Drop</a> to get a shareable link.</p>
+  </footer>
+
+  <!-- CORE NEURAL NETWORK AND WORKSPACE SCRIPTS -->
+  <script>
+    // ==========================================
+    // 1. LIGHTWEIGHT NEURAL NETWORK ENGINE (JS)
+    // ==========================================
+
+    class DenseLayer {
+      constructor(inputDim, outputDim, activation = 'linear') {
+        this.inputDim = inputDim;
+        this.outputDim = outputDim;
+        this.activation = activation;
+        
+        // Initialization: He for relu, Xavier for others
+        const scale = activation === 'relu' ? Math.sqrt(2.0 / inputDim) : Math.sqrt(1.0 / inputDim);
+        this.weights = Array.from({ length: inputDim }, () => 
+          Array.from({ length: outputDim }, () => (Math.random() * 2 - 1) * scale)
+        );
+        this.biases = Array(outputDim).fill(0);
+        
+        this.inputs = null;
+        this.z = null;
+        this.outputs = null;
+        
+        this.dWeights = null;
+        this.dBiases = null;
+      }
+      
+      forward(inputs) {
+        this.inputs = inputs;
+        const B = inputs.length;
+        this.z = Array.from({ length: B }, () => Array(this.outputDim).fill(0));
+        this.outputs = Array.from({ length: B }, () => Array(this.outputDim).fill(0));
+        
+        for (let b = 0; b < B; b++) {
+          for (let j = 0; j < this.outputDim; j++) {
+            let sum = this.biases[j];
+            for (let i = 0; i < this.inputDim; i++) {
+              sum += inputs[b][i] * this.weights[i][j];
+            }
+            this.z[b][j] = sum;
+            
+            if (this.activation === 'relu') {
+              this.outputs[b][j] = Math.max(0, sum);
+            } else if (this.activation === 'sigmoid') {
+              this.outputs[b][j] = 1 / (1 + Math.exp(-sum));
+            } else {
+              this.outputs[b][j] = sum; // linear
+            }
+          }
+        }
+        return this.outputs;
+      }
+      
+      backward(dOutputs) {
+        const B = dOutputs.length;
+        const dZ = Array.from({ length: B }, () => Array(this.outputDim).fill(0));
+        
+        for (let b = 0; b < B; b++) {
+          for (let j = 0; j < this.outputDim; j++) {
+            const outVal = this.outputs[b][j];
+            let deriv = 1.0;
+            if (this.activation === 'sigmoid') {
+              deriv = outVal * (1 - outVal);
+            } else if (this.activation === 'relu') {
+              deriv = this.z[b][j] > 0 ? 1.0 : 0.0;
+            }
+            dZ[b][j] = dOutputs[b][j] * deriv;
+          }
+        }
+        
+        this.dWeights = Array.from({ length: this.inputDim }, () => Array(this.outputDim).fill(0));
+        this.dBiases = Array(this.outputDim).fill(0);
+        
+        for (let b = 0; b < B; b++) {
+          for (let j = 0; j < this.outputDim; j++) {
+            this.dBiases[j] += dZ[b][j];
+            for (let i = 0; i < this.inputDim; i++) {
+              this.dWeights[i][j] += this.inputs[b][i] * dZ[b][j];
+            }
+          }
+        }
+        
+        const dInputs = Array.from({ length: B }, () => Array(this.inputDim).fill(0));
+        for (let b = 0; b < B; b++) {
+          for (let i = 0; i < this.inputDim; i++) {
+            let sum = 0;
+            for (let j = 0; j < this.outputDim; j++) {
+              sum += dZ[b][j] * this.weights[i][j];
+            }
+            dInputs[b][i] = sum;
+          }
+        }
+        return dInputs;
+      }
+      
+      update(learningRate) {
+        for (let i = 0; i < this.inputDim; i++) {
+          for (let j = 0; j < this.outputDim; j++) {
+            this.weights[i][j] -= learningRate * this.dWeights[i][j];
+          }
+        }
+        for (let j = 0; j < this.outputDim; j++) {
+          this.biases[j] -= learningRate * this.dBiases[j];
+        }
+      }
+    }
+
+    class SequentialNetwork {
+      constructor(layers = []) {
+        this.layers = layers;
+      }
+      
+      add(layer) {
+        this.layers.push(layer);
+      }
+      
+      forward(inputs) {
+        let val = inputs;
+        for (const layer of this.layers) {
+          val = layer.forward(val);
+        }
+        return val;
+      }
+      
+      backward(dOutputs) {
+        let val = dOutputs;
+        for (let i = this.layers.length - 1; i >= 0; i--) {
+          val = this.layers[i].backward(val);
+        }
+        return val;
+      }
+      
+      update(learningRate) {
+        for (const layer of this.layers) {
+          layer.update(learningRate);
+        }
+      }
+    }
+
+    // Binary Cross Entropy helper
+    function computeBCE(predictions, targets) {
+      const B = predictions.length;
+      let loss = 0;
+      const dLoss = Array.from({ length: B }, () => Array(1).fill(0));
+      for (let b = 0; b < B; b++) {
+        const pred = Math.max(1e-7, Math.min(1 - 1e-7, predictions[b][0]));
+        const target = targets[b][0];
+        loss += -(target * Math.log(pred) + (1 - target) * Math.log(1 - pred));
+        dLoss[b][0] = ((pred - target) / (pred * (1 - pred))) / B;
+      }
+      return { loss: loss / B, dLoss };
+    }
+
+
+    // ==========================================
+    // 2. TAB TRANSITIONS UTILS
+    // ==========================================
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      
+      // Find corresponding button
+      const indexMap = { 'tab1': 0, 'tab2': 1, 'tab3': 2, 'tab4': 3 };
+      document.querySelectorAll('.tab-btn')[indexMap[tabId]].classList.add('active');
+      
+      // Stop training loops in other tabs
+      stopAllTraining();
+      
+      // Initialize tab specifically if needed
+      if (tabId === 'tab1') initT1();
+      else if (tabId === 'tab2') initT2();
+      else if (tabId === 'tab3') initT3();
+      else if (tabId === 'tab4') initT4();
+    }
+
+    function stopAllTraining() {
+      t1Training = false;
+      t2Training = false;
+      t3Training = false;
+      t4Training = false;
+      
+      document.getElementById('t1-train-btn').innerHTML = getPlayIcon() + ' Start Training';
+      document.getElementById('t2-train-btn').innerHTML = getPlayIcon() + ' Start Training';
+      document.getElementById('t3-train-btn').innerHTML = getPlayIcon() + ' Train Embeddings';
+      document.getElementById('t4-train-btn').innerHTML = getPlayIcon() + ' Train Network';
+    }
+
+    function getPlayIcon() {
+      return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    }
+
+    function getPauseIcon() {
+      return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    }
+
+
+    // ==========================================
+    // 3. S1-1: ACTIVATIONS SIMULATION
+    // ==========================================
+
+    let t1Data = [];
+    let t1LinearNet, t1ReluNet;
+    let t1EpochCount = 0;
+    let t1Training = false;
+    let t1Lr = 0.1;
+    let t1HiddenDim = 8;
+    let t1Chart = null;
+
+    // Concentric rings generator
+    function generateConcentricRings(numPoints) {
+      const data = [];
+      const half = numPoints / 2;
+      
+      // Inner Circle (Class 0)
+      for (let i = 0; i < half; i++) {
+        const r = 0.25 + Math.random() * 0.2;
+        const theta = Math.random() * 2 * Math.PI;
+        const x = r * Math.cos(theta);
+        const y = r * Math.sin(theta);
+        data.push({ input: [x, y], target: [0] });
+      }
+      
+      // Outer Circle (Class 1)
+      for (let i = 0; i < half; i++) {
+        const r = 0.7 + Math.random() * 0.2;
+        const theta = Math.random() * 2 * Math.PI;
+        const x = r * Math.cos(theta);
+        const y = r * Math.sin(theta);
+        data.push({ input: [x, y], target: [1] });
+      }
+      return data;
+    }
+
+    function initT1() {
+      if (t1Data.length === 0) {
+        t1Data = generateConcentricRings(300);
+      }
+      
+      // Create Networks
+      t1LinearNet = new SequentialNetwork([
+        new DenseLayer(2, 1, 'sigmoid')
+      ]);
+      
+      t1ReluNet = new SequentialNetwork([
+        new DenseLayer(2, t1HiddenDim, 'relu'),
+        new DenseLayer(t1HiddenDim, 1, 'sigmoid')
+      ]);
+      
+      t1EpochCount = 0;
+      
+      // Init Canvas
+      drawBoundaryCanvas('t1-linear-canvas', t1LinearNet, t1Data);
+      drawBoundaryCanvas('t1-relu-canvas', t1ReluNet, t1Data);
+      
+      // Init Chart
+      initT1Chart();
+      updateT1Stats();
+    }
+
+    function resetT1() {
+      stopAllTraining();
+      t1Data = generateConcentricRings(300);
+      initT1();
+    }
+
+    function updateT1Lr(val) {
+      t1Lr = parseFloat(val);
+      document.getElementById('t1-lr-val').innerText = val;
+    }
+
+    function updateT1Hidden(val) {
+      t1HiddenDim = parseInt(val);
+      document.getElementById('t1-hidden-val').innerText = val;
+      // Re-initialize network with new hidden dim
+      t1ReluNet = new SequentialNetwork([
+        new DenseLayer(2, t1HiddenDim, 'relu'),
+        new DenseLayer(t1HiddenDim, 1, 'sigmoid')
+      ]);
+      t1EpochCount = 0;
+      if (t1Chart) {
+        t1Chart.data.labels = [];
+        t1Chart.data.datasets[0].data = [];
+        t1Chart.data.datasets[1].data = [];
+        t1Chart.update();
+      }
+      drawBoundaryCanvas('t1-relu-canvas', t1ReluNet, t1Data);
+      updateT1Stats();
+    }
+
+    function toggleT1Training() {
+      t1Training = !t1Training;
+      const btn = document.getElementById('t1-train-btn');
+      if (t1Training) {
+        btn.innerHTML = getPauseIcon() + ' Pause Training';
+        trainT1Step();
+      } else {
+        btn.innerHTML = getPlayIcon() + ' Start Training';
+      }
+    }
+
+    function trainT1Step() {
+      if (!t1Training) return;
+      
+      // Train for 5 epochs per animation frame
+      const epochsPerFrame = 5;
+      
+      for (let step = 0; step < epochsPerFrame; step++) {
+        // Collect batch inputs and targets
+        const inputs = t1Data.map(d => d.input);
+        const targets = t1Data.map(d => d.target);
+        
+        // 1. Train Linear Network
+        const linPreds = t1LinearNet.forward(inputs);
+        const linBce = computeBCE(linPreds, targets);
+        t1LinearNet.backward(linBce.dLoss);
+        t1LinearNet.update(t1Lr);
+        
+        // 2. Train ReLU Network
+        const reluPreds = t1ReluNet.forward(inputs);
+        const reluBce = computeBCE(reluPreds, targets);
+        t1ReluNet.backward(reluBce.dLoss);
+        t1ReluNet.update(t1Lr);
+        
+        t1EpochCount++;
+        
+        // Log to chart every 10 epochs
+        if (t1EpochCount % 10 === 0) {
+          const linAcc = calculateAccuracy(linPreds, targets);
+          const reluAcc = calculateAccuracy(reluPreds, targets);
+          
+          t1Chart.data.labels.push(t1EpochCount);
+          t1Chart.data.datasets[0].data.push(linAcc * 100);
+          t1Chart.data.datasets[1].data.push(reluAcc * 100);
+          
+          // Truncate chart history if too long to prevent slowdowns
+          if (t1Chart.data.labels.length > 50) {
+            t1Chart.data.labels.shift();
+            t1Chart.data.datasets[0].data.shift();
+            t1Chart.data.datasets[1].data.shift();
+          }
+          t1Chart.update('none');
+        }
+      }
+      
+      // Draw new boundaries
+      drawBoundaryCanvas('t1-linear-canvas', t1LinearNet, t1Data);
+      drawBoundaryCanvas('t1-relu-canvas', t1ReluNet, t1Data);
+      
+      updateT1Stats();
+      requestAnimationFrame(trainT1Step);
+    }
+
+    function updateT1Stats() {
+      document.getElementById('t1-epoch').innerText = t1EpochCount;
+      
+      const inputs = t1Data.map(d => d.input);
+      const targets = t1Data.map(d => d.target);
+      
+      const linPreds = t1LinearNet.forward(inputs);
+      const reluPreds = t1ReluNet.forward(inputs);
+      
+      const linAcc = calculateAccuracy(linPreds, targets);
+      const reluAcc = calculateAccuracy(reluPreds, targets);
+      
+      document.getElementById('t1-linear-acc').innerText = (linAcc * 100).toFixed(1) + '%';
+      document.getElementById('t1-relu-acc').innerText = (reluAcc * 100).toFixed(1) + '%';
+    }
+
+    function calculateAccuracy(predictions, targets) {
+      let correct = 0;
+      for (let i = 0; i < predictions.length; i++) {
+        const predClass = predictions[i][0] >= 0.5 ? 1 : 0;
+        if (predClass === targets[i][0]) {
+          correct++;
+        }
+      }
+      return correct / predictions.length;
+    }
+
+    function initT1Chart() {
+      const ctx = document.getElementById('t1-chart').getContext('2d');
+      if (t1Chart) t1Chart.destroy();
+      
+      t1Chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Linear Model Accuracy (%)',
+              data: [],
+              borderColor: '#ff5e62',
+              backgroundColor: 'rgba(255, 94, 98, 0.1)',
+              borderWidth: 2,
+              tension: 0.1,
+              pointRadius: 0
+            },
+            {
+              label: 'ReLU Model Accuracy (%)',
+              data: [],
+              borderColor: '#00f2fe',
+              backgroundColor: 'rgba(0, 242, 254, 0.1)',
+              borderWidth: 2,
+              tension: 0.1,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#9ca3af', font: { family: 'Inter' } }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#9ca3af' }
+            },
+            y: {
+              min: 40,
+              max: 100,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#9ca3af' }
+            }
+          }
+        }
+      });
+    }
+
+
+    // ==========================================
+    // COMMON BOUNDARY RENDERING UTILITY
+    // ==========================================
+
+    function drawBoundaryCanvas(canvasId, model, dataset) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      
+      ctx.clearRect(0, 0, W, H);
+      
+      // 1. Draw grid predictions in background
+      const gridSize = 50;
+      const cellSize = W / gridSize;
+      
+      // Generate grid coordinates
+      const gridInputs = [];
+      for (let v = 0; v < gridSize; v++) {
+        const yCoord = 1.2 - (v / (gridSize - 1)) * 2.4; // Map [0, gridSize] to [1.2, -1.2]
+        for (let u = 0; u < gridSize; u++) {
+          const xCoord = (u / (gridSize - 1)) * 2.4 - 1.2; // Map [0, gridSize] to [-1.2, 1.2]
+          gridInputs.push([xCoord, yCoord]);
+        }
+      }
+      
+      const gridPreds = model.forward(gridInputs);
+      
+      let idx = 0;
+      for (let v = 0; v < gridSize; v++) {
+        for (let u = 0; u < gridSize; u++) {
+          const p = gridPreds[idx][0];
+          idx++;
+          
+          let color = '';
+          if (p > 0.5) {
+            const alpha = (p - 0.5) * 2 * 0.45;
+            color = `rgba(0, 198, 255, ${alpha})`;
+          } else {
+            const alpha = (0.5 - p) * 2 * 0.45;
+            color = `rgba(255, 94, 98, ${alpha})`;
+          }
+          ctx.fillStyle = color;
+          ctx.fillRect(u * cellSize, v * cellSize, cellSize + 0.5, cellSize + 0.5);
+        }
+      }
+      
+      // 2. Draw Data points
+      for (const pt of dataset) {
+        const [x, y] = pt.input;
+        const target = pt.target[0];
+        
+        const px = ((x + 1.2) / 2.4) * W;
+        const py = ((1.2 - y) / 2.4) * H;
+        
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = target === 1 ? '#00c6ff' : '#ff5e62';
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = target === 1 ? '#00c6ff' : '#ff5e62';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        ctx.beginPath();
+        ctx.arc(px, py, 4.5, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
+
+
+    // ==========================================
+    // 4. S1-2: DEPTH COLLAPSE SIMULATION
+    // ==========================================
+
+    let t2Linear1Net, t2Linear5Net, t2Relu5Net;
+    let t2EpochCount = 0;
+    let t2Training = false;
+    let t2Lr = 0.05;
+
+    function initT2() {
+      if (t1Data.length === 0) {
+        t1Data = generateConcentricRings(300);
+      }
+      
+      // 1. Single linear layer
+      t2Linear1Net = new SequentialNetwork([
+        new DenseLayer(2, 1, 'sigmoid')
+      ]);
+      
+      // 2. 5 Stacked linear layers (no activations inside, just linear)
+      t2Linear5Net = new SequentialNetwork([
+        new DenseLayer(2, 8, 'linear'),
+        new DenseLayer(8, 8, 'linear'),
+        new DenseLayer(8, 8, 'linear'),
+        new DenseLayer(8, 8, 'linear'),
+        new DenseLayer(8, 1, 'sigmoid')
+      ]);
+      
+      // 3. 5 Stacked ReLU layers
+      t2Relu5Net = new SequentialNetwork([
+        new DenseLayer(2, 8, 'relu'),
+        new DenseLayer(8, 8, 'relu'),
+        new DenseLayer(8, 8, 'relu'),
+        new DenseLayer(8, 8, 'relu'),
+        new DenseLayer(8, 1, 'sigmoid')
+      ]);
+      
+      t2EpochCount = 0;
+      
+      drawBoundaryCanvas('t2-l1-canvas', t2Linear1Net, t1Data);
+      drawBoundaryCanvas('t2-l5-canvas', t2Linear5Net, t1Data);
+      drawBoundaryCanvas('t2-r5-canvas', t2Relu5Net, t1Data);
+      
+      updateT2Stats();
+      computeAndShowMatrixCollapse();
+    }
+
+    function resetT2() {
+      stopAllTraining();
+      initT2();
+    }
+
+    function updateT2Lr(val) {
+      t2Lr = parseFloat(val);
+      document.getElementById('t2-lr-val').innerText = val;
+    }
+
+    function toggleT2Training() {
+      t2Training = !t2Training;
+      const btn = document.getElementById('t2-train-btn');
+      if (t2Training) {
+        btn.innerHTML = getPauseIcon() + ' Pause Training';
+        trainT2Step();
+      } else {
+        btn.innerHTML = getPlayIcon() + ' Start Training';
+      }
+    }
+
+    function toggleMathExplanation() {
+      const content = document.getElementById('math-explanation-content');
+      const icon = document.getElementById('math-toggle-icon');
+      if (content.style.display === 'none') {
+        content.style.display = 'flex';
+        icon.innerText = '−';
+      } else {
+        content.style.display = 'none';
+        icon.innerText = '+';
+      }
+    }
+
+    function trainT2Step() {
+      if (!t2Training) return;
+      
+      const epochsPerFrame = 5;
+      const inputs = t1Data.map(d => d.input);
+      const targets = t1Data.map(d => d.target);
+      
+      for (let step = 0; step < epochsPerFrame; step++) {
+        // Train 1-layer Linear
+        const p1 = t2Linear1Net.forward(inputs);
+        const bce1 = computeBCE(p1, targets);
+        t2Linear1Net.backward(bce1.dLoss);
+        t2Linear1Net.update(t2Lr);
+        
+        // Train 5-layer Linear
+        const p2 = t2Linear5Net.forward(inputs);
+        const bce2 = computeBCE(p2, targets);
+        t2Linear5Net.backward(bce2.dLoss);
+        t2Linear5Net.update(t2Lr);
+        
+        // Train 5-layer ReLU
+        const p3 = t2Relu5Net.forward(inputs);
+        const bce3 = computeBCE(p3, targets);
+        t2Relu5Net.backward(bce3.dLoss);
+        t2Relu5Net.update(t2Lr * 0.5);
+        
+        t2EpochCount++;
+      }
+      
+      drawBoundaryCanvas('t2-l1-canvas', t2Linear1Net, t1Data);
+      drawBoundaryCanvas('t2-l5-canvas', t2Linear5Net, t1Data);
+      drawBoundaryCanvas('t2-r5-canvas', t2Relu5Net, t1Data);
+      
+      updateT2Stats();
+      computeAndShowMatrixCollapse();
+      
+      requestAnimationFrame(trainT2Step);
+    }
+
+    function updateT2Stats() {
+      document.getElementById('t2-epoch').innerText = t2EpochCount;
+      
+      const inputs = t1Data.map(d => d.input);
+      const targets = t1Data.map(d => d.target);
+      
+      const p1 = t2Linear1Net.forward(inputs);
+      const p2 = t2Linear5Net.forward(inputs);
+      const p3 = t2Relu5Net.forward(inputs);
+      
+      document.getElementById('t2-l1-acc').innerText = (calculateAccuracy(p1, targets) * 100).toFixed(1) + '%';
+      document.getElementById('t2-l5-acc').innerText = (calculateAccuracy(p2, targets) * 100).toFixed(1) + '%';
+      document.getElementById('t2-r5-acc').innerText = (calculateAccuracy(p3, targets) * 100).toFixed(1) + '%';
+    }
+
+    // Matrix collapse proof
+    function computeAndShowMatrixCollapse() {
+      const L = t2Linear5Net.layers;
+      
+      let W_eff = L[0].weights; // 2x8
+      let b_eff = [...L[0].biases]; // size 8
+      
+      for (let l = 1; l < 5; l++) {
+        const W_next = L[l].weights; // [8, 8] or [8, 1]
+        const b_next = L[l].biases; // size 8 or 1
+        
+        const N_in = W_eff.length;      // 2
+        const N_mid = W_eff[0].length;   // 8
+        const N_out = W_next[0].length;  // 8 or 1
+        
+        const W_new = Array.from({ length: N_in }, () => Array(N_out).fill(0));
+        for (let i = 0; i < N_in; i++) {
+          for (let j = 0; j < N_out; j++) {
+            let sum = 0;
+            for (let k = 0; k < N_mid; k++) {
+              sum += W_eff[i][k] * W_next[k][j];
+            }
+            W_new[i][j] = sum;
+          }
+        }
+        
+        const b_new = Array(N_out).fill(0);
+        for (let j = 0; j < N_out; j++) {
+          let sum = b_next[j];
+          for (let k = 0; k < N_mid; k++) {
+            sum += b_eff[k] * W_next[k][j];
+          }
+          b_new[j] = sum;
+        }
+        
+        W_eff = W_new;
+        b_eff = b_new;
+      }
+      
+      document.getElementById('m-eff-w0').innerText = W_eff[0][0].toFixed(5);
+      document.getElementById('m-eff-w1').innerText = W_eff[1][0].toFixed(5);
+      document.getElementById('m-eff-b').innerText = b_eff[0].toFixed(5);
+      
+      const L1 = t2Linear1Net.layers[0];
+      document.getElementById('m-lin-w0').innerText = L1.weights[0][0].toFixed(5);
+      document.getElementById('m-lin-w1').innerText = L1.weights[1][0].toFixed(5);
+      document.getElementById('m-lin-b').innerText = L1.biases[0].toFixed(5);
+      
+      const sample = [[0.5, 0.5]];
+      const out5L = t2Linear5Net.forward(sample)[0][0];
+      const outProd = (sample[0][0] * W_eff[0][0] + sample[0][1] * W_eff[1][0] + b_eff[0]);
+      
+      const sig5L = 1 / (1 + Math.exp(-out5L));
+      const sigProd = 1 / (1 + Math.exp(-outProd));
+      
+      document.getElementById('m-out-5l').innerText = sig5L.toFixed(6);
+      document.getElementById('m-out-prod').innerText = sigProd.toFixed(6);
+      
+      const diff = Math.abs(sig5L - sigProd);
+      document.getElementById('m-out-diff').innerText = diff.toFixed(8);
+    }
+
+
+    // ==========================================
+    // 5. S1-3: EMBEDDINGS SIMILARITY SIMULATION
+    // ==========================================
+
+    const vocab = ['cat', 'dog', 'cow', 'eat', 'chase', 'see', 'apple', 'mango', '<EOS>'];
+    const wordCategories = {
+      'cat': 'animal', 'dog': 'animal', 'cow': 'animal',
+      'eat': 'verb', 'chase': 'verb', 'see': 'verb',
+      'apple': 'fruit', 'mango': 'fruit',
+      '<EOS>': 'eos'
+    };
+    
+    let t3Model;
+    let t3Dataset = [];
+    let t3Steps = 0;
+    let t3Training = false;
+    let t3Lr = 0.2;
+    let t3SelectedWord = 'cat';
+
+    class EmbeddingModel {
+      constructor(vocabSize, embeddingDim) {
+        this.vocabSize = vocabSize;
+        this.embeddingDim = embeddingDim;
+        
+        this.embeddings = Array.from({ length: vocabSize }, () =>
+          Array.from({ length: embeddingDim }, () => (Math.random() * 2 - 1) * 0.15)
+        );
+        
+        this.W_out = Array.from({ length: embeddingDim }, () =>
+          Array.from({ length: vocabSize }, () => (Math.random() * 2 - 1) * 0.2)
+        );
+        this.b_out = Array(vocabSize).fill(0);
+      }
+      
+      trainBatch(batchPairs, baseLr, stepCount) {
+        // Decay learning rate over time to make updates smooth and settle the embeddings
+        const decayedLr = baseLr / (1 + 0.0003 * stepCount);
+        
+        // Gradient accumulators
+        const dW_out = Array.from({ length: this.embeddingDim }, () => Array(this.vocabSize).fill(0));
+        const db_out = Array(this.vocabSize).fill(0);
+        const dEmbeddings = Array.from({ length: this.vocabSize }, () => Array(this.embeddingDim).fill(0));
+        
+        let batchLoss = 0;
+        const B = batchPairs.length;
+        
+        for (const pair of batchPairs) {
+          const inputIdx = pair.inputIdx;
+          const targetIdx = pair.targetIdx;
+          const embed = this.embeddings[inputIdx];
+          
+          // Forward
+          const logits = Array(this.vocabSize).fill(0);
+          for (let j = 0; j < this.vocabSize; j++) {
+            let sum = this.b_out[j];
+            for (let d = 0; d < this.embeddingDim; d++) {
+              sum += embed[d] * this.W_out[d][j];
+            }
+            logits[j] = sum;
+          }
+          
+          // Softmax
+          const maxLogit = Math.max(...logits);
+          const exps = logits.map(l => Math.exp(l - maxLogit));
+          const sumExps = exps.reduce((a, b) => a + b, 0);
+          const softmax = exps.map(e => e / sumExps);
+          
+          batchLoss += -Math.log(Math.max(1e-15, softmax[targetIdx]));
+          
+          // Softmax cross-entropy gradient
+          const dLogits = [...softmax];
+          dLogits[targetIdx] -= 1.0;
+          
+          // Accumulate gradients
+          for (let j = 0; j < this.vocabSize; j++) {
+            const grad = dLogits[j];
+            db_out[j] += grad;
+            for (let d = 0; d < this.embeddingDim; d++) {
+              dW_out[d][j] += grad * embed[d];
+              dEmbeddings[inputIdx][d] += grad * this.W_out[d][j];
+            }
+          }
+        }
+        
+        // Apply batch updates
+        for (let j = 0; j < this.vocabSize; j++) {
+          this.b_out[j] -= decayedLr * (db_out[j] / B);
+          for (let d = 0; d < this.embeddingDim; d++) {
+            this.W_out[d][j] -= decayedLr * (dW_out[d][j] / B);
+          }
+        }
+        for (let i = 0; i < this.vocabSize; i++) {
+          for (let d = 0; d < this.embeddingDim; d++) {
+            this.embeddings[i][d] -= decayedLr * (dEmbeddings[i][d] / B);
+          }
+        }
+        
+        return batchLoss / B;
+      }
+    }
+
+    function generateEmbeddingCorpus() {
+      const sentences = [
+        ['cat', 'eat', 'apple'], ['dog', 'eat', 'mango'], ['cow', 'eat', 'apple'],
+        ['cat', 'eat', 'mango'], ['dog', 'eat', 'apple'], ['cow', 'eat', 'mango'],
+        ['cat', 'chase', 'dog'], ['dog', 'chase', 'cow'], ['cow', 'chase', 'cat'],
+        ['cat', 'chase', 'cow'], ['dog', 'chase', 'cat'], ['cow', 'chase', 'dog'],
+        ['cat', 'see', 'apple'], ['dog', 'see', 'mango'], ['cow', 'see', 'cat'],
+        ['cat', 'see', 'dog'], ['dog', 'see', 'apple'], ['cow', 'see', 'mango'],
+        ['cat', 'see', 'cow']
+      ];
+      
+      const pairs = [];
+      for (const sent of sentences) {
+        // We have: word0 -> word1 -> word2
+        pairs.push({ input: sent[0], target: sent[1] });
+        pairs.push({ input: sent[1], target: sent[2] });
+        // word2 -> <EOS>
+        pairs.push({ input: sent[2], target: '<EOS>' });
+        
+        // <EOS> -> start a new sentence.
+        // To distinguish <EOS> target distribution from "chase" target distribution,
+        // we only start sentences with "cat" or "dog" (not "cow").
+        const nextAnimal = ['cat', 'dog'][Math.floor(Math.random() * 2)];
+        pairs.push({ input: '<EOS>', target: nextAnimal });
+      }
+      return pairs;
+    }
+
+    function initT3() {
+      const rawDataset = generateEmbeddingCorpus();
+      // Pre-map indices for batch training efficiency
+      t3Dataset = rawDataset.map(pair => ({
+        input: pair.input,
+        target: pair.target,
+        inputIdx: vocab.indexOf(pair.input),
+        targetIdx: vocab.indexOf(pair.target)
+      }));
+      t3Model = new EmbeddingModel(vocab.length, 2);
+      t3Steps = 0;
+      
+      drawEmbeddingCanvas();
+      updateT3Stats(0);
+      computeNearestNeighbors();
+    }
+
+    function resetT3() {
+      stopAllTraining();
+      initT3();
+    }
+
+    function updateT3Lr(val) {
+      t3Lr = parseFloat(val);
+      document.getElementById('t3-lr-val').innerText = val;
+    }
+
+    function toggleT3Training() {
+      t3Training = !t3Training;
+      const btn = document.getElementById('t3-train-btn');
+      if (t3Training) {
+        btn.innerHTML = getPauseIcon() + ' Pause';
+        trainT3Step();
+      } else {
+        btn.innerHTML = getPlayIcon() + ' Train Embeddings';
+      }
+    }
+
+    function trainT3Step() {
+      if (!t3Training) return;
+      
+      let avgLoss = 0;
+      const trainingEpochs = 20; // 20 batch steps per animation frame
+      
+      for (let t = 0; t < trainingEpochs; t++) {
+        avgLoss = t3Model.trainBatch(t3Dataset, t3Lr, t3Steps);
+        t3Steps++;
+      }
+      
+      drawEmbeddingCanvas();
+      updateT3Stats(avgLoss);
+      computeNearestNeighbors();
+      
+      requestAnimationFrame(trainT3Step);
+    }
+
+    function updateT3Stats(loss) {
+      document.getElementById('t3-step').innerText = t3Steps;
+      document.getElementById('t3-loss').innerText = loss.toFixed(4);
+    }
+
+    function drawEmbeddingCanvas() {
+      const canvas = document.getElementById('t3-embedding-canvas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      
+      ctx.clearRect(0, 0, W, H);
+      
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.lineWidth = 1;
+      for (let x = 50; x < W; x += 50) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, x); ctx.lineTo(W, x); ctx.stroke();
+      }
+      
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+      
+      let minX = Infinity, maxX = -Infinity;
+      let minY = Infinity, maxY = -Infinity;
+      for (let i = 0; i < vocab.length; i++) {
+        const [x, y] = t3Model.embeddings[i];
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+      
+      const maxVal = Math.max(Math.abs(minX), Math.abs(maxX), Math.abs(minY), Math.abs(maxY), 0.2) * 1.3;
+      
+      for (let i = 0; i < vocab.length; i++) {
+        const word = vocab[i];
+        const [ex, ey] = t3Model.embeddings[i];
+        
+        const px = W / 2 + (ex / maxVal) * (W / 2 - 50);
+        const py = H / 2 - (ey / maxVal) * (H / 2 - 50);
+        
+        const cat = wordCategories[word];
+        let color = '#ff5e62';
+        if (cat === 'animal') color = '#10b981';
+        else if (cat === 'verb') color = '#f59e0b';
+        else if (cat === 'fruit') color = '#ec4899';
+        else if (cat === 'eos') color = '#a855f7';
+        
+        if (word === t3SelectedWord) {
+          ctx.beginPath();
+          ctx.arc(px, py, 14, 0, 2 * Math.PI);
+          ctx.fillStyle = color + '22';
+          ctx.fill();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+        
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = word === t3SelectedWord ? 'bold 13px Inter' : '11px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('  ' + word, px + 6, py + 4);
+      }
+    }
+
+    function highlightEmbeddingWord(word) {
+      t3SelectedWord = word;
+      document.getElementById('embedding-selected-word').innerText = `Selected: ${word} (${wordCategories[word]})`;
+      drawEmbeddingCanvas();
+      computeNearestNeighbors();
+    }
+
+    document.getElementById('t3-embedding-canvas').addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      
+      const W = this.width;
+      const H = this.height;
+      
+      let minX = Infinity, maxX = -Infinity;
+      let minY = Infinity, maxY = -Infinity;
+      for (let i = 0; i < vocab.length; i++) {
+        const [x, y] = t3Model.embeddings[i];
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+      const maxVal = Math.max(Math.abs(minX), Math.abs(maxX), Math.abs(minY), Math.abs(maxY), 0.2) * 1.3;
+      
+      let closestWord = null;
+      let closestDist = Infinity;
+      
+      for (let i = 0; i < vocab.length; i++) {
+        const [ex, ey] = t3Model.embeddings[i];
+        const px = W / 2 + (ex / maxVal) * (W / 2 - 50);
+        const py = H / 2 - (ey / maxVal) * (H / 2 - 50);
+        
+        const dist = Math.sqrt((clickX - px)**2 + (clickY - py)**2);
+        if (dist < closestDist && dist < 20) {
+          closestDist = dist;
+          closestWord = vocab[i];
+        }
+      }
+      
+      if (closestWord) {
+        highlightEmbeddingWord(closestWord);
+      }
+    });
+
+    function cosineSimilarity(a, b) {
+      const dot = a[0]*b[0] + a[1]*b[1];
+      const normA = Math.sqrt(a[0]**2 + a[1]**2);
+      const normB = Math.sqrt(b[0]**2 + b[1]**2);
+      if (normA === 0 || normB === 0) return 0;
+      return dot / (normA * normB);
+    }
+
+    function computeNearestNeighbors() {
+      if (!t3SelectedWord) return;
+      const idx = vocab.indexOf(t3SelectedWord);
+      const targetEmbed = t3Model.embeddings[idx];
+      
+      const list = [];
+      for (let i = 0; i < vocab.length; i++) {
+        if (vocab[i] === t3SelectedWord) continue;
+        const sim = cosineSimilarity(targetEmbed, t3Model.embeddings[i]);
+        list.push({ word: vocab[i], sim: sim });
+      }
+      
+      list.sort((a, b) => b.sim - a.sim);
+      
+      let html = `<table style="width:100%; text-align:left; border-spacing: 0.5rem;">
+        <tr>
+          <th style="color:var(--text-main);">Rank</th>
+          <th style="color:var(--text-main);">Word</th>
+          <th style="color:var(--text-main);">Category</th>
+          <th style="color:var(--text-main);">Cosine Similarity</th>
+        </tr>`;
+      
+      list.forEach((item, r) => {
+        const cat = wordCategories[item.word];
+        let color = '#ff5e62';
+        if (cat === 'animal') color = '#10b981';
+        else if (cat === 'verb') color = '#f59e0b';
+        else if (cat === 'fruit') color = '#ec4899';
+        
+        html += `<tr>
+          <td>#${r+1}</td>
+          <td style="color:${color}; font-weight:600;">${item.word}</td>
+          <td style="text-transform: capitalize;">${cat}</td>
+          <td style="font-family:'Fira Code';">${item.sim.toFixed(5)}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      
+      document.getElementById('t3-neighbors-grid').innerHTML = html;
+    }
+
+
+    // ==========================================
+    // 6. S1-4: MEMORIZATION VS GENERALIZATION
+    // ==========================================
+
+    let t4DatasetSize = 20;
+    let t4TrainData = [];
+    let t4TestData = [];
+    let t4Net;
+    let t4EpochCount = 0;
+    let t4Training = false;
+    let t4Chart = null;
+
+    function generateSpiralData(numPoints, noise = 0.15) {
+      const data = [];
+      const half = numPoints / 2;
+      
+      // Class 0: Spiral 1
+      for (let i = 0; i < half; i++) {
+        const r = (i / half) * 0.95;
+        const theta = (i / half) * 2.2 * Math.PI;
+        const x = r * Math.sin(theta) + (Math.random() - 0.5) * noise;
+        const y = r * Math.cos(theta) + (Math.random() - 0.5) * noise;
+        data.push({ input: [x, y], target: [0] });
+      }
+      
+      // Class 1: Spiral 2
+      for (let i = 0; i < half; i++) {
+        const r = (i / half) * 0.95;
+        const theta = (i / half) * 2.2 * Math.PI + Math.PI;
+        const x = r * Math.sin(theta) + (Math.random() - 0.5) * noise;
+        const y = r * Math.cos(theta) + (Math.random() - 0.5) * noise;
+        data.push({ input: [x, y], target: [1] });
+      }
+      
+      return data;
+    }
+
+    function setT4DatasetSize(size) {
+      t4DatasetSize = size;
+      
+      document.querySelectorAll('#tab4 .btn-secondary').forEach(b => {
+        b.classList.remove('active');
+        b.style.borderColor = 'rgba(255,255,255,0.08)';
+        b.style.color = 'var(--text-muted)';
+      });
+      
+      const activeBtn = document.getElementById(`btn-size-${size}`);
+      activeBtn.classList.add('active');
+      activeBtn.style.borderColor = 'var(--accent-magenta)';
+      activeBtn.style.color = 'var(--accent-magenta)';
+      
+      document.querySelectorAll('.t4-n-label').forEach(e => e.innerText = size);
+      document.getElementById('t4-n-val').innerText = size;
+      
+      resetT4();
+    }
+
+    function initT4() {
+      t4TrainData = generateSpiralData(t4DatasetSize, 0.12);
+      t4TestData = generateSpiralData(500, 0.12);
+      
+      t4Net = new SequentialNetwork([
+        new DenseLayer(2, 64, 'relu'),
+        new DenseLayer(64, 32, 'relu'),
+        new DenseLayer(32, 1, 'sigmoid')
+      ]);
+      
+      t4EpochCount = 0;
+      
+      drawBoundaryCanvas('t4-train-canvas', t4Net, t4TrainData);
+      drawBoundaryCanvas('t4-test-canvas', t4Net, t4TestData);
+      
+      initT4Chart();
+      updateT4Stats(0, 0);
+    }
+
+    function resetT4() {
+      stopAllTraining();
+      initT4();
+    }
+
+    function toggleT4Training() {
+      t4Training = !t4Training;
+      const btn = document.getElementById('t4-train-btn');
+      if (t4Training) {
+        btn.innerHTML = getPauseIcon() + ' Pause';
+        trainT4Step();
+      } else {
+        btn.innerHTML = getPlayIcon() + ' Train Network';
+      }
+    }
+
+    function trainT4Step() {
+      if (!t4Training) return;
+      
+      const lr = 0.05;
+      const epochsPerFrame = 5;
+      
+      let trainLoss = 0;
+      
+      for (let step = 0; step < epochsPerFrame; step++) {
+        const trainInputs = t4TrainData.map(d => d.input);
+        const trainTargets = t4TrainData.map(d => d.target);
+        
+        const preds = t4Net.forward(trainInputs);
+        const bce = computeBCE(preds, trainTargets);
+        t4Net.backward(bce.dLoss);
+        t4Net.update(lr);
+        
+        t4EpochCount++;
+        trainLoss = bce.loss;
+        
+        if (t4EpochCount % 10 === 0) {
+          const testInputs = t4TestData.map(d => d.input);
+          const testTargets = t4TestData.map(d => d.target);
+          
+          const testPreds = t4Net.forward(testInputs);
+          const testBce = computeBCE(testPreds, testTargets);
+          
+          t4Chart.data.labels.push(t4EpochCount);
+          t4Chart.data.datasets[0].data.push(trainLoss);
+          t4Chart.data.datasets[1].data.push(testBce.loss);
+          
+          if (t4Chart.data.labels.length > 50) {
+            t4Chart.data.labels.shift();
+            t4Chart.data.datasets[0].data.shift();
+            t4Chart.data.datasets[1].data.shift();
+          }
+          t4Chart.update('none');
+        }
+      }
+      
+      drawBoundaryCanvas('t4-train-canvas', t4Net, t4TrainData);
+      drawBoundaryCanvas('t4-test-canvas', t4Net, t4TestData);
+      
+      const testInputs = t4TestData.map(d => d.input);
+      const testTargets = t4TestData.map(d => d.target);
+      const testPreds = t4Net.forward(testInputs);
+      const testBce = computeBCE(testPreds, testTargets);
+      
+      updateT4Stats(trainLoss, testBce.loss);
+      
+      requestAnimationFrame(trainT4Step);
+    }
+
+    function updateT4Stats(trainLoss, testLoss) {
+      document.getElementById('t4-epoch').innerText = t4EpochCount;
+      
+      const trainInputs = t4TrainData.map(d => d.input);
+      const trainTargets = t4TrainData.map(d => d.target);
+      const testInputs = t4TestData.map(d => d.input);
+      const testTargets = t4TestData.map(d => d.target);
+      
+      const trainPreds = t4Net.forward(trainInputs);
+      const testPreds = t4Net.forward(testInputs);
+      
+      const trainAcc = calculateAccuracy(trainPreds, trainTargets);
+      const testAcc = calculateAccuracy(testPreds, testTargets);
+      
+      document.getElementById('t4-train-acc').innerText = (trainAcc * 100).toFixed(1) + '%';
+      document.getElementById('t4-test-acc').innerText = (testAcc * 100).toFixed(1) + '%';
+      
+      document.getElementById('t4-train-loss').innerText = trainLoss.toFixed(4);
+      document.getElementById('t4-test-loss').innerText = testLoss.toFixed(4);
+      
+      const gap = Math.max(0, testLoss - trainLoss);
+      document.getElementById('t4-gen-gap').innerText = gap.toFixed(4);
+    }
+
+    function initT4Chart() {
+      const ctx = document.getElementById('t4-chart').getContext('2d');
+      if (t4Chart) t4Chart.destroy();
+      
+      t4Chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Training Loss',
+              data: [],
+              borderColor: '#00f2fe',
+              backgroundColor: 'rgba(0, 242, 254, 0.1)',
+              borderWidth: 2,
+              tension: 0.1,
+              pointRadius: 0
+            },
+            {
+              label: 'Test Loss',
+              data: [],
+              borderColor: '#ff007f',
+              backgroundColor: 'rgba(255, 0, 127, 0.1)',
+              borderWidth: 2,
+              tension: 0.1,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#9ca3af', font: { family: 'Inter' } }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#9ca3af' }
+            },
+            y: {
+              min: 0,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#9ca3af' }
+            }
+          }
+        }
+      });
+    }
+
+    // ==========================================
+    // INITIALIZATION ON LOAD
+    // ==========================================
+    window.addEventListener('load', () => {
+      initT1();
+    });
+  </script>
+</body>
+</html>
