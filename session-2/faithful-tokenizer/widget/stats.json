@@ -1,0 +1,62 @@
+{
+  "languages": {
+    "en": "English",
+    "hi": "Hindi",
+    "te": "Telugu",
+    "mr": "Marathi"
+  },
+  "per_language": {
+    "en": {
+      "tokens": 120409,
+      "faithful_units": 186426,
+      "fertility": 0.6458809393539527,
+      "roundtrip_nonspace_preserved": true
+    },
+    "hi": {
+      "tokens": 56158,
+      "faithful_units": 88359,
+      "fertility": 0.6355662694236014,
+      "roundtrip_nonspace_preserved": true
+    },
+    "te": {
+      "tokens": 22146,
+      "faithful_units": 36293,
+      "fertility": 0.610200314110159,
+      "roundtrip_nonspace_preserved": true
+    },
+    "mr": {
+      "tokens": 18870,
+      "faithful_units": 29766,
+      "fertility": 0.6339447691997581,
+      "roundtrip_nonspace_preserved": true
+    }
+  },
+  "sorted_fertilities": [
+    {
+      "lang": "te",
+      "fertility": 0.610200314110159
+    },
+    {
+      "lang": "mr",
+      "fertility": 0.6339447691997581
+    },
+    {
+      "lang": "hi",
+      "fertility": 0.6355662694236014
+    },
+    {
+      "lang": "en",
+      "fertility": 0.6458809393539527
+    }
+  ],
+  "min_fertility": 0.610200314110159,
+  "max_fertility": 0.6458809393539527,
+  "spread": 0.035680625243793784,
+  "score": 28026.414704544393,
+  "hindi_penalty_factor": 1,
+  "adjusted_score": 28026.414704544393,
+  "vocab_size": 10000,
+  "merges": 9441,
+  "all_counts_match_targets": true,
+  "computed_by": "widget/verify.mjs via engine.mjs (same JS BPE engine as index.html)"
+}

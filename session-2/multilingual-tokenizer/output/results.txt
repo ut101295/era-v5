@@ -3,16 +3,16 @@ HuggingFace Byte-Level BPE Tokenizer — Results
 
 Vocab size: 10000
 Languages: English, Hindi, Telugu, Marathi
-Best weights: {'en': 1.4313155466086072, 'hi': 0.2594257725119219, 'te': 1.4851005562110133, 'mr': 0.8241581246684575}
+Best weights: {'en': 1.5, 'hi': 0.343, 'te': 1.717, 'mr': 0.89}
 
 Language      Words     Tokens   Ratio(X)
 ------------------------------------------
-English       9,963     11,528     1.1571
-Hindi         7,970     14,657     1.8390
-Telugu        2,391      4,722     1.9749
-Marathi       4,496      8,557     1.9032
+English       9,963     11,795     1.1839
+Hindi         7,970     14,062     1.7644
+Telugu        2,391      4,473     1.8708
+Marathi       4,496      8,500     1.8906
 
-Min X: 1.1571
-Max X: 1.9749
-Spread: 0.8178
-Score: 1222.76
+Min X: 1.1839
+Max X: 1.8906
+Spread: 0.7067
+Score: 1415.05

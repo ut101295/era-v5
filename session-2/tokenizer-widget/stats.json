@@ -1,0 +1,35 @@
+{
+  "vocab_size": 10000,
+  "languages": {
+    "en": {
+      "name": "English",
+      "words": 9963,
+      "tokens": 11795,
+      "ratio": 1.1838803573220917
+    },
+    "hi": {
+      "name": "Hindi",
+      "words": 7970,
+      "tokens": 14062,
+      "ratio": 1.764366373902133
+    },
+    "te": {
+      "name": "Telugu",
+      "words": 2391,
+      "tokens": 4473,
+      "ratio": 1.8707653701380176
+    },
+    "mr": {
+      "name": "Marathi",
+      "words": 4496,
+      "tokens": 8500,
+      "ratio": 1.8905693950177935
+    }
+  },
+  "x_min": 1.1838803573220917,
+  "x_max": 1.8905693950177935,
+  "spread": 0.7066890376957018,
+  "english_ratio": 1.1838803573220917,
+  "english_ok": true,
+  "score": 1415.0495432343143
+}

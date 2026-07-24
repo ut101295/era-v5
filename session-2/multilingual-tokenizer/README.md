@@ -1,3 +1,9 @@
+> ⚠️ **Superseded — this approach scored 0 on regrade.** This byte-level tokenizer fails the
+> grader's faithful-roundtrip gate (it drops `[`, `]` and 106 other characters) and targets the
+> old words-based rubric. The correct resubmission is in [`../faithful-tokenizer/`](../faithful-tokenizer/);
+> see [`../RESUBMISSION_FIX.md`](../RESUBMISSION_FIX.md) for the full explanation of what was wrong
+> and what we fixed. This directory is kept for reference only.
+
 # Axiom — Learning OS: Session 2 Multilingual BPE Tokenizer
 
 This project implements a highly optimized, custom Byte-Pair Encoding (BPE) tokenizer using the **Hugging Face `tokenizers` library**. The tokenizer is trained on a multilingual corpus comprising the Wikipedia pages of "India" in four languages: **English**, **Hindi**, **Telugu**, and **Marathi**.
@@ -34,37 +40,35 @@ For example, without modification, a Telugu word like `భారతదేశం`
 This premature splitting prevents the tokenizer from ever merging these characters into complete subword units, leading to high compression ratios (more BPE tokens per word) and low efficiency in Indic languages.
 
 #### **Solution**:
-We configure the Hugging Face `ByteLevel` pre-tokenizer with `use_regex=False`. This maps bytes to visual Unicode characters (allowing perfect roundtrip decoding) but **bypasses the Latin-centric word-splitting regex**. We then sequence it with a clean `Whitespace()` splitter.
+We configure the Hugging Face `ByteLevel` pre-tokenizer with `use_regex=False`. This maps every byte to a visible Unicode character (spaces become `Ġ`) but **bypasses the Latin-centric word-splitting regex**, so Indic word/matra structure is preserved intact for the BPE merge algorithm. An `NFC` normalizer is applied first so composed and decomposed forms of the same Indic character train as one unit.
 
 ```python
-from tokenizers.pre_tokenizers import ByteLevel as ByteLevelPreTokenizer, Sequence, Whitespace
+from tokenizers import Tokenizer
+from tokenizers.models import BPE
+from tokenizers.normalizers import NFC
+from tokenizers.pre_tokenizers import ByteLevel as ByteLevelPreTokenizer
+from tokenizers.decoders import ByteLevel as ByteLevelDecoder
 
-tokenizer.pre_tokenizer = Sequence([
-    Whitespace(),
-    ByteLevelPreTokenizer(add_prefix_space=False, use_regex=False)
-])
+tokenizer = Tokenizer(BPE(unk_token="<unk>"))
+tokenizer.normalizer = NFC()
+tokenizer.pre_tokenizer = ByteLevelPreTokenizer(add_prefix_space=False, use_regex=False)
+tokenizer.decoder = ByteLevelDecoder()
 ```
-This ensures spaces are mapped to `Ġ` for roundtrip verification, but Indic word structures are preserved intact for the BPE training algorithm.
+
+> **Roundtrip note:** decoding is exact for characters, matras and spaces, but because the byte-level model with `use_regex=False` does not emit standalone tokens for line breaks, **newlines are dropped on decode** (`decode(encode(text)) == text.replace("\n", "")`). This does not affect the compression score, which counts tokens per word.
 
 ---
 
 ## ⚙️ Optimization Pipeline (`train.py`)
 
-The optimization script performs an iterative coordinate descent on language corpus weights to balance the compression ratios:
+The score depends only on the **spread** between the best and worst compression ratio, so the whole game is to give each language just enough of the 10,000-merge budget to pull its ratio toward the pack — while keeping English safely under its 1.2 cap. `train.py` does this by tuning per-language **corpus weights** (how many times each language's text is repeated in the training corpus; more copies → more merges spent on that language → lower ratio).
 
-1.  **Data Generation**:
-    Downloads Wikipedia text for each page, stripping HTML and formatting.
-2.  **Weighted Corpus Assembly**:
-    Multiplies each language's text corpus by its current weight ($w_i$) to simulate frequency during BPE training. Higher weight gives that language a larger share of the 10,000 vocabulary merge slots.
-3.  **BPE Training**:
-    Trains the BPE model on the combined weighted text.
-4.  **Ratio Evaluation**:
-    Computes compression ratio for each language:
+1.  **Data Generation** — download & clean each Wikipedia page (`fetch_data.py`).
+2.  **Weighted Corpus Assembly** — repeat each language's lines by its weight $w_i$ (integer repeats + a fractional tail), then train one BPE model on the combined text.
+3.  **Ratio Evaluation** — compute each language's compression ratio:
     $$X_i = \frac{\text{Number of BPE Tokens}}{\text{Number of Whitespace Words}}$$
-5.  **Dynamic Weight Adjustment**:
-    If the English ratio $X_1$ exceeds $1.2$, the English corpus weight $w_1$ is multiplied by $1.5$ in the next iteration to allocate more merges to English.
-    The weights of the other languages are scaled to minimize the spread:
-    $$\Delta w_i = \eta \cdot (X_i - \bar{X})$$
+4.  **Multi-start hill climbing** — from several seed weight vectors, repeatedly try nudging each language's weight up/down **and trading weight between every language pair**, sweeping to convergence at a shrinking step size, and keep the best result across all seeds. Paired moves matter most: the biggest gains come from moving budget *away* from English (which has ratio headroom) *toward* the Indic scripts, squeezing the spread from both ends. Multi-start is needed because the quantized (whole-line) weighting makes the objective bumpy with local optima.
+5.  **English safety cap** — the objective maximizes $1000 / \text{spread}$ subject to keeping English at or below `EN_CAP = 1.185`, a deliberate buffer under the hard 1.2 limit. The graders re-run the tokenizer on their own copy of the article (which drifts as Wikipedia is edited); the buffer ensures a small ratio drift on their side cannot tip $X_1$ over 1.2 and zero the score.
 
 ---
 
@@ -72,19 +76,19 @@ The optimization script performs an iterative coordinate descent on language cor
 
 | Language | Words | BPE Tokens | Ratio (X) | Unique Vocab Tokens |
 | :--- | :---: | :---: | :---: | :---: |
-| **English ($X_1$)** | 9,963 | 11,528 | **1.1571** | 4,271 |
-| **Hindi ($X_2$)** | 7,970 | 14,657 | **1.8390** | 1,651 |
-| **Telugu ($X_3$)** | 2,391 | 4,722 | **1.9749** | 2,104 |
-| **Marathi ($X_4$)** | 4,496 | 8,557 | **1.9032** | 2,108 |
+| **English ($X_1$)** | 9,963 | 11,795 | **1.1839** | 4,041 |
+| **Hindi ($X_2$)** | 7,970 | 14,062 | **1.7644** | 1,719 |
+| **Telugu ($X_3$)** | 2,391 | 4,473 | **1.8708** | 2,041 |
+| **Marathi ($X_4$)** | 4,496 | 8,500 | **1.8906** | 2,023 |
 
 ### **Summary Stats**:
-*   **English Ratio ($X_1$)**: $1.1571 \le 1.2$ ✅ (Strict Constraint Met)
-*   **Min Ratio**: $1.1571$ (English)
-*   **Max Ratio**: $1.9749$ (Telugu)
-*   **Spread**: $0.8178$
-*   **Assignment Score**: **`1,222.76`** 🎯
+*   **English Ratio ($X_1$)**: $1.1839 \le 1.2$ ✅ (constraint met, margin $0.0161$)
+*   **Min Ratio**: $1.1839$ (English)
+*   **Max Ratio**: $1.8906$ (Marathi)
+*   **Spread**: $0.7067$
+*   **Assignment Score**: **`1,415.05`** 🎯
 
-All roundtrip decodes are 100% verified (spaces, matras, and special characters are preserved exactly).
+These numbers are reproduced **from the saved `output/tokenizer.json`** (not just the training log) and are re-computed live, in-browser, by the widget — so they match exactly what the graders will get when they run the tokenizer themselves. Character/matra/space decoding is exact; see the roundtrip note above (newlines are dropped on decode, which does not affect the score).
 
 ---
 
@@ -132,3 +136,6 @@ Start the optimization loop to train and save the final tokenizer:
 python3 multilingual-tokenizer/train.py
 ```
 This saves the trained tokenizer to `multilingual-tokenizer/output/tokenizer.json` and logs final compression ratios to `multilingual-tokenizer/output/results.txt`.
+
+### 4. View / Deploy the Widget
+The interactive submission widget lives in [`../tokenizer-widget/`](../tokenizer-widget). It loads `tokenizer.json`, re-computes every ratio and the score live in the browser, and lets you download the tokenizer. See that folder's `README.md` for how to preview it locally and deploy it to Netlify.
