@@ -1,0 +1,43 @@
+{
+  "variant": "wiki_faithful_markdown",
+  "languages": {
+    "en": "English",
+    "hi": "Hindi",
+    "te": "Telugu",
+    "mr": "Marathi"
+  },
+  "weights": {
+    "en": 2,
+    "hi": 2,
+    "te": 5,
+    "mr": 5
+  },
+  "config": {
+    "model": "BPE(byte_fallback=True)",
+    "normalizer": "NFC",
+    "pre_tokenizer": "Metaspace('▁', prepend_scheme='never')",
+    "decoder": "Sequence(ByteFallback, Metaspace)"
+  },
+  "vocab_size": 10000,
+  "faithful_units": {
+    "en": 186426,
+    "hi": 88359,
+    "te": 36293,
+    "mr": 29766
+  },
+  "unit_policy": "Counts each contiguous Unicode letter/mark/number run as one unit and each visible non-space punctuation/symbol character as one unit.",
+  "token_counts": {
+    "en": 120409,
+    "hi": 56158,
+    "te": 22146,
+    "mr": 18870
+  },
+  "ratios": {
+    "en": 0.6458809393539527,
+    "hi": 0.6355662694236014,
+    "te": 0.610200314110159,
+    "mr": 0.6339447691997581
+  },
+  "spread": 0.035680625243793784,
+  "score": 28026.414704544393
+}

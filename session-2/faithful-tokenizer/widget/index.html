@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Faithful Multilingual BPE Tokenizer — Session 2</title>
+<style>
+  :root {
+    --bg: #0b0f1a; --panel: #121829; --panel2: #0e1424; --line: #24304d;
+    --text: #e6ecf7; --muted: #8a99b8; --accent: #6ea8fe; --accent2: #b78cff;
+    --good: #46d39a; --bad: #ff6b6b; --warn: #ffcc66;
+    --en: #6ea8fe; --hi: #ff9f6e; --te: #46d39a; --mr: #b78cff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: radial-gradient(1200px 600px at 70% -10%, #16213c 0%, var(--bg) 55%);
+    color: var(--text); font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh; padding: 32px 20px 64px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 26px; }
+  .eyebrow { color: var(--accent2); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; font-size: 12px; }
+  h1 { margin: 6px 0 4px; font-size: 30px; letter-spacing: -.02em; }
+  .sub { color: var(--muted); max-width: 660px; }
+  .scorecard {
+    background: linear-gradient(160deg, #1c2743 0%, #141d33 100%);
+    border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; text-align: center; min-width: 230px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.35);
+  }
+  .scorecard .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
+  .scorecard .value { font-size: 42px; font-weight: 800; letter-spacing: -.02em;
+    background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .scorecard .formula { color: var(--muted); font-size: 12.5px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+  .card h2 { margin: 0 0 4px; font-size: 17px; }
+  .card .hint { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: right; padding: 10px 12px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  tbody tr:last-child td { border-bottom: none; }
+  .lang { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .bar { height: 8px; border-radius: 6px; background: #223; overflow: hidden; min-width: 110px; }
+  .bar > i { display: block; height: 100%; border-radius: 6px; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; letter-spacing: .03em; }
+  .tag.min { background: rgba(70,211,154,.16); color: var(--good); }
+  .tag.max { background: rgba(255,107,107,.16); color: var(--bad); }
+  .row { display: flex; flex-wrap: wrap; gap: 18px; }
+  .row > .card { flex: 1; min-width: 300px; }
+  .kv { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); gap: 14px; }
+  .kv:last-child { border-bottom: none; }
+  .kv span:first-child { color: var(--muted); }
+  .kv b { font-variant-numeric: tabular-nums; }
+  .pill { display:inline-flex; align-items:center; gap:7px; padding:6px 12px; border-radius:999px; font-weight:700; font-size:13px; }
+  .pill.ok { background: rgba(70,211,154,.14); color: var(--good); border:1px solid rgba(70,211,154,.3); }
+  .pill.no { background: rgba(255,107,107,.14); color: var(--bad); border:1px solid rgba(255,107,107,.3); }
+  button {
+    font: inherit; font-weight: 700; color: #0b0f1a; cursor: pointer; border: none; border-radius: 11px;
+    padding: 12px 18px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: transform .06s ease, filter .2s;
+  }
+  button:hover { filter: brightness(1.08); } button:active { transform: translateY(1px); }
+  button.ghost { background:linear-gradient(90deg,#2a3a63,#39507f); color:#dfe8fb; }
+  select, textarea { font: inherit; color: var(--text); background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  textarea { width: 100%; min-height: 92px; resize: vertical; line-height: 1.5; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px; max-height: 260px; overflow: auto; padding: 4px; }
+  .tok { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; padding: 3px 6px; border-radius: 6px;
+    background: #1b2540; border: 1px solid var(--line); white-space: pre; }
+  .tok.unk { background: rgba(255,107,107,.14); border-color: rgba(255,107,107,.4); color: var(--bad); }
+  .tok .sp { color: var(--accent2); }
+  .demo-stats { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 12px; color: var(--muted); font-size: 13px; }
+  .demo-stats b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .banner { background: rgba(255,204,102,.1); border: 1px solid rgba(255,204,102,.35); color: var(--warn);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; display: none; }
+  .foot { color: var(--muted); font-size: 12.5px; margin-top: 26px; text-align: center; }
+  .verified { display:inline-flex; align-items:center; gap:7px; color: var(--good); font-size: 13px; font-weight:600; }
+  a { color: var(--accent); }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; background:#0e1424; padding:1px 5px; border-radius:5px; }
+  .gaterow { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px dashed var(--line); }
+  .gaterow:last-child { border-bottom:none; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:12.5px; color:var(--muted); }
+  .why { color: var(--muted); font-size: 13.5px; }
+  .why b { color: var(--text); }
+  .why code { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Axiom · Session 2 · Resubmission</div>
+      <h1>Faithful Multilingual BPE Tokenizer</h1>
+      <p class="sub">One shared 10,000-token BPE tokenizer (Metaspace + <code>byte_fallback</code>) for the <em>India</em> Wikipedia articles in English, Hindi, Telugu &amp; Marathi. Every number below is <strong>recomputed live in your browser</strong> by re-running the tokenizer on the corpus — nothing is hard-coded.</p>
+    </div>
+    <div class="scorecard">
+      <div class="label">Self score</div>
+      <div class="value" id="scoreVal">…</div>
+      <div class="formula" id="scoreFormula">1000 / (max − min)</div>
+    </div>
+  </header>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Faithful-unit fertility by language</h2>
+      <p class="hint">Fertility = BPE&nbsp;tokens ÷ faithful&nbsp;units. A <em>faithful unit</em> = one contiguous <code>\p{L}\p{M}\p{N}</code> run, or one visible non-space symbol. The score rewards a <strong>small spread</strong> between the best and worst language.</p>
+      <table>
+        <thead>
+          <tr><th>Language</th><th>Faithful units</th><th>Tokens</th><th>Fertility</th><th></th><th style="min-width:120px">Relative</th></tr>
+        </thead>
+        <tbody id="statsBody">
+          <tr><td colspan="6" style="text-align:center;color:var(--muted)">Loading &amp; tokenizing…</td></tr>
+        </tbody>
+      </table>
+      <div id="verified" style="margin-top:14px"></div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h2>Score calculation</h2>
+        <p class="hint">Sort the four fertilities; score is <code>1000 / (max − min)</code>.</p>
+        <div id="sortRow"></div>
+        <div class="kv"><span>max − min (spread)</span><b id="spreadVal">…</b></div>
+        <div class="kv"><span>Raw score = 1000 / spread</span><b id="scoreVal2">…</b></div>
+        <div class="kv"><span>Hindi penalty = exp(max(0, hi/1.2 − 1))</span><b id="hiPen">…</b></div>
+        <div class="kv"><span>Hindi-adjusted score</span><b id="adjScore">…</b></div>
+        <div style="margin-top:12px" id="hiConstraint"></div>
+      </div>
+
+      <div class="card">
+        <h2>Tokenizer &amp; artifact</h2>
+        <div class="kv"><span>Model</span><b>BPE · byte_fallback</b></div>
+        <div class="kv"><span>Normalizer</span><b>NFC</b></div>
+        <div class="kv"><span>Pre-tokenizer</span><b>Metaspace (▁, never)</b></div>
+        <div class="kv"><span>Vocabulary size</span><b id="vocabVal">…</b></div>
+        <div class="kv"><span>Merge rules</span><b id="mergeVal">…</b></div>
+        <div class="kv"><span>Byte tokens <code>&lt;0xHH&gt;</code></span><b id="byteVal">…</b></div>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+          <button id="dlTok">⬇ Download tokenizer.json (graded artifact)</button>
+          <button id="dlVocab" class="ghost">⬇ Vocabulary (.txt)</button>
+        </div>
+        <div id="crosscheck" class="mono" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Roundtrip gate — faithfulness</h2>
+      <p class="hint">The gate requires <code>decode(encode(text))</code> to preserve every <strong>non-whitespace</strong> character. Byte-level submissions failed this by dropping <code>[</code> / <code>]</code>; this one passes because Metaspace keeps punctuation attached, NFC is non-lossy, and <code>byte_fallback</code> covers anything unseen.</p>
+      <div id="byteNote" class="pill ok" style="margin-bottom:14px">✓ byte_fallback is functional (<span id="byteNoteN">256</span> <code style="color:inherit">&lt;0xHH&gt;</code> tokens) — any character round-trips via its UTF-8 bytes, so nothing is ever silently dropped.</div>
+      <div id="gateBody"></div>
+      <p class="hint" style="margin:14px 0 0">Common-character samples (grader-style) — including out-of-vocab symbols that now survive via byte_fallback:</p>
+      <div id="sampleGate"></div>
+    </div>
+
+    <div class="card">
+      <h2>Try the tokenizer live</h2>
+      <p class="hint">Paste any text — it is NFC-normalized, Metaspace pre-tokenized, then BPE-merged in-browser with the exact model. <span class="tok" style="padding:1px 5px"><span class="sp">▁</span></span> marks a space; out-of-vocab symbols show as byte tokens <span class="tok" style="padding:1px 5px">&lt;0xHH&gt;</span> and still round-trip.</p>
+      <div class="controls">
+        <select id="sample">
+          <option value="">Sample text…</option>
+          <option value="en">English sample</option>
+          <option value="hi">Hindi sample</option>
+          <option value="te">Telugu sample</option>
+          <option value="mr">Marathi sample</option>
+          <option value="mix">Mixed / punctuation</option>
+          <option value="bytes">byte_fallback (emoji · £ € … · math)</option>
+        </select>
+        <button id="tokBtn">Tokenize →</button>
+      </div>
+      <textarea id="input" placeholder="Enter text to tokenize…"></textarea>
+      <div class="demo-stats">
+        <div>Characters: <b id="dChars">0</b></div>
+        <div>Faithful units: <b id="dUnits">0</b></div>
+        <div>Tokens: <b id="dTokens">0</b></div>
+        <div>Fertility: <b id="dRatio">—</b></div>
+        <div>Roundtrip: <b id="dRt">—</b></div>
+      </div>
+      <div class="toks" id="toks"></div>
+    </div>
+
+    <div class="card">
+      <h2>Why this design passes the faithful-roundtrip gate</h2>
+      <p class="why">
+        <b>NFC normalization</b> is canonical and reversible — unlike NFKC it never rewrites characters (e.g. curly → straight quotes), so no visible symbol is lost.
+        <b>Metaspace</b> turns the space <code>U+0020</code> into a visible marker <code>▁</code> and keeps brackets, URLs, apostrophes and number separators attached to their word, tokenizing on <em>characters</em> (not 3-byte UTF-8 sequences) so Indic scripts compress well.
+        <b>byte_fallback</b> is enabled so any symbol never seen in training still round-trips through its UTF-8 bytes rather than being dropped.
+        Decode reverses it all: <code>Sequence(ByteFallback, Metaspace)</code> rebuilds bytes and turns every <code>▁</code> back into a space.
+        <b>Fertility</b> is <code>tokens / faithful_units</code> per language; the <b>score</b> is <code>1000 / (max_fertility − min_fertility)</code>, and the Hindi penalty <code>exp(max(0, hi/1.2 − 1))</code> is 1.0 because Hindi fertility sits well under 1.2.
+      </p>
+    </div>
+  </div>
+
+  <p class="foot">
+    Built for Axiom — Learning OS · Session 2 (resubmission). Trained with HuggingFace <code>tokenizers</code>.
+    All statistics are recomputed live from <code>tokenizer.json</code> + <code>corpus/*.faithful.txt</code> on load — the JS engine is verified to match the Python <code>tokenizers</code> output exactly.
+  </p>
+</div>
+
+<script>
+// ======================================================================
+// ==== TOKENIZER ENGINE (identical to engine.mjs / verified vs Python) =
+// ======================================================================
+const METASPACE = "▁"; // ▁
+
+function buildEngine(tk) {
+  const model = tk.model;
+  const VOCAB = new Map(Object.entries(model.vocab));
+  const RANK = new Map();
+  model.merges.forEach((m, i) => {
+    const p = Array.isArray(m) ? m : m.split(" ");
+    RANK.set(p[0] + " " + p[1], i);
+  });
+  const UNK = model.unk_token;
+  const UNK_ID = VOCAB.get(UNK);
+  const BYTE_FALLBACK = !!model.byte_fallback;
+  const FUSE_UNK = !!model.fuse_unk;
+  const enc = new TextEncoder();
+
+  const SPECIAL_IDS = new Set((tk.added_tokens || []).filter((t) => t.special).map((t) => t.id));
+  const ID2TOK = new Map();
+  for (const [t, i] of VOCAB) ID2TOK.set(i, t);
+
+  const lt = (x, y) => x[0] < y[0] || (x[0] === y[0] && x[2] < y[2]);
+  class Heap {
+    constructor() { this.a = []; }
+    push(x) { const a = this.a; a.push(x); let i = a.length - 1; while (i > 0) { const p = (i - 1) >> 1; if (!lt(a[i], a[p])) break; [a[p], a[i]] = [a[i], a[p]]; i = p; } }
+    pop() { const a = this.a; const t = a[0]; const l = a.pop(); if (a.length) { a[0] = l; let i = 0; const n = a.length; for (;;) { let L = 2 * i + 1, R = L + 1, s = i; if (L < n && lt(a[L], a[s])) s = L; if (R < n && lt(a[R], a[s])) s = R; if (s === i) break; [a[s], a[i]] = [a[i], a[s]]; i = s; } } return t; }
+    get size() { return this.a.length; }
+  }
+
+  function bpe(symbols) {
+    const N = symbols.length;
+    if (N <= 1) return symbols;
+    const val = symbols.slice();
+    const prev = new Int32Array(N), next = new Int32Array(N), ver = new Int32Array(N);
+    const alive = new Uint8Array(N).fill(1);
+    for (let i = 0; i < N; i++) { prev[i] = i - 1; next[i] = i + 1 < N ? i + 1 : -1; }
+    const heap = new Heap();
+    const add = (i) => { const j = next[i]; if (j === -1) return; const r = RANK.get(val[i] + " " + val[j]); if (r !== undefined) heap.push([r, ver[i], i]); };
+    for (let i = 0; i < N; i++) add(i);
+    while (heap.size) {
+      const [r, seq, i] = heap.pop();
+      if (!alive[i] || ver[i] !== seq) continue;
+      const j = next[i];
+      if (j === -1 || !alive[j]) continue;
+      if (RANK.get(val[i] + " " + val[j]) !== r) continue;
+      val[i] = val[i] + val[j]; alive[j] = 0;
+      const k = next[j]; next[i] = k; if (k !== -1) prev[k] = i;
+      ver[i]++; if (prev[i] !== -1) { ver[prev[i]]++; add(prev[i]); } add(i);
+    }
+    const out = [];
+    for (let i = 0; i !== -1 && i < N; i = next[i]) if (alive[i]) out.push(val[i]);
+    return out;
+  }
+
+  // Metaspace pre-tokenize: only U+0020 -> ▁; each ▁ begins a new pre-token;
+  // the run before the first ▁ is its own pre-token; newlines/tabs untouched.
+  function preTokenize(text) {
+    const s = text.replace(/ /g, METASPACE);
+    const pre = []; let cur = "";
+    for (const ch of s) {
+      if (ch === METASPACE) { if (cur !== "") pre.push(cur); cur = METASPACE; }
+      else cur += ch;
+    }
+    if (cur !== "") pre.push(cur);
+    return pre;
+  }
+
+  function symbolToIds(sym, outIds, outToks) {
+    const id = VOCAB.get(sym);
+    if (id !== undefined) { outIds.push(id); outToks.push(sym); return; }
+    if (BYTE_FALLBACK) {
+      const bytes = enc.encode(sym); const btoks = []; let ok = true;
+      for (const b of bytes) { const bt = "<0x" + b.toString(16).toUpperCase().padStart(2, "0") + ">"; if (VOCAB.has(bt)) btoks.push(bt); else { ok = false; break; } }
+      if (ok) { for (const bt of btoks) { outIds.push(VOCAB.get(bt)); outToks.push(bt); } return; }
+    }
+    outIds.push(UNK_ID); outToks.push(UNK);
+  }
+
+  function encode(text) {
+    const pre = preTokenize(text.normalize("NFC"));
+    const ids = [], toks = [];
+    for (const pt of pre) {
+      const merged = bpe(Array.from(pt));
+      for (const sym of merged) {
+        if (FUSE_UNK && VOCAB.get(sym) === undefined) {
+          const before = ids.length; symbolToIds(sym, ids, toks);
+          if (ids[before] === UNK_ID && before > 0 && ids[before - 1] === UNK_ID) { ids.splice(before, 1); toks.splice(before, 1); }
+        } else { symbolToIds(sym, ids, toks); }
+      }
+    }
+    return { ids, tokens: toks };
+  }
+
+  function decode(ids, skipSpecial = true) {
+    const toks = [];
+    for (const id of ids) { if (skipSpecial && SPECIAL_IDS.has(id)) continue; toks.push(ID2TOK.get(id) ?? ""); }
+    const out = []; let buf = [];
+    const flush = () => { if (buf.length) { out.push(new TextDecoder().decode(Uint8Array.from(buf))); buf = []; } };
+    for (const t of toks) { const m = /^<0x([0-9A-Fa-f]{2})>$/.exec(t); if (m) buf.push(parseInt(m[1], 16)); else { flush(); out.push(t); } }
+    flush();
+    return out.join("").replace(/▁/g, " ");
+  }
+
+  return { encode, decode, VOCAB, RANK, model, UNK };
+}
+
+// Faithful-unit regex — \p{White_Space} (not \s) to match Python's regex on U+FEFF.
+const FAITHFUL_UNIT_RE = /[\p{L}\p{M}\p{N}]+|[^\p{White_Space}\p{L}\p{M}\p{N}]/gu;
+const faithfulUnits = (t) => (t.match(FAITHFUL_UNIT_RE) || []).length;
+const nonspace = (s) => s.replace(/\s+/g, "");
+
+// ======================================================================
+// ==== UI ==============================================================
+// ======================================================================
+const LANG = { en: "English", hi: "Hindi", te: "Telugu", mr: "Marathi" };
+const COLOR = { en: "var(--en)", hi: "var(--hi)", te: "var(--te)", mr: "var(--mr)" };
+const SAMPLES = {
+  en: "India, officially the Republic of India, is a country in South Asia. [1] It is the seventh-largest country by area.",
+  hi: "भारत, आधिकारिक तौर पर भारत गणराज्य, दक्षिण एशिया में स्थित एक देश है। यह क्षेत्रफल के हिसाब से सातवाँ सबसे बड़ा देश है।",
+  te: "భారతదేశం, అధికారికంగా భారత గణరాజ్యం, దక్షిణ ఆసియాలోని ఒక దేశం. ఇది వైశాల్యం ప్రకారం ఏడవ అతిపెద్ద దేశం.",
+  mr: "भारत, अधिकृतपणे भारतीय प्रजासत्ताक, हा दक्षिण आशियातील एक देश आहे. क्षेत्रफळानुसार हा सातवा सर्वात मोठा देश आहे.",
+  mix: "See [https://example.com] (ref). {x} <y> #tag *em* `code` | table | 1,428,627,663 — café 😀 中文",
+  bytes: "byte_fallback keeps every symbol: 😀🎉 £ € ¥ ₹ ½ × § … ‰ † and math 𝕳𝖊𝖑𝖑𝖔 ℤ ∑ ∫ plus accents ï ã ó Þ — all round-trip.",
+};
+const $ = (id) => document.getElementById(id);
+let ENGINE = null, TOKENIZER_RAW = null, METRICS = null;
+
+async function boot() {
+  try {
+    const tk = await (await fetch("tokenizer.json", { cache: "no-store" })).json();
+    TOKENIZER_RAW = tk; ENGINE = buildEngine(tk);
+    try { METRICS = await (await fetch("metrics.json", { cache: "no-store" })).json(); } catch (_) { METRICS = null; }
+    $("vocabVal").textContent = ENGINE.VOCAB.size.toLocaleString();
+    $("mergeVal").textContent = tk.model.merges.length.toLocaleString();
+    const byteCount = [...ENGINE.VOCAB.keys()].filter((t) => /^<0x[0-9A-Fa-f]{2}>$/.test(t)).length;
+    $("byteVal").textContent = byteCount.toLocaleString() + (tk.model.byte_fallback ? " (active)" : "");
+    $("byteNoteN").textContent = byteCount;
+
+    const per = {};
+    for (const l of Object.keys(LANG)) {
+      const text = await (await fetch("corpus/" + l + ".faithful.txt", { cache: "no-store" })).text();
+      const { ids } = ENGINE.encode(text);
+      const units = faithfulUnits(text);
+      const rt = nonspace(text) === nonspace(ENGINE.decode(ids));
+      per[l] = { units, tokens: ids.length, fertility: ids.length / units, roundtrip: rt };
+    }
+    render(per);
+  } catch (e) {
+    const b = $("banner"); b.style.display = "block";
+    b.innerHTML = "⚠️ Could not load <code>tokenizer.json</code> / corpus. Browsers block <code>fetch()</code> on <code>file://</code> — serve this folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>.";
+    console.error(e);
+  }
+}
+
+function render(per) {
+  const langs = Object.keys(LANG);
+  const ferts = langs.map((l) => per[l].fertility);
+  const fmin = Math.min(...ferts), fmax = Math.max(...ferts), spread = fmax - fmin;
+  const score = 1000 / spread;
+  const hiPen = Math.exp(Math.max(0, per.hi.fertility / 1.2 - 1));
+  const adj = score / hiPen;
+
+  const body = $("statsBody"); body.innerHTML = "";
+  for (const l of langs) {
+    const p = per[l], isMin = p.fertility === fmin, isMax = p.fertility === fmax;
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      `<td><span class="lang"><span class="dot" style="background:${COLOR[l]}"></span>${LANG[l]}</span></td>` +
+      `<td>${p.units.toLocaleString()}</td>` +
+      `<td>${p.tokens.toLocaleString()}</td>` +
+      `<td><b>${p.fertility.toFixed(4)}</b></td>` +
+      `<td>${isMin ? '<span class="tag min">min</span>' : isMax ? '<span class="tag max">max</span>' : ""}</td>` +
+      `<td><div class="bar"><i style="width:${(p.fertility / fmax * 100).toFixed(1)}%;background:${COLOR[l]}"></i></div></td>`;
+    body.appendChild(tr);
+  }
+
+  const sorted = langs.slice().sort((a, b) => per[a].fertility - per[b].fertility);
+  $("sortRow").innerHTML = "<div class='kv'><span>Sorted fertility (low → high)</span><b>" +
+    sorted.map((l) => `${l}=${per[l].fertility.toFixed(4)}`).join("  ·  ") + "</b></div>";
+
+  $("scoreVal").textContent = score.toFixed(1);
+  $("scoreVal2").textContent = score.toFixed(2);
+  $("spreadVal").textContent = spread.toFixed(6);
+  $("hiPen").textContent = hiPen.toFixed(6);
+  $("adjScore").textContent = adj.toFixed(2);
+  $("scoreFormula").innerHTML = `1000 / (${fmax.toFixed(4)} − ${fmin.toFixed(4)})`;
+  $("hiConstraint").innerHTML = per.hi.fertility <= 1.2
+    ? `<span class="pill ok">✓ Hindi fertility ${per.hi.fertility.toFixed(4)} ≤ 1.2 → penalty 1.0</span>`
+    : `<span class="pill no">✗ Hindi fertility ${per.hi.fertility.toFixed(4)} &gt; 1.2 → penalized</span>`;
+
+  const tot = langs.reduce((s, l) => s + per[l].tokens, 0);
+  const totU = langs.reduce((s, l) => s + per[l].units, 0);
+  $("verified").innerHTML = `<span class="verified">✓ Computed live in your browser — ${tot.toLocaleString()} tokens across ${totU.toLocaleString()} faithful units.</span>`;
+
+  // cross-check vs metrics.json
+  if (METRICS && METRICS.token_counts) {
+    const match = langs.every((l) => METRICS.token_counts[l] === per[l].tokens);
+    $("crosscheck").innerHTML = match
+      ? `✓ Live counts match saved metrics.json exactly (score ${(1000 / (Math.max(...Object.values(METRICS.ratios)) - Math.min(...Object.values(METRICS.ratios)))).toFixed(1)}).`
+      : `⚠ Live counts differ from metrics.json.`;
+  }
+
+  // roundtrip gate — per corpus
+  const gb = $("gateBody"); gb.innerHTML = "";
+  for (const l of langs) {
+    const div = document.createElement("div"); div.className = "gaterow";
+    div.innerHTML = `<span class="lang"><span class="dot" style="background:${COLOR[l]}"></span>${LANG[l]} corpus — non-whitespace preserved</span>` +
+      (per[l].roundtrip ? `<span class="pill ok">✓ PASS</span>` : `<span class="pill no">✗ FAIL</span>`);
+    gb.appendChild(div);
+  }
+
+  // common-character samples (incl. out-of-vocab chars that survive via byte_fallback)
+  const samples = [
+    "India, officially the Republic of India [1]",
+    "India's population is 1,428,627,663.",
+    "See [https://example.com] (ref). {x} <y> #tag *em* `code` | table |",
+    "byte_fallback: 😀 £ € ₹ … ½ × § ï ã Þ 𝕳 ℤ ∑ 中文",
+  ];
+  const sg = $("sampleGate"); sg.innerHTML = "";
+  for (const s of samples) {
+    const dec = ENGINE.decode(ENGINE.encode(s).ids);
+    const ok = nonspace(s) === nonspace(dec);
+    const div = document.createElement("div"); div.className = "gaterow";
+    div.innerHTML = `<span class="mono">${s.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]))}</span>` +
+      (ok ? `<span class="pill ok">✓</span>` : `<span class="pill no">✗</span>`);
+    sg.appendChild(div);
+  }
+
+  $("input").value = SAMPLES.en;
+  runDemo();
+}
+
+function runDemo() {
+  const text = $("input").value;
+  const { ids, tokens } = ENGINE.encode(text);
+  const units = faithfulUnits(text);
+  const dec = ENGINE.decode(ids);
+  const rt = nonspace(text) === nonspace(dec);
+  $("dChars").textContent = [...text].length.toLocaleString();
+  $("dUnits").textContent = units.toLocaleString();
+  $("dTokens").textContent = ids.length.toLocaleString();
+  $("dRatio").textContent = units ? (ids.length / units).toFixed(3) : "—";
+  $("dRt").innerHTML = text.length === 0 ? "—" : (rt ? '<span style="color:var(--good)">✓ preserved</span>' : '<span style="color:var(--bad)">✗ lost</span>');
+  const box = $("toks"); box.innerHTML = "";
+  const frag = document.createDocumentFragment();
+  tokens.slice(0, 2000).forEach((s) => {
+    const span = document.createElement("span");
+    span.className = "tok" + (s === ENGINE.UNK ? " unk" : "");
+    span.textContent = "";
+    // render ▁ and newline visibly
+    span.innerHTML = s === ENGINE.UNK ? "[UNK]"
+      : s.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]))
+         .replace(/▁/g, '<span class="sp">▁</span>')
+         .replace(/\n/g, '<span class="sp">⏎</span>');
+    frag.appendChild(span);
+  });
+  box.appendChild(frag);
+  if (tokens.length > 2000) { const m = document.createElement("span"); m.className = "tok"; m.textContent = `… +${tokens.length - 2000} more`; box.appendChild(m); }
+}
+
+function download(name, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+$("dlTok").onclick = () => TOKENIZER_RAW && download("tokenizer.json", JSON.stringify(TOKENIZER_RAW), "application/json");
+$("dlVocab").onclick = () => {
+  if (!ENGINE) return;
+  const items = [...ENGINE.VOCAB.entries()].sort((a, b) => a[1] - b[1]);
+  download("vocab.txt", items.map(([t, i]) => `${i}\t${t}`).join("\n"), "text/plain");
+};
+$("tokBtn").onclick = runDemo;
+$("input").addEventListener("input", runDemo);
+$("sample").onchange = (e) => { if (e.target.value) { $("input").value = SAMPLES[e.target.value] || ""; runDemo(); } };
+
+boot();
+</script>
+</body>
+</html>

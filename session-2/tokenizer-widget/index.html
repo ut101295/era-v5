@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multilingual BPE Tokenizer — Session 2</title>
+<style>
+  :root {
+    --bg: #0b0f1a; --panel: #121829; --panel2: #0e1424; --line: #24304d;
+    --text: #e6ecf7; --muted: #8a99b8; --accent: #6ea8fe; --accent2: #b78cff;
+    --good: #46d39a; --bad: #ff6b6b; --warn: #ffcc66;
+    --en: #6ea8fe; --hi: #ff9f6e; --te: #46d39a; --mr: #b78cff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: radial-gradient(1200px 600px at 70% -10%, #16213c 0%, var(--bg) 55%);
+    color: var(--text); font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh; padding: 32px 20px 64px;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; }
+  header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+  .eyebrow { color: var(--accent2); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; font-size: 12px; }
+  h1 { margin: 6px 0 4px; font-size: 30px; letter-spacing: -.02em; }
+  .sub { color: var(--muted); max-width: 640px; }
+  .scorecard {
+    background: linear-gradient(160deg, #1c2743 0%, #141d33 100%);
+    border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; text-align: center; min-width: 210px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.35);
+  }
+  .scorecard .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
+  .scorecard .value { font-size: 46px; font-weight: 800; letter-spacing: -.02em;
+    background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .scorecard .formula { color: var(--muted); font-size: 12.5px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+  .card h2 { margin: 0 0 4px; font-size: 17px; }
+  .card .hint { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: right; padding: 10px 12px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  tbody tr:last-child td { border-bottom: none; }
+  .lang { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .bar { height: 8px; border-radius: 6px; background: #223; overflow: hidden; min-width: 120px; }
+  .bar > i { display: block; height: 100%; border-radius: 6px; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; letter-spacing: .03em; }
+  .tag.min { background: rgba(70,211,154,.16); color: var(--good); }
+  .tag.max { background: rgba(255,107,107,.16); color: var(--bad); }
+  .row { display: flex; flex-wrap: wrap; gap: 18px; }
+  .row > .card { flex: 1; min-width: 280px; }
+  .kv { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+  .kv:last-child { border-bottom: none; }
+  .kv span:first-child { color: var(--muted); }
+  .kv b { font-variant-numeric: tabular-nums; }
+  .pill { display:inline-flex; align-items:center; gap:7px; padding:6px 12px; border-radius:999px; font-weight:700; font-size:13px; }
+  .pill.ok { background: rgba(70,211,154,.14); color: var(--good); border:1px solid rgba(70,211,154,.3); }
+  .pill.no { background: rgba(255,107,107,.14); color: var(--bad); border:1px solid rgba(255,107,107,.3); }
+  button {
+    font: inherit; font-weight: 700; color: #0b0f1a; cursor: pointer; border: none; border-radius: 11px;
+    padding: 12px 18px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: transform .06s ease, filter .2s;
+  }
+  button:hover { filter: brightness(1.08); } button:active { transform: translateY(1px); }
+  select, textarea { font: inherit; color: var(--text); background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  textarea { width: 100%; min-height: 92px; resize: vertical; line-height: 1.5; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px; max-height: 260px; overflow: auto; padding: 4px; }
+  .tok { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; padding: 3px 6px; border-radius: 6px;
+    background: #1b2540; border: 1px solid var(--line); white-space: pre; }
+  .tok .sp { color: var(--muted); }
+  .demo-stats { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 12px; color: var(--muted); font-size: 13px; }
+  .demo-stats b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .banner { background: rgba(255,204,102,.1); border: 1px solid rgba(255,204,102,.35); color: var(--warn);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; display: none; }
+  .foot { color: var(--muted); font-size: 12.5px; margin-top: 26px; text-align: center; }
+  .verified { display:inline-flex; align-items:center; gap:7px; color: var(--good); font-size: 13px; font-weight:600; }
+  a { color: var(--accent); }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; background:#0e1424; padding:1px 5px; border-radius:5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Axiom · Session 2</div>
+      <h1>Multilingual BPE Tokenizer</h1>
+      <p class="sub">A single byte-level BPE tokenizer (vocab&nbsp;=&nbsp;10,000) trained on the <em>India</em> Wikipedia article in English, Hindi, Telugu &amp; Marathi. Every number below is <strong>computed live in your browser</strong> by running the tokenizer on the source texts — nothing is hard-coded.</p>
+    </div>
+    <div class="scorecard">
+      <div class="label">Self score</div>
+      <div class="value" id="scoreVal">…</div>
+      <div class="formula" id="scoreFormula">1000 / (X_max − X_min)</div>
+    </div>
+  </header>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Compression ratios by language</h2>
+      <p class="hint">Ratio&nbsp;X = total BPE tokens ÷ whitespace words. Lower is better. The score rewards a <em>small spread</em> between the best and worst language.</p>
+      <table>
+        <thead>
+          <tr><th>Language</th><th>Words</th><th>Tokens</th><th>Ratio&nbsp;X</th><th></th><th style="min-width:130px">Relative</th></tr>
+        </thead>
+        <tbody id="statsBody">
+          <tr><td colspan="6" style="text-align:center;color:var(--muted)">Loading &amp; tokenizing…</td></tr>
+        </tbody>
+      </table>
+      <div id="verified" style="margin-top:14px"></div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h2>Score calculation</h2>
+        <p class="hint">Sort the four ratios; the score is <code>1000 / (X_max − X_min)</code>.</p>
+        <div id="sortRow"></div>
+        <div class="kv"><span>X_max − X_min (spread)</span><b id="spreadVal">…</b></div>
+        <div class="kv"><span>Score = 1000 / spread</span><b id="scoreVal2">…</b></div>
+        <div style="margin-top:14px" id="enConstraint"></div>
+        <p class="hint" style="margin:12px 0 0">Hard rule: English ratio must be ≤ 1.2, else the score is 0. We optimize English up toward — but safely under — that cap.</p>
+      </div>
+
+      <div class="card">
+        <h2>Tokenizer</h2>
+        <div class="kv"><span>Model</span><b>Byte-level BPE</b></div>
+        <div class="kv"><span>Vocabulary size</span><b id="vocabVal">…</b></div>
+        <div class="kv"><span>Merge rules</span><b id="mergeVal">…</b></div>
+        <div class="kv"><span>Languages</span><b>EN · HI · TE · MR</b></div>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+          <button id="dlTok">⬇ Download tokenizer.json</button>
+          <button id="dlVocab" style="background:linear-gradient(90deg,#2a3a63,#39507f); color:#dfe8fb">⬇ Vocabulary (.txt)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Try the tokenizer live</h2>
+      <p class="hint">Type or paste any text — it is tokenized in-browser with the exact same BPE model. A leading <span class="tok" style="padding:1px 5px">Ġ</span> marks a space (byte-level convention).</p>
+      <div class="controls">
+        <select id="sample">
+          <option value="">Sample text…</option>
+          <option value="en">English sample</option>
+          <option value="hi">Hindi sample</option>
+          <option value="te">Telugu sample</option>
+          <option value="mr">Marathi sample</option>
+        </select>
+        <button id="tokBtn">Tokenize →</button>
+      </div>
+      <textarea id="input" placeholder="Enter text to tokenize…"></textarea>
+      <div class="demo-stats">
+        <div>Characters: <b id="dChars">0</b></div>
+        <div>Words: <b id="dWords">0</b></div>
+        <div>Tokens: <b id="dTokens">0</b></div>
+        <div>Ratio: <b id="dRatio">—</b></div>
+      </div>
+      <div class="toks" id="toks"></div>
+    </div>
+  </div>
+
+  <p class="foot">
+    Built for Axiom — Learning OS · Session 2. Tokenizer trained with HuggingFace <code>tokenizers</code> (byte-level BPE).
+    All statistics on this page are recomputed live from <code>tokenizer.json</code> each time you load it.
+  </p>
+</div>
+
+<script>
+// ---------- Byte-level BPE (exact port of HuggingFace's merge order) ----------
+const LANG = { en: "English", hi: "Hindi", te: "Telugu", mr: "Marathi" };
+const COLOR = { en: "var(--en)", hi: "var(--hi)", te: "var(--te)", mr: "var(--mr)" };
+
+function byteToUnicode() {
+  const bs = [];
+  for (let i = 33; i <= 126; i++) bs.push(i);
+  for (let i = 161; i <= 172; i++) bs.push(i);
+  for (let i = 174; i <= 255; i++) bs.push(i);
+  const cs = bs.slice(); let n = 0;
+  for (let b = 0; b < 256; b++) if (!bs.includes(b)) { bs.push(b); cs.push(256 + n); n++; }
+  const map = new Array(256);
+  for (let i = 0; i < bs.length; i++) map[bs[i]] = String.fromCodePoint(cs[i]);
+  return map;
+}
+const B2U = byteToUnicode();
+const enc = new TextEncoder();
+
+let RANK = null, VOCAB = null;
+function loadModel(tk) {
+  RANK = new Map();
+  tk.model.merges.forEach((m, i) => { const p = Array.isArray(m) ? m : m.split(" "); RANK.set(p[0] + " " + p[1], i); });
+  VOCAB = tk.model.vocab;
+}
+
+function lt(x, y) { return x[0] < y[0] || (x[0] === y[0] && x[2] < y[2]); }
+class Heap {
+  constructor() { this.a = []; }
+  push(x) { const a = this.a; a.push(x); let i = a.length - 1; while (i > 0) { const p = (i - 1) >> 1; if (!lt(a[i], a[p])) break; [a[p], a[i]] = [a[i], a[p]]; i = p; } }
+  pop() { const a = this.a; const t = a[0]; const l = a.pop(); if (a.length) { a[0] = l; let i = 0; const n = a.length; for (;;) { let L = 2 * i + 1, R = L + 1, s = i; if (L < n && lt(a[L], a[s])) s = L; if (R < n && lt(a[R], a[s])) s = R; if (s === i) break; [a[s], a[i]] = [a[i], a[s]]; i = s; } } return t; }
+  get size() { return this.a.length; }
+}
+
+// Returns the array of merged symbol strings for a byte-mapped symbol list.
+function bpeSymbols(symbols) {
+  const N = symbols.length;
+  if (N <= 1) return symbols;
+  const val = symbols.slice();
+  const prev = new Int32Array(N), next = new Int32Array(N), ver = new Int32Array(N);
+  const alive = new Uint8Array(N).fill(1);
+  for (let i = 0; i < N; i++) { prev[i] = i - 1; next[i] = i + 1 < N ? i + 1 : -1; }
+  const heap = new Heap();
+  const add = (i) => { const j = next[i]; if (j === -1) return; const r = RANK.get(val[i] + " " + val[j]); if (r !== undefined) heap.push([r, ver[i], i]); };
+  for (let i = 0; i < N; i++) add(i);
+  while (heap.size) {
+    const [r, seq, i] = heap.pop();
+    if (!alive[i] || ver[i] !== seq) continue;
+    const j = next[i];
+    if (j === -1 || !alive[j]) continue;
+    if (RANK.get(val[i] + " " + val[j]) !== r) continue;
+    val[i] = val[i] + val[j]; alive[j] = 0;
+    const k = next[j]; next[i] = k; if (k !== -1) prev[k] = i;
+    ver[i]++; if (prev[i] !== -1) { ver[prev[i]]++; add(prev[i]); } add(i);
+  }
+  const out = [];
+  for (let i = 0; i !== -1 && i < N; i = next[i]) if (alive[i]) out.push(val[i]);
+  return out;
+}
+
+function textToSymbols(text) {
+  const bytes = enc.encode(text.normalize("NFC"));
+  const s = new Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) s[i] = B2U[bytes[i]];
+  return s;
+}
+function tokenize(text) { return bpeSymbols(textToSymbols(text)); }
+function tokenCount(text) { return tokenize(text).length; }
+function wordCount(text) { return (text.trim().match(/\S+/g) || []).length; }
+
+// ---------- UI ----------
+const $ = (id) => document.getElementById(id);
+let TOKENIZER_RAW = null, SAMPLES = {};
+
+async function boot() {
+  try {
+    const tk = await (await fetch("tokenizer.json", { cache: "no-store" })).json();
+    TOKENIZER_RAW = tk; loadModel(tk);
+    $("vocabVal").textContent = Object.keys(tk.model.vocab).length.toLocaleString();
+    $("mergeVal").textContent = tk.model.merges.length.toLocaleString();
+
+    const per = {};
+    for (const l of Object.keys(LANG)) {
+      const text = await (await fetch("corpus/" + l + ".txt", { cache: "no-store" })).text();
+      SAMPLES[l] = text.slice(0, 220).replace(/\s+/g, " ").trim();
+      const words = wordCount(text), tokens = tokenCount(text);
+      per[l] = { words, tokens, ratio: tokens / words };
+    }
+    render(per);
+  } catch (e) {
+    const b = $("banner");
+    b.style.display = "block";
+    b.innerHTML = "⚠️ Could not load <code>tokenizer.json</code> / corpus files. Browsers block <code>fetch()</code> on <code>file://</code> — serve this folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>, or view the hosted version.";
+    console.error(e);
+  }
+}
+
+function render(per) {
+  const langs = Object.keys(LANG);
+  const ratios = langs.map((l) => per[l].ratio);
+  const xmin = Math.min(...ratios), xmax = Math.max(...ratios), spread = xmax - xmin;
+  const en = per.en.ratio;
+  const score = en > 1.2 ? 0 : 1000 / spread;
+  const maxR = Math.max(...ratios);
+
+  // stats table
+  const body = $("statsBody"); body.innerHTML = "";
+  for (const l of langs) {
+    const p = per[l], isMin = p.ratio === xmin, isMax = p.ratio === xmax;
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      `<td><span class="lang"><span class="dot" style="background:${COLOR[l]}"></span>${LANG[l]}</span></td>` +
+      `<td>${p.words.toLocaleString()}</td>` +
+      `<td>${p.tokens.toLocaleString()}</td>` +
+      `<td><b>${p.ratio.toFixed(4)}</b></td>` +
+      `<td>${isMin ? '<span class="tag min">min</span>' : isMax ? '<span class="tag max">max</span>' : ""}</td>` +
+      `<td><div class="bar"><i style="width:${(p.ratio / maxR * 100).toFixed(1)}%;background:${COLOR[l]}"></i></div></td>`;
+    body.appendChild(tr);
+  }
+
+  // sorted ratios row
+  const sorted = langs.slice().sort((a, b) => per[a].ratio - per[b].ratio);
+  $("sortRow").innerHTML = "<div class='kv'><span>Sorted X (low → high)</span><b>" +
+    sorted.map((l, i) => `X${i + 1}=${per[l].ratio.toFixed(3)}`).join("  ·  ") + "</b></div>";
+
+  $("scoreVal").textContent = score ? score.toFixed(1) : "0";
+  $("scoreVal2").textContent = score ? score.toFixed(2) : "0.00";
+  $("spreadVal").textContent = spread.toFixed(4);
+  $("scoreFormula").innerHTML = `1000 / (${xmax.toFixed(3)} − ${xmin.toFixed(3)})`;
+
+  $("enConstraint").innerHTML = en <= 1.2
+    ? `<span class="pill ok">✓ English X₁ = ${en.toFixed(4)} ≤ 1.2 &nbsp;(margin ${(1.2 - en).toFixed(4)})</span>`
+    : `<span class="pill no">✗ English X₁ = ${en.toFixed(4)} &gt; 1.2 → score 0</span>`;
+
+  $("verified").innerHTML =
+    `<span class="verified">✓ Computed live in your browser — ${langs.reduce((s, l) => s + per[l].tokens, 0).toLocaleString()} tokens across ${langs.reduce((s, l) => s + per[l].words, 0).toLocaleString()} words.</span>`;
+
+  // seed the playground
+  $("input").value = SAMPLES.en || "";
+  runDemo();
+}
+
+function runDemo() {
+  const text = $("input").value;
+  const syms = tokenize(text);
+  $("dChars").textContent = text.length.toLocaleString();
+  const w = wordCount(text);
+  $("dWords").textContent = w.toLocaleString();
+  $("dTokens").textContent = syms.length.toLocaleString();
+  $("dRatio").textContent = w ? (syms.length / w).toFixed(3) : "—";
+  const box = $("toks"); box.innerHTML = "";
+  const frag = document.createDocumentFragment();
+  syms.slice(0, 2000).forEach((s) => {
+    const span = document.createElement("span");
+    span.className = "tok";
+    span.innerHTML = s.replace(/Ġ/g, '<span class="sp">Ġ</span>').replace(/Ċ/g, '<span class="sp">⏎</span>');
+    frag.appendChild(span);
+  });
+  box.appendChild(frag);
+  if (syms.length > 2000) { const m = document.createElement("span"); m.className = "tok"; m.textContent = `… +${syms.length - 2000} more`; box.appendChild(m); }
+}
+
+// downloads
+function download(name, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+$("dlTok").onclick = () => TOKENIZER_RAW && download("tokenizer.json", JSON.stringify(TOKENIZER_RAW), "application/json");
+$("dlVocab").onclick = () => {
+  if (!VOCAB) return;
+  const items = Object.entries(VOCAB).sort((a, b) => a[1] - b[1]);
+  download("vocab.txt", items.map(([t, i]) => `${i}\t${t}`).join("\n"), "text/plain");
+};
+$("tokBtn").onclick = runDemo;
+$("input").addEventListener("input", runDemo);
+$("sample").onchange = (e) => { if (e.target.value) { $("input").value = SAMPLES[e.target.value] || ""; runDemo(); } };
+
+boot();
+</script>
+</body>
+</html>

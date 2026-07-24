@@ -1,0 +1,10 @@
+{
+  "lang": "en",
+  "title": "India",
+  "source_url": "https://en.wikipedia.org/api/rest_v1/page/html/India",
+  "variant": "wiki_faithful_markdown",
+  "generated_at": "2026-07-17T13:02:03Z",
+  "chars": 598376,
+  "faithful_units": 186426,
+  "unit_policy": "Counts each contiguous Unicode letter/mark/number run as one unit and each visible non-space punctuation/symbol character as one unit."
+}
