@@ -1,0 +1,79 @@
+[dense] step    0/400  loss 5.5946
+[dense] step   16/400  loss 4.2534
+[dense] step   32/400  loss 3.5699
+[dense] step   48/400  loss 2.7789
+[dense] step   64/400  loss 2.2784
+[dense] step   80/400  loss 1.9370
+[dense] step   96/400  loss 1.5944
+[dense] step  112/400  loss 1.1828
+[dense] step  128/400  loss 0.8696
+[dense] step  144/400  loss 0.5947
+[dense] step  160/400  loss 0.3677
+[dense] step  176/400  loss 0.2865
+[dense] step  192/400  loss 0.1693
+[dense] step  208/400  loss 0.1411
+[dense] step  224/400  loss 0.1095
+[dense] step  240/400  loss 0.0972
+[dense] step  256/400  loss 0.0823
+[dense] step  272/400  loss 0.0726
+[dense] step  288/400  loss 0.0611
+[dense] step  304/400  loss 0.0578
+[dense] step  320/400  loss 0.0504
+[dense] step  336/400  loss 0.0574
+[dense] step  352/400  loss 0.0560
+[dense] step  368/400  loss 0.0513
+[dense] step  384/400  loss 0.0465
+[dense] step  399/400  loss 0.0412
+upcycled MoE vs dense cross-entropy at init: |Δ| = 3.35e-05 (same output -> no jump)
+[moe-upcycled] step    0/400  loss 0.0512  load-cv 1.852
+[moe-upcycled] step   16/400  loss 0.0466  load-cv 0.302
+[moe-upcycled] step   32/400  loss 0.0520  load-cv 0.200
+[moe-upcycled] step   48/400  loss 0.0614  load-cv 0.227
+[moe-upcycled] step   64/400  loss 0.0623  load-cv 0.258
+[moe-upcycled] step   80/400  loss 0.0522  load-cv 0.290
+[moe-upcycled] step   96/400  loss 0.0567  load-cv 0.280
+[moe-upcycled] step  112/400  loss 0.0489  load-cv 0.334
+[moe-upcycled] step  128/400  loss 0.0500  load-cv 0.218
+[moe-upcycled] step  144/400  loss 0.0520  load-cv 0.240
+[moe-upcycled] step  160/400  loss 0.0499  load-cv 0.282
+[moe-upcycled] step  176/400  loss 0.0492  load-cv 0.233
+[moe-upcycled] step  192/400  loss 0.0517  load-cv 0.337
+[moe-upcycled] step  208/400  loss 0.0443  load-cv 0.267
+[moe-upcycled] step  224/400  loss 0.0537  load-cv 0.262
+[moe-upcycled] step  240/400  loss 0.0581  load-cv 0.267
+[moe-upcycled] step  256/400  loss 0.0466  load-cv 0.270
+[moe-upcycled] step  272/400  loss 0.0471  load-cv 0.316
+[moe-upcycled] step  288/400  loss 0.0495  load-cv 0.236
+[moe-upcycled] step  304/400  loss 0.0504  load-cv 0.282
+[moe-upcycled] step  320/400  loss 0.0434  load-cv 0.261
+[moe-upcycled] step  336/400  loss 0.0483  load-cv 0.279
+[moe-upcycled] step  352/400  loss 0.0478  load-cv 0.251
+[moe-upcycled] step  368/400  loss 0.0457  load-cv 0.271
+[moe-upcycled] step  384/400  loss 0.0454  load-cv 0.272
+[moe-upcycled] step  399/400  loss 0.0448  load-cv 0.265
+[moe-scratch] step    0/400  loss 5.5898  load-cv 0.608
+[moe-scratch] step   16/400  loss 4.2914  load-cv 0.522
+[moe-scratch] step   32/400  loss 3.5413  load-cv 0.616
+[moe-scratch] step   48/400  loss 2.6461  load-cv 0.591
+[moe-scratch] step   64/400  loss 2.1149  load-cv 0.392
+[moe-scratch] step   80/400  loss 1.5759  load-cv 0.330
+[moe-scratch] step   96/400  loss 1.1377  load-cv 0.284
+[moe-scratch] step  112/400  loss 0.7523  load-cv 0.280
+[moe-scratch] step  128/400  loss 0.4683  load-cv 0.276
+[moe-scratch] step  144/400  loss 0.3111  load-cv 0.246
+[moe-scratch] step  160/400  loss 0.2265  load-cv 0.247
+[moe-scratch] step  176/400  loss 0.1715  load-cv 0.254
+[moe-scratch] step  192/400  loss 0.1546  load-cv 0.246
+[moe-scratch] step  208/400  loss 0.1019  load-cv 0.245
+[moe-scratch] step  224/400  loss 0.1003  load-cv 0.226
+[moe-scratch] step  240/400  loss 0.0855  load-cv 0.211
+[moe-scratch] step  256/400  loss 0.0758  load-cv 0.191
+[moe-scratch] step  272/400  loss 0.0785  load-cv 0.228
+[moe-scratch] step  288/400  loss 0.0738  load-cv 0.253
+[moe-scratch] step  304/400  loss 0.0663  load-cv 0.176
+[moe-scratch] step  320/400  loss 0.0686  load-cv 0.199
+[moe-scratch] step  336/400  loss 0.0563  load-cv 0.163
+[moe-scratch] step  352/400  loss 0.0603  load-cv 0.184
+[moe-scratch] step  368/400  loss 0.0636  load-cv 0.170
+[moe-scratch] step  384/400  loss 0.0570  load-cv 0.181
+[moe-scratch] step  399/400  loss 0.0598  load-cv 0.152

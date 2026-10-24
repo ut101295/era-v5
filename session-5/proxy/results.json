@@ -1,0 +1,144 @@
+{
+  "config": {
+    "K": 8,
+    "EMB": 24,
+    "HID": 64,
+    "STEPS": 4000,
+    "BATCH": 128,
+    "LR": 0.3,
+    "SEED": 20260803,
+    "vocab": 351,
+    "budget_chars_per_arm": 882857
+  },
+  "arms": {
+    "A_naive_web_heavy": {
+      "weights": {
+        "en": 0.82,
+        "code": 0.12,
+        "math": 0.03,
+        "indic": 0.03
+      },
+      "train_examples": 882846,
+      "per_lane": {
+        "en": {
+          "bits_per_char": 2.8714,
+          "perplexity": 7.318
+        },
+        "code": {
+          "bits_per_char": 4.1184,
+          "perplexity": 17.369
+        },
+        "math": {
+          "bits_per_char": 3.6734,
+          "perplexity": 12.759
+        },
+        "indic": {
+          "bits_per_char": 5.5932,
+          "perplexity": 48.276
+        }
+      }
+    },
+    "B_v5_main": {
+      "weights": {
+        "en": 0.57,
+        "code": 0.21,
+        "math": 0.08,
+        "indic": 0.14
+      },
+      "train_examples": 882846,
+      "per_lane": {
+        "en": {
+          "bits_per_char": 3.0516,
+          "perplexity": 8.291
+        },
+        "code": {
+          "bits_per_char": 3.9523,
+          "perplexity": 15.48
+        },
+        "math": {
+          "bits_per_char": 2.4922,
+          "perplexity": 5.626
+        },
+        "indic": {
+          "bits_per_char": 4.4206,
+          "perplexity": 21.416
+        }
+      }
+    },
+    "C_v5_anneal": {
+      "weights": {
+        "en": 0.45,
+        "code": 0.23,
+        "math": 0.12,
+        "indic": 0.2
+      },
+      "train_examples": 882847,
+      "per_lane": {
+        "en": {
+          "bits_per_char": 3.1594,
+          "perplexity": 8.934
+        },
+        "code": {
+          "bits_per_char": 3.9575,
+          "perplexity": 15.536
+        },
+        "math": {
+          "bits_per_char": 1.8865,
+          "perplexity": 3.697
+        },
+        "indic": {
+          "bits_per_char": 4.2676,
+          "perplexity": 19.26
+        }
+      }
+    }
+  },
+  "delta_vs_naive": {
+    "B_v5_main": {
+      "en": {
+        "delta_bits": 0.1802,
+        "pct": 6.28
+      },
+      "code": {
+        "delta_bits": -0.1661,
+        "pct": -4.03
+      },
+      "math": {
+        "delta_bits": -1.1812,
+        "pct": -32.16
+      },
+      "indic": {
+        "delta_bits": -1.1726,
+        "pct": -20.96
+      }
+    },
+    "C_v5_anneal": {
+      "en": {
+        "delta_bits": 0.288,
+        "pct": 10.03
+      },
+      "code": {
+        "delta_bits": -0.1609,
+        "pct": -3.91
+      },
+      "math": {
+        "delta_bits": -1.7869,
+        "pct": -48.64
+      },
+      "indic": {
+        "delta_bits": -1.3256,
+        "pct": -23.7
+      }
+    }
+  },
+  "hypothesis": {
+    "evaluated_on": "B_v5_main",
+    "statement": "The V5 main mix lowers Indic (and math/code) held-out perplexity vs the naive web-heavy mix, at a graceful general-web cost.",
+    "indic_pct": -20.96,
+    "math_pct": -32.16,
+    "code_pct": -4.03,
+    "en_pct": 6.28,
+    "confirmed": false,
+    "note": "A ~1MB char-LM overstates the English cost: at 16T scale English is data-rich (~7T unique tokens), so reducing its SHARE barely changes its loss, whereas Indic is data-starved and every protected token counts. The proxy confirms the DIRECTION; the 1B/3B run measures the magnitude."
+  }
+}

@@ -1,0 +1,113 @@
+device: mps  |  mode: local verification
+corpus: 28864 bytes, vocab 256
+Correctness (small model, depth 8):
+  forward then inverse, max|recon - input|   = 7.15e-07
+  custom vs autograd, max|Δ output|          = 7.15e-07
+  custom vs autograd, max|Δ grad wrt input|  = 1.19e-06
+  custom vs autograd, max|Δ grad wrt params| = 4.77e-06
+  => PASS: reversible backward matches autograd
+
+Memory vs depth (one forward+backward, peak MB over init baseline):
+  depth    standard   reversible
+      4        88.2         14.1
+      8       172.1         26.7
+     16       340.0         52.0
+     24       507.9         77.3
+     32       675.8        102.5
+  wrote fig_memory_vs_depth.png
+
+=== Run 1: standard, fixed batch ===
+  [standard] step     0/341  tok      2048  loss 6.1878
+  [standard] step    17/341  tok     36864  loss 2.5422
+  [standard] step    34/341  tok     71680  loss 2.0152
+  [standard] step    51/341  tok    106496  loss 1.7049
+  [standard] step    68/341  tok    141312  loss 1.4293
+  [standard] step    85/341  tok    176128  loss 1.1081
+  [standard] step   102/341  tok    210944  loss 0.8490
+  [standard] step   119/341  tok    245760  loss 0.6571
+  [standard] step   136/341  tok    280576  loss 0.3477
+  [standard] step   153/341  tok    315392  loss 0.2519
+  [standard] step   170/341  tok    350208  loss 0.1691
+  [standard] step   187/341  tok    385024  loss 0.1738
+  [standard] step   204/341  tok    419840  loss 0.1200
+  [standard] step   221/341  tok    454656  loss 0.1410
+  [standard] step   238/341  tok    489472  loss 0.0960
+  [standard] step   255/341  tok    524288  loss 0.0876
+  [standard] step   272/341  tok    559104  loss 0.0681
+  [standard] step   289/341  tok    593920  loss 0.0796
+  [standard] step   306/341  tok    628736  loss 0.0602
+  [standard] step   323/341  tok    663552  loss 0.0735
+  [standard] step   340/341  tok    698368  loss 0.0589
+  [standard] DONE  params 10.7M  final loss 0.0589  8,695 tok/s  peak 552 MB  (optim-floor 204 MB)  batch 16
+
+=== Run 2: reversible (midpoint), same batch ===
+  [reversible] step     0/341  tok      2048  loss 6.1412
+  [reversible] step    17/341  tok     36864  loss 2.5326
+  [reversible] step    34/341  tok     71680  loss 1.9558
+  [reversible] step    51/341  tok    106496  loss 1.5675
+  [reversible] step    68/341  tok    141312  loss 1.1624
+  [reversible] step    85/341  tok    176128  loss 0.9650
+  [reversible] step   102/341  tok    210944  loss 0.6489
+  [reversible] step   119/341  tok    245760  loss 0.5327
+  [reversible] step   136/341  tok    280576  loss 0.3818
+  [reversible] step   153/341  tok    315392  loss 0.2498
+  [reversible] step   170/341  tok    350208  loss 0.1844
+  [reversible] step   187/341  tok    385024  loss 0.1668
+  [reversible] step   204/341  tok    419840  loss 0.1399
+  [reversible] step   221/341  tok    454656  loss 0.1494
+  [reversible] step   238/341  tok    489472  loss 0.0705
+  [reversible] step   255/341  tok    524288  loss 0.0709
+  [reversible] step   272/341  tok    559104  loss 0.0861
+  [reversible] step   289/341  tok    593920  loss 0.0793
+  [reversible] step   306/341  tok    628736  loss 0.0844
+  [reversible] step   323/341  tok    663552  loss 0.0621
+  [reversible] step   340/341  tok    698368  loss 0.0668
+  [reversible] DONE  params 10.7M  final loss 0.0668  5,877 tok/s  peak 218 MB  (optim-floor 203 MB)  batch 16
+
+=== Run 3: reversible (midpoint), max batch ===
+  [reversible-maxbatch] step     0/85  tok      8192  loss 6.2116
+  [reversible-maxbatch] step     4/85  tok     40960  loss 3.3945
+  [reversible-maxbatch] step     8/85  tok     73728  loss 2.8234
+  [reversible-maxbatch] step    12/85  tok    106496  loss 2.4889
+  [reversible-maxbatch] step    16/85  tok    139264  loss 2.2689
+  [reversible-maxbatch] step    20/85  tok    172032  loss 2.0870
+  [reversible-maxbatch] step    24/85  tok    204800  loss 1.9850
+  [reversible-maxbatch] step    28/85  tok    237568  loss 1.8688
+  [reversible-maxbatch] step    32/85  tok    270336  loss 1.7728
+  [reversible-maxbatch] step    36/85  tok    303104  loss 1.6560
+  [reversible-maxbatch] step    40/85  tok    335872  loss 1.5497
+  [reversible-maxbatch] step    44/85  tok    368640  loss 1.4697
+  [reversible-maxbatch] step    48/85  tok    401408  loss 1.3321
+  [reversible-maxbatch] step    52/85  tok    434176  loss 1.2767
+  [reversible-maxbatch] step    56/85  tok    466944  loss 1.1939
+  [reversible-maxbatch] step    60/85  tok    499712  loss 1.1089
+  [reversible-maxbatch] step    64/85  tok    532480  loss 1.0016
+  [reversible-maxbatch] step    68/85  tok    565248  loss 0.9338
+  [reversible-maxbatch] step    72/85  tok    598016  loss 0.8767
+  [reversible-maxbatch] step    76/85  tok    630784  loss 0.7647
+  [reversible-maxbatch] step    80/85  tok    663552  loss 0.7215
+  [reversible-maxbatch] step    84/85  tok    696320  loss 0.6659
+  [reversible-maxbatch] DONE  params 10.7M  final loss 0.6659  6,560 tok/s  peak 257 MB  (optim-floor 199 MB)  batch 64
+wrote fig_training.png
+
+Session 13 — reversible LLM, results
+device: mps  mode: local-verification
+
+Correctness:
+  reconstruction error      7.15e-07
+  grad vs autograd (input)  1.19e-06
+  grad vs autograd (params) 4.77e-06
+  verdict                   PASS
+
+Memory vs depth (peak activation MB):
+  depths      [4, 8, 16, 24, 32]
+  standard    [88.2, 172.1, 340.0, 507.9, 675.8]
+  reversible  [14.1, 26.7, 52.0, 77.3, 102.5]
+
+Training runs (peak = step high-water incl. activations; floor = after-step: params+optimizer+grads):
+  run                    batch  final loss       tok/s   peak MB  floor MB
+  standard                  16      0.0589       8,695       552       204
+  reversible                16      0.0668       5,877       218       203
+  reversible-maxbatch       64      0.6659       6,560       257       199
+
+wrote results.txt

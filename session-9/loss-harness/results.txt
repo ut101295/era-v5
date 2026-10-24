@@ -1,0 +1,108 @@
+device = mps
+
+vocab size = 14  (incl. '<pad>'=0, '<eos>'=1)
+
+======================================================================
+(1) SHAPES — every tensor and what each dimension means
+======================================================================
+tokens        (2, 6)   [B=batch, T=sequence length]
+hidden        (2, 6, 64)   [B, T, d_model=hidden width]
+logits        (2, 6, 14)   [B, T, V=vocab; score per next-token]
+shift_logits  (2, 5, 14)   [B, T-1, V] — drop last position (no target)
+shift_targets (2, 5)   [B, T-1]   — drop first token (nothing predicts it)
+flat_logits   (10, 14)  [B*(T-1), V] — flattened for cross_entropy
+flat_targets  (10,)      [B*(T-1)]   — flattened targets
+
+======================================================================
+(2) SHIFT CHECK — input word → the word the model must predict
+======================================================================
+If this reads as a sensible 'next word' column, the shift is correct.
+
+  sequence 0: 'the cat ran over the log'
+      input    'the'   ->   target 'cat'
+      input    'cat'   ->   target 'ran'
+      input    'ran'   ->   target 'over'
+      input   'over'   ->   target 'the'
+      input    'the'   ->   target 'log'
+
+  sequence 1: 'the dog sat near the mat'
+      input    'the'   ->   target 'dog'
+      input    'dog'   ->   target 'sat'
+      input    'sat'   ->   target 'near'
+      input   'near'   ->   target 'the'
+      input    'the'   ->   target 'mat'
+
+  assert passed: target[i] == input[i+1]  (the shift is a +1 slice)
+
+======================================================================
+(3) PADDING MASK — contributing-token count must drop when we ignore <pad>
+======================================================================
+padded batch shape (2, 6):
+    ['the', 'cat', 'ran', 'over', 'the', 'log']
+    ['the', 'dog', 'sat', '<pad>', '<pad>', '<pad>']
+
+  contributing tokens  no-mask: 10   masked: 7  (dropped 3 <pad> targets)
+  loss  no-mask: 2.6629   masked: 2.6330
+  -> the mean is now taken over real tokens only; <pad> no longer dilutes it.
+
+======================================================================
+(4) DOCUMENT PACKING — mask the cross-document boundary target
+======================================================================
+  packed: ['the', 'cat', 'ran', 'over', 'the', 'log', '<eos>', 'the', 'fox', 'jumped', 'under', 'the', 'mat']
+  boundary target = predict 'the' from <eos> (cross-document — meaningless)
+
+  loss before masking boundary: 5.6055
+  loss after  masking boundary: 5.2413
+  (the single boundary term alone = 9.6114 — far above the rest)
+  -> masking removes a large, unlearnable cross-document term from the mean.
+
+======================================================================
+(5) PERPLEXITY — an untrained model should sit near |vocab|
+======================================================================
+  untrained cross-entropy = 2.6573
+  untrained perplexity    = 14.26   (vocab size = 14)
+  ln(vocab) = 2.6391   exp(ln vocab) = 14  <- target
+  -> PPL ~ |vocab| means the model is guessing ~uniformly: the harness is sane.
+
+======================================================================
+(6) TIED vs UNTIED output head — parameter counts on THIS config
+======================================================================
+  separate head weight = d_model x vocab = 896
+  total params  tied:   105,088
+  total params  untied: 105,984
+  untied costs 896 extra params (one (14, 64) matrix)
+  -> tying reuses the embedding matrix as the head: zero extra params.
+
+======================================================================
+(7) MEMORY — ordinary cross-entropy vs chunked cross-entropy
+======================================================================
+  N (rows) = 4096, V = 14
+  ordinary: largest logits tensor = 0.229 MB   loss=14.1077
+  chunked : largest logits tensor = 0.014 MB   loss=14.1077  (16 chunks)
+  logits-activation peak ratio = 16.0x smaller
+  -> identical loss, but chunked never holds the full [N,V] logits at once.
+     (The real-world win is largest with a big vocab, e.g. V=50k.)
+
+======================================================================
+PART 2 — second head predicts t+2; watch its loss vs the t+1 head
+======================================================================
+   step   loss1(t+1)   loss2(t+2)        sum
+      0       2.6301       2.6539     5.2840
+     50       1.0008       1.5179     2.5187
+    100       0.9092       1.4119     2.3211
+    150       0.8136       1.2780     2.0917
+    200       0.7381       1.1340     1.8722
+    250       0.6866       1.0336     1.7202
+    300       0.6279       0.9613     1.5892
+
+  What happens: both losses fall together, but loss2 (t+2) stays clearly ABOVE
+  loss1 (t+1), and the gap widens as training sharpens the one-step predictor.
+  Why: the data is an order-1 chain, so the last token x_t strongly pins x_{t+1}
+  (low loss1), but x_{t+2} can only be reached by marginalising over the still-
+  unknown x_{t+1}, which is more spread out (higher loss2). The far head converges
+  to a higher floor = the extra irreducible uncertainty of the longer jump. This
+  is the same reason speculative-decoding / multi-token heads trust near tokens
+  more than far ones. (It's the robust tendency for sequential data, not a
+  theorem for every possible distribution.)
+
+done.

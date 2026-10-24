@@ -1,0 +1,111 @@
+{
+  "summary": "For a 40B \"India-first\" LLM, the evidence base points to a clear recipe. Token budgets for 27-40B open models cluster at 14-18T tokens (Gemma 3 27B: 14T; Qwen2.5: 18T; DeepSeek-V3: 14.8T; Llama 3: ~15T), and Llama 3's published mix (~50% general, 25% math/reasoning, 17% code, 8% multilingual) is the most directly usable data-recipe breakdown — though for Indic excellence the multilingual share must be raised well above 8%. Indic pretraining data is anchored by AI4Bharat's Sangraha (251B tokens, 22 languages, but ~65% synthetic), IndicCorp v2 (20.9B tokens, 24 languages), plus FineWeb-2 and OCR/transcription pipelines; native high-quality Indic web text remains scarce and skewed (Hindi ~1.86B vs Assamese ~32.6M in v1). Cleaning best practice combines multi-level + global MinHash dedup (FineWeb: 5-grams, 112 hashes, 14×8 buckets, 75% threshold), LLM-scored educational quality classifiers (FineWeb-Edu: Llama-3-70B labels → embedding regression, filtered 15T→1.3T), and PII/safety filtering — with the caveat that global dedup showed diminishing/negative returns. Post-training converges on SFT + RL, with GRPO and rule-based+model-based rewards (DeepSeek-V3, no DPO) and R1-style reasoning distillation. On tokenizers, large vocabularies (Gemma 3: 262K; Llama 3: 128K) improve non-English/compression balance but carry an embedding-parameter cost that becomes negligible at 40B scale (~1.4B/27B ≈ 5%), favoring a large, Indic-balanced vocab.",
+  "findings": [
+    {
+      "claim": "Token budgets for 27-40B-class open frontier models cluster tightly at ~14-18 trillion tokens, giving a defensible target range for a 40B model.",
+      "confidence": "high",
+      "vote": "3-0 across all constituent claims",
+      "evidence": "Gemma 3 27B: 14T tokens (12B=12T, 4B=4T, 1B=2T), scaling budget with size. Llama 3: ~15T (405B flagship = 15.6T), an 8.3x jump over Llama 2's 1.8T. Qwen2.5: 18T (up from 7T in Qwen2). DeepSeek-V3: 14.8T (671B MoE, 37B active/token). A 40B dense model should plan for the upper end of this range (15-18T+).",
+      "sources": [
+        "https://storage.googleapis.com/deepmind-media/gemma/Gemma3Report.pdf",
+        "https://arxiv.org/abs/2407.21783",
+        "https://arxiv.org/abs/2412.15115",
+        "https://arxiv.org/abs/2412.19437"
+      ]
+    },
+    {
+      "claim": "Llama 3's final pretraining mix (~50% general knowledge, 25% math/reasoning, 17% code, 8% multilingual) is the most concrete published data-recipe breakdown; an India-first coding model should raise multilingual and hold/raise code+math.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "Llama 3 report gives exact end-state percentages over ~15T tokens, with proportions dynamically adjusted during training (upsampled math, increased non-English late, downsampled low-quality). This is a snapshot of the final mix, not a static recipe. For India-first coding/agentic goals, the 8% multilingual share is a floor to exceed and the 17% code / 25% math shares are the reference for strong coding/reasoning.",
+      "sources": [
+        "https://arxiv.org/abs/2407.21783"
+      ]
+    },
+    {
+      "claim": "AI4Bharat's Sangraha (251B tokens, 22 languages) is the largest cleaned Indic pretraining corpus, but ~65% (162B) is synthetic (translated/romanized Wikimedia), not native web text.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "Sangraha = Verified (64B: scraped human-verified sites + OCR of Indic PDFs + transcribed audio/video) + Unverified (24B: perplexity-filtered from CulturaX/MADLAD-400 via n-gram LMs trained on Verified, extending CCNet) + Synthetic (162B: Wikimedia EN translated into 14 Indic langs via IndicTrans2, then romanized via IndicXlit). Peer-reviewed (Khan et al., ACL 2024, arXiv:2403.06350), CC-BY-4.0. The heavy synthetic share is a data-quality caveat for a frontier recipe.",
+      "sources": [
+        "https://github.com/AI4Bharat/IndicLLMSuite"
+      ]
+    },
+    {
+      "claim": "IndicCorp v2 (20.9B tokens, 24 languages, 4 families) and the older AI4Bharat-IndicNLP corpus (2.7B words, 10 languages) are the primary native monolingual Indic resources, alongside FineWeb-2 — but Indic data is small and severely skewed by language.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "IndicCorp v2: 20.9B tokens, 24 langs, 4 families, 2.3x/+12 langs over v1 (Doddapaneni et al., ACL 2023). AI4Bharat-IndicNLP: 2.7B words, 10 langs, Indo-Aryan+Dravidian (Kunchukuttan et al. 2020). Per-language skew is severe: IndicCorp v1 Hindi 1.86B tokens vs Assamese 32.6M (~57x gap). AI4Bharat's own IndicBERT-v3 corpus explicitly drew from Sangraha-Verified, HuggingFaceFW/fineweb-2, and IndicCorpV2 among others — a concrete source list to mirror. Native Indic web text remains scarce relative to frontier budgets.",
+      "sources": [
+        "https://huggingface.co/datasets/ai4bharat/IndicCorpV2",
+        "https://huggingface.co/datasets/ai4bharat/IndicCorpV2/blob/main/README.md",
+        "https://arxiv.org/abs/2005.00085",
+        "https://github.com/AI4Bharat/indicnlp_corpus",
+        "https://huggingface.co/ai4bharat/IndicBERT-v3-4B/blob/main/README.md"
+      ]
+    },
+    {
+      "claim": "A phased/curriculum sampling schedule with fixed language-family ratios is a documented technique for balancing English foundation against high- and low-resource Indic languages.",
+      "confidence": "medium",
+      "vote": "3-0 (but transferability caveat)",
+      "evidence": "AI4Bharat IndicBERT-v3-4B used a four-phase curriculum: Phase 1 English 0.30, Phase 2 (14 high/mid-resource Indic) 0.25, Phase 3 (8 low-resource) 0.15, Phase 4 (joint consolidation, all 23) 0.25, with the final ~10% of steps for joint consolidation to mitigate catastrophic forgetting. IMPORTANT: this is a 4B bidirectional ENCODER (Gemma-3-4b-pt base, ~35B tokens), not a 40B from-scratch decoder — the ratios are illustrative of curriculum design, not directly a frontier decoder recipe. Ratios are per-phase sampling weights (sum 0.95), not a single corpus partition.",
+      "sources": [
+        "https://huggingface.co/ai4bharat/IndicBERT-v3-4B/blob/main/README.md"
+      ]
+    },
+    {
+      "claim": "Large-scale cleaning should combine multi-level + global MinHash dedup, line-frequency filtering, PII/safety filters, and model-based quality classifiers.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "Llama 3: URL/document/line-level dedup + global MinHash near-dup removal + line-frequency filter (drop lines appearing >6x per 30M-doc bucket) + dirty-word/PII/unsafe filtering + fastText and RoBERTa/DistilRoBERTa quality classifiers. FineWeb specifies MinHash params: 5-grams, 112 hash functions in 14 buckets of 8, targeting ≥75% similarity.",
+      "sources": [
+        "https://arxiv.org/abs/2407.21783",
+        "https://arxiv.org/html/2406.17557v1"
+      ]
+    },
+    {
+      "claim": "LLM-scored educational quality classifiers (FineWeb-Edu style) are a proven, cheap way to filter web-scale corpora, and can be replicated for Indic.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "FineWeb is 15T tokens from 96 Common Crawl snapshots; FineWeb-Edu is 1.3T filtered via a classifier: Llama-3-70B-Instruct scored 460K samples 0-5, a linear regression on frozen Snowflake-arctic-embed-m embeddings (threshold 3, F1 82%) then classified all 15T tokens in ~6,000 H100 GPU-hours (~92% of tokens removed). This is a directly transferable pipeline for building an Indic-Edu quality filter.",
+      "sources": [
+        "https://arxiv.org/html/2406.17557v1"
+      ]
+    },
+    {
+      "claim": "More deduplication is not always better — global dedup can hurt, so dedup strategy needs tuning.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "FineWeb: per-snapshot (individual) dedup matched RefinedWeb performance, while global dedup gave only a modest uplift and removed up to 90% of base-filtered data on older snapshots — the retained old-crawl data was of worse quality than what was removed. None of the attempted dedup methods outperformed individual dedup. Relevant for scarce Indic data where over-aggressive global dedup could strip valuable text.",
+      "sources": [
+        "https://arxiv.org/html/2406.17557v1"
+      ]
+    },
+    {
+      "claim": "Post-training should use SFT + RL with GRPO, combining rule-based (verifiable math/code) and model-based reward models, plus reasoning distillation from a strong R1-style teacher; DPO is not required.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "DeepSeek-V3 (671B MoE, 37B active, 14.8T pretraining tokens) post-trains with SFT then RL via GRPO (no value model), using rule-based rewards for verifiable tasks and model-based rewards for free-form answers, and distills reasoning from the DeepSeek-R1 series (1.5M SFT instances). No DPO is used. This gives a concrete RLVR/distillation template for a coding/agentic + Indic model.",
+      "sources": [
+        "https://arxiv.org/abs/2412.19437"
+      ]
+    },
+    {
+      "claim": "A large, non-English-balanced tokenizer vocabulary (200K+) is favored for an Indic model, and its embedding-parameter cost becomes negligible at 40B scale.",
+      "confidence": "high",
+      "vote": "3-0",
+      "evidence": "Gemma 3 uses a 262K-entry SentencePiece tokenizer (same as Gemini 2.0; split digits, preserved whitespace, byte-level) explicitly 'more balanced for non-English languages.' Embedding cost shrinks with scale: 302M of the 1B model (~30%) vs 1,416M of the 27B model (~5%, with 25,600M non-embedding) — so a large Indic-balanced vocab is nearly free at 40B. Llama 3's 128K vocab improved English compression 3.17→3.94 chars/token, showing vocab design directly affects fertility/compression.",
+      "sources": [
+        "https://storage.googleapis.com/deepmind-media/gemma/Gemma3Report.pdf",
+        "https://arxiv.org/abs/2407.21783"
+      ]
+    }
+  ],
+  "caveats": "Time-sensitivity: token budgets and recipes move fast — Qwen3 already doubled Qwen2.5's corpus to 36T, so the 14-18T range is a 2024/early-2025 snapshot and the practical target is likely rising. Data-recipe percentages: only Llama 3 publishes an explicit mix; Gemma 3, Qwen2.5, and DeepSeek-V3 do NOT disclose comparable code/math/multilingual splits, so the recipe generalization rests substantially on one source. Indic data quality: Sangraha's 251B headline is ~65% synthetic (machine-translated/romanized), and its 'largest/high-quality' framing is AI4Bharat's self-description; native high-quality Indic web text is far smaller and severely language-skewed. The IndicBERT-v3 four-phase curriculum (Finding 5) comes from a 4B bidirectional ENCODER trained on ~35B tokens, not a 40B from-scratch decoder — transferability to frontier decoder pretraining is limited. No primary-source numbers were surfaced here for several items named in the question: Sarvam-1 (68K vocab), Krutrim, IndicSuperTokenizer, Bhasha-wiki, Indic per-script fertility (tokens/word) tables, or the specific Indic evaluation benchmarks (MILU, IndicGenBench, IndicMMLU-Pro), coding/agentic benchmarks (LiveCodeBench, SWE-bench, Terminal-Bench, BFCL, tau-bench), and whether Indic coding/agentic benchmarks exist — the verified claim set did not cover these, so they remain gaps. 'Fertility' vs 'compression': Llama 3's 3.17→3.94 is chars/token (higher=better compression), the inverse of fertility (tokens/word); do not conflate. No independent evidence for 'diminishing returns above ~200K vocab' was among the verified claims — only the embedding-cost-shrinks-with-scale point is confirmed.",
+  "openQuestions": [
+    "What are the concrete Indic tokenizer fertility (tokens/word) numbers per script (Devanagari, Tamil, Telugu, Bengali, etc.) and for code, and how do Sarvam-1 (68K), IndicSuperTokenizer, Gemma-3 (262K), Llama/Qwen/DeepSeek vocabularies compare on Indic fertility? Is there real evidence of diminishing returns above ~200K vocab?",
+    "Do dedicated Indic coding and agentic/tool-use benchmarks exist, or must a 40B India-first coding model be evaluated only on English-centric HumanEval/MBPP/LiveCodeBench/SWE-bench/BFCL/tau-bench plus separate Indic language benchmarks (MILU, IndicGenBench, IndicMMLU-Pro, Indic-QA)?",
+    "What are the actual SFT/preference/agentic-trace data sources and volumes for Indic instruction-following, Hinglish/transliteration, and India-first cultural alignment (Sarvam, Krutrim pipelines) — the verified claims covered pretraining data far more than post-training data?",
+    "What code/math/multilingual mix percentages did Gemma 3, Qwen2.5, and DeepSeek-V3 actually use, given only Llama 3 disclosed an explicit breakdown, and how should the multilingual share be sized for an India-first model without eroding coding/math performance?"
+  ]
+}

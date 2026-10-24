@@ -49,6 +49,9 @@ ActiveState.venv/
 **/data/*.txt
 **/data/*.csv
 **/data/*.json
+**/data/*.jsonl
+# Session 4 pipeline run logs
+session-4/pipeline/*.log
 
 # Faithful corpus raw HTML snapshots (regenerable via build_wiki_faithful_markdown.py)
 *.raw.html

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Session 4 — Data Cleaning &amp; Deduplication · Assamese Corpus</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel-2:#1c2330; --line:#2a3038;
+    --ink:#e6edf3; --muted:#9aa7b4; --dim:#6e7b8a;
+    --saffron:#ff9f1c; --green:#2dd4a7; --blue:#5aa9ff; --violet:#b98cff; --red:#ff6b6b;
+    --maxw:1040px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  header.hero{padding:54px 22px 30px;text-align:center;
+    background:radial-gradient(900px 320px at 50% -40px,rgba(255,159,28,.14),transparent 70%);
+    border-bottom:1px solid var(--line)}
+  .flagbar{height:5px;width:120px;margin:0 auto 18px;border-radius:3px;
+    background:linear-gradient(90deg,var(--saffron) 0 33%,#e9edf1 33% 66%,var(--green) 66% 100%)}
+  h1{font-size:33px;margin:.1em 0 .15em;letter-spacing:-.5px}
+  .sub{color:var(--muted);font-size:16px;max-width:720px;margin:6px auto 0}
+  .tag{display:inline-block;margin:14px 5px 0;padding:4px 11px;border:1px solid var(--line);
+    border-radius:20px;font-size:12.5px;color:var(--muted);background:var(--panel)}
+  nav{position:sticky;top:0;z-index:20;background:rgba(13,17,23,.9);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;gap:5px;flex-wrap:wrap;padding:9px 22px;font-size:13px}
+  nav a{color:var(--muted);padding:4px 9px;border-radius:6px}
+  nav a:hover{color:var(--ink);background:var(--panel-2);text-decoration:none}
+  section{padding:34px 0 8px;border-bottom:1px solid var(--line)}
+  h2{font-size:22px;margin:0 0 4px;display:flex;align-items:baseline;gap:10px}
+  h2 .n{color:var(--saffron);font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+  h3{font-size:13px;margin:18px 0 6px;color:var(--green);letter-spacing:.3px;text-transform:uppercase}
+  p{margin:8px 0} .lead{color:var(--muted)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card h4{margin:0 0 6px;font-size:13.5px;color:var(--blue);text-transform:uppercase;letter-spacing:.3px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+  th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.4px}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr:hover td{background:rgba(255,255,255,.015)}
+  tfoot td{border-top:2px solid var(--line);font-weight:700;color:var(--ink)}
+  .callout{border-left:3px solid var(--saffron);background:var(--panel-2);
+    border-radius:0 8px 8px 0;padding:10px 14px;margin:14px 0;font-size:13.5px;color:var(--muted)}
+  .callout b{color:var(--ink)}
+  .callout.warn{border-left-color:var(--red)} .callout.ok{border-left-color:var(--green)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 6px}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+  .kpi .v{font-size:25px;font-weight:800;letter-spacing:-.5px}
+  .kpi .l{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .p-in{background:rgba(90,169,255,.16);color:#9cc7ff}
+  .p-out{background:rgba(45,212,167,.16);color:#7ff0d0}
+  .p-drop{background:rgba(255,107,107,.16);color:#ffb3b3}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+  /* pipeline flow */
+  .flow{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 6px}
+  .flow .step{flex:1 1 90px;background:var(--panel);border:1px solid var(--line);
+    border-radius:8px;padding:9px 10px;font-size:12px;cursor:pointer;transition:.15s;position:relative}
+  .flow .step:hover{border-color:var(--blue);transform:translateY(-2px)}
+  .flow .step.active{border-color:var(--saffron);background:var(--panel-2)}
+  .flow .step b{display:block;color:var(--blue);font-size:11.5px;margin-bottom:3px}
+  .flow .step .rm{color:var(--red);font-size:11px;font-variant-numeric:tabular-nums}
+  .flow .step .n{position:absolute;top:6px;right:8px;color:var(--dim);font-size:10px}
+  .barwrap{background:var(--panel-2);border-radius:6px;height:26px;overflow:hidden;margin:10px 0;
+    display:flex;align-items:center;position:relative;border:1px solid var(--line)}
+  .bar{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .5s}
+  .barwrap .lab{position:absolute;left:12px;font-size:12px;font-weight:700;color:#04141a;
+    mix-blend-mode:screen}
+  .detail{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-top:8px}
+  .detail h4{margin:0 0 2px;font-size:16px;color:var(--ink)}
+  .detail .why{color:var(--muted);font-size:13.5px;margin:8px 0}
+  .metrics{display:flex;flex-wrap:wrap;gap:16px;margin:10px 0}
+  .metrics .m{min-width:90px}
+  .metrics .m .mv{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+  .metrics .m .ml{font-size:11px;color:var(--muted)}
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  @media(max-width:760px){.ba{grid-template-columns:1fr}}
+  .ba .box{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:10px}
+  .ba .box .t{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+  .ba .before .t{color:var(--red)} .ba .after .t{color:var(--green)}
+  .ba .box pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,Menlo,monospace;
+    font-size:12px;color:var(--ink);max-height:150px;overflow:auto}
+  .btn{display:inline-block;padding:7px 14px;border:1px solid var(--line);border-radius:8px;
+    background:var(--panel-2);color:var(--ink);font-size:13px;cursor:pointer;margin:4px 6px 0 0}
+  .btn:hover{border-color:var(--blue)}
+  .strat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:10px 0}
+  .strat .hd{display:flex;align-items:baseline;gap:10px}
+  .strat .hd .num{color:var(--saffron);font-weight:800;font-size:13px}
+  .strat .hd h4{margin:0;font-size:15px}
+  .strat .hd .live{margin-left:auto;font-size:12px;color:var(--green);font-variant-numeric:tabular-nums}
+  .strat p{margin:6px 0;font-size:13.5px;color:var(--muted)}
+  .strat p b{color:var(--ink)}
+  ul.tight{margin:6px 0;padding-left:18px} ul.tight li{margin:3px 0;color:var(--muted);font-size:13.5px}
+  ul.tight li b{color:var(--ink)}
+  .dl{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  footer{padding:26px 22px 50px;text-align:center;color:var(--dim);font-size:12.5px}
+  #loading{padding:60px 22px;text-align:center;color:var(--muted)}
+  .badge{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--panel-2);
+    border:1px solid var(--line);color:var(--muted)}
+  .ok-badge{color:var(--green);border-color:rgba(45,212,167,.4)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="flagbar"></div>
+  <h1>Raw data is not training data</h1>
+  <div class="sub">Session 4 — the eight cleaning strategies that turn a raw Indic web crawl into a
+    training corpus, run for real on <b>~10M tokens of Assamese</b> from AI4Bharat IndicCorpV2.
+    Every number below is measured by an actual, reproducible pipeline.</div>
+  <div>
+    <span class="tag">8 cleaning strategies</span>
+    <span class="tag">IndicCorpV2 · Assamese</span>
+    <span class="tag" id="tag-raw">— raw docs</span>
+    <span class="tag" id="tag-final">— clean docs</span>
+    <span class="tag ok-badge" id="tag-det">deterministic ✓</span>
+  </div>
+</header>
+
+<nav><div class="wrap">
+  <a href="#strategies">Strategies</a>
+  <a href="#dataset">Dataset</a>
+  <a href="#pipeline">Pipeline</a>
+  <a href="#stages">What was cleaned</a>
+  <a href="#other">Other concerns</a>
+  <a href="#final">Final statistics</a>
+  <a href="#manifest">Manifest</a>
+</div></nav>
+
+<div id="loading">Loading measured statistics…</div>
+<main id="app" class="wrap" style="display:none">
+
+<!-- 1. STRATEGIES -->
+<section id="strategies">
+  <h2><span class="n">01</span> How many strategies — and what they are</h2>
+  <p class="lead">The session lays out data cleaning as an <b>ordered pipeline, not a menu</b>. Counting the
+  transforms the closing commitments name explicitly gives the headline answer:
+  <b>8 cleaning strategies</b>. With honest nuance it is a <b>10-stage pipeline</b> (add
+  <i>extraction</i>, carried over from Session 3, and split deduplication into its <i>local
+  mechanism</i> and <i>global scale</i> halves — each gets its own section and widget), plus
+  <b>2 operational artifacts</b> from the Minor (a collection tracker and a central dedup machine).</p>
+  <div class="callout"><b>The count I defend: 8.</b> normalization · format discipline · quality
+  filtering · deduplication · language validation · PII removal · decontamination ·
+  manifest/provenance. Below, each is described and then run for real on the Assamese corpus.</div>
+  <div id="strat-list"></div>
+</section>
+
+<!-- 2. DATASET -->
+<section id="dataset">
+  <h2><span class="n">02</span> The dataset I picked</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>Primary corpus</h4>
+      <p id="ds-name" class="lead"></p>
+      <p id="ds-why" class="lead"></p>
+    </div>
+    <div class="card">
+      <h4>Why this one (and not the reasoning-distilled example)</h4>
+      <ul class="tight">
+        <li><b>It's from the Session 3 research family.</b> Session 3 anchored Indic
+        pre-training on the AI4Bharat corpora (Sangraha, IndicCorp v2); this is IndicCorp v2.</li>
+        <li><b>It exercises the sovereign thread end-to-end</b> — Brahmic joiners in
+        normalization, script-aware quality rules, the Assamese/Bengali language-ID trap,
+        and Indic PII false-positives — which a clean English set never would.</li>
+        <li><b>Two small secondaries</b> fill the gaps: 300 Bengali docs mislabeled as
+        Assamese (to give language-ID a real mismatch to catch) and 2,000 real Indic
+        instruction pairs (to demonstrate the ghost-tag / format stage).</li>
+      </ul>
+      <p class="mono" id="ds-secondary" style="color:var(--dim)"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. PIPELINE MAP -->
+<section id="pipeline">
+  <h2><span class="n">03</span> The pipeline as a whole</h2>
+  <p class="lead">Raw bytes in on the left, clean tokens + a provenance manifest out on the right.
+  Click any stage to see what it removed and why. The bar shows <b>surviving documents</b> collapsing
+  as the pipeline runs — cleaning is a large, deliberate reduction, not a light touch.</p>
+  <div class="flow" id="flow"></div>
+  <div class="barwrap"><div class="bar" id="survbar"></div><div class="lab" id="survlab"></div></div>
+  <div class="detail" id="stage-detail"></div>
+</section>
+
+<!-- 4. WHAT WAS CLEANED (per stage) -->
+<section id="stages">
+  <h2><span class="n">04</span> What was cleaned, why, and how</h2>
+  <p class="lead">Every card is backed by measured numbers from the run. Three live before/after
+  samples are drawn straight from the corpus.</p>
+  <div id="samples"></div>
+  <div id="stage-cards"></div>
+</section>
+
+<!-- 5. OTHER CONCERNS -->
+<section id="other">
+  <h2><span class="n">05</span> Other strategies &amp; concerns cleaned up</h2>
+  <h3>The Minor — operational artifacts</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>Live cleaning-numbers tracker</h4>
+      <p class="lead">Deduplication and collection are a <b>shared, measured</b> effort, not a private
+      task. A tracker shows who has shipped how many clean tokens and which language pools are still
+      under-served, so effort moves toward the gaps. This run contributes
+      <b id="track-tokens"></b> clean Assamese tokens to that ledger.</p>
+    </div>
+    <div class="card">
+      <h4>The central dedup machine</h4>
+      <p class="lead">Duplication is <b>global</b>: two students can each dedup their own shard
+      perfectly and still leave a doc that appears in both. In this run,
+      <b id="cross-shard"></b> of the near-duplicates were <b>cross-shard</b> — invisible to any
+      local pass. That is why the course provisions one large-memory, checkpoint-resumable,
+      single-owner machine to run the one global pass everything depends on.</p>
+    </div>
+  </div>
+  <h3>Extra defects our own run caught (the honest gallery)</h3>
+  <div id="defects"></div>
+  <div class="callout warn"><b>Filter bias, quantified.</b> An English-tuned quality filter would have
+  dropped <b id="en-bias"></b> of the good Assamese documents this pipeline kept — a near-total wipe
+  of the low-resource corpus. Filtering is not a neutral step; it is a decision about which languages
+  the model will be able to speak.</div>
+</section>
+
+<!-- 6. FINAL STATS -->
+<section id="final">
+  <h2><span class="n">06</span> Final statistics</h2>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid2" style="margin-top:8px">
+    <div class="card">
+      <h4>Before → after</h4>
+      <table id="ba-table"><tbody></tbody></table>
+    </div>
+    <div class="card">
+      <h4>What each strategy removed</h4>
+      <table id="removed-table"><tbody></tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- 7. MANIFEST -->
+<section id="manifest">
+  <h2><span class="n">07</span> Manifest &amp; reproducibility</h2>
+  <p class="lead">A clean corpus is only trustworthy if we can say exactly where it came from and
+  reproduce it. The content hash is computed <b>after</b> cleaning; identifiers are content-addressed,
+  not running counters; an unknown or unsafe license blocks the shard. The same input gives the same
+  hash on every run.</p>
+  <div class="card"><pre class="mono" id="manifest-json" style="white-space:pre-wrap;margin:0"></pre></div>
+  <div class="dl" id="downloads"></div>
+</section>
+
+<footer>
+  Session 4 · Axiom — Learning OS · cleaning pipeline run on AI4Bharat IndicCorpV2 (Assamese).
+  All statistics measured, not estimated. <span id="foot-runtime"></span>
+</footer>
+</main>
+
+<script>
+const STRATEGIES = [
+  {key:"normalization", n:1, title:"Normalization",
+   what:"Put every document into one canonical form: NFC Unicode, unescape HTML entities, strip invisible control/format characters, and collapse whitespace.",
+   why:"A byte-level tokenizer sees every stray character; an uncleaned corpus spends vocabulary on zero-width spaces and broken byte fragments (our audit found 46 such garbage tokens).",
+   how:"A ~15-line pass that runs before anything else — and critically KEEPS the zero-width joiner/non-joiner (ZWNJ/ZWJ), which are legitimate parts of Brahmic scripts. Stripping all invisibles would mangle Indic text.",
+   live:s=>`${fmt(s.joiners_kept)} joiners kept · ${fmt(s.noise_removed+s.control_removed)} garbage chars removed`},
+  {key:"format", n:2, title:"Format discipline (the ghost-tag trap)",
+   what:"Rewrite every conversation source into ONE canonical special-token format at ingestion.",
+   why:"Sources mark speakers differently ([INST], <|user|>, ### Human:, <start_of_turn>). Baked into text, the model learns these ghost markers as ordinary language in pretraining, then they collide with the real special tokens in SFT — the priority-zero finding from our audit.",
+   how:"Detect each marker family, unify to one real special-token schema, and scan pretraining shards for leaked markers.",
+   live:s=>`${fmt(s.ghost_markers_found)} ghost markers from 4 formats unified → 1`},
+  {key:"quality", n:3, title:"Quality filtering",
+   what:"A cascade of cheap heuristic rules (word length, symbol ratio, duplicate lines, terminal punctuation, script purity) followed by an educational-value gate.",
+   why:"Decide whether a document is worth keeping at all — and do it without wrongly rejecting good low-resource text.",
+   how:"Every rule is SCRIPT-AWARE: it measures characters in the document's own script and treats the Indic danda (।) as sentence punctuation. Indic combining marks count as content, not symbols.",
+   live:s=>`${fmt(s.dropped_heuristic)} dropped · avg edu ${s.avg_edu}`},
+  {key:"dedup", n:4, title:"Deduplication (MinHash + LSH, local & global)",
+   what:"Catch near-duplicates, not just exact copies: shingles → MinHash signatures → LSH banding.",
+   why:"The same article reposted with a different header is not an exact match; naive exact-dedup misses almost all real duplication. Our Indic crawl had none of this — wasted compute and a memorization risk.",
+   how:"Word-5-gram shingles, 112 MinHash permutations, 14 bands × 8 rows (FineWeb parameters, ≈0.72 similarity). Duplication is GLOBAL, so we also measure cross-shard duplicates a local pass can never see.",
+   live:s=>`${fmt(s.removed)} near-dups removed · ${fmt(s.cross_shard_dups)} cross-shard`},
+  {key:"langid", n:5, title:"Language identification & validation",
+   what:"Detect each document's language at runtime instead of trusting the folder it came from.",
+   why:"Web crawls are mislabeled often enough to pollute per-language pools and skew the fertility numbers used to size each language's budget.",
+   how:"Script-based detection, with Assamese vs Bengali disambiguated on the Assamese-only letters ৰ/ৱ (both scripts share the Bengali block). The V4 Telugu 2-char↔3-char code bug is fixed by failing loud instead of silently falling back.",
+   live:s=>`${fmt(s.removed_injected)} injected Bengali caught · ${fmt(s.removed_genuine_fp)} genuine FP`},
+  {key:"pii", n:6, title:"PII removal",
+   what:"Mask personal data: a regex layer for structured identifiers and a name layer for the rest.",
+   why:"Both for the people whose data would otherwise sit in the corpus and for the legal usability of the corpus.",
+   how:"Regex masks emails / phones / IPs / IDs cleanly; the name layer trades precision for recall — and that trade is sharper for Indic, where place-names and common words get caught as names.",
+   live:s=>`${fmt(s.emails+s.phones+s.urls+s.ids)} structured masked · name FP rate shown`},
+  {key:"decontam", n:7, title:"Decontamination (the eval firewall)",
+   what:"Keep the training data and the benchmark material strictly apart.",
+   why:"A single leaked test item inflates every score we will ever report. The discipline has two homes: a firewall at sourcing time and a scan at cleaning time.",
+   how:"Fingerprint the held-out eval set as word-13-grams, remove any training doc that overlaps it, and plant a canary string so a later leak is detectable after the fact.",
+   live:s=>`${fmt(s.contaminated_removed)} contaminated removed · canary ${s.canary_detected? "detected ✓":"—"}`},
+  {key:"manifest", n:8, title:"Manifest & reproducibility",
+   what:"Stamp every shard with a provenance manifest and make the whole pipeline deterministic.",
+   why:"A clean corpus is only trustworthy if we can trace and reproduce it; the manifest is the datasheet we publish and the object the gating rule enforces.",
+   how:"Content-addressed IDs (a hash of the cleaned text, not a running counter), the content hash computed AFTER cleaning, the exact cleaning-script hash recorded, and unsafe/unknown licenses block the shard.",
+   live:s=>`content-hash id · determinism verified`},
+];
+
+function fmt(n){ if(n==null) return "—"; return n.toLocaleString("en-US"); }
+function pct(n){ return (n).toFixed(1)+"%"; }
+function stageByKey(stages,k){ return stages.find(x=>x.key===k); }
+
+fetch("stats.json").then(r=>r.json()).then(render).catch(e=>{
+  document.getElementById("loading").innerHTML =
+   "Could not load stats.json — this page must be served over http (not file://). "+
+   "Run <span class='mono'>python3 -m http.server</span> here, or open the deployed link. <br><br>"+e;
+});
+
+function render(S){
+  document.getElementById("loading").style.display="none";
+  document.getElementById("app").style.display="block";
+  const fs=S.final_stats, meta=S.meta, stages=S.stages;
+
+  // hero tags
+  document.getElementById("tag-raw").textContent = fmt(fs.raw_docs)+" raw docs";
+  document.getElementById("tag-final").textContent = fmt(fs.final_docs)+" clean docs";
+  document.getElementById("tag-det").textContent = fs.deterministic? "deterministic ✓":"non-deterministic";
+
+  // strategies list
+  document.getElementById("strat-list").innerHTML = STRATEGIES.map(st=>{
+    const stg = stageByKey(stages, st.key);
+    const live = stg? st.live(stg.detail) : "";
+    return `<div class="strat"><div class="hd"><span class="num">${String(st.n).padStart(2,"0")}</span>
+      <h4>${st.title}</h4><span class="live">${live}</span></div>
+      <p><b>What.</b> ${st.what}</p>
+      <p><b>Why.</b> ${st.why}</p>
+      <p><b>How.</b> ${st.how}</p></div>`;
+  }).join("");
+
+  // dataset
+  document.getElementById("ds-name").innerHTML =
+    `<b>${meta.dataset}</b> — ${fmt(fs.raw_docs)} documents, ~${fmt(fs.raw_tokens)} tokens, ${meta.raw_size_mb} MB raw.`;
+  document.getElementById("ds-why").textContent = meta.why;
+  document.getElementById("ds-secondary").textContent = "secondaries: "+meta.secondary.join("  ·  ");
+
+  // pipeline flow + surviving bar
+  const flow=document.getElementById("flow");
+  flow.innerHTML = stages.map((s,i)=>{
+    const dropped = s.docs_in - s.docs_out;
+    return `<div class="step" data-i="${i}"><span class="n">${i+1}</span>
+      <b>${s.name.split("(")[0].trim()}</b>
+      <span class="rm">${dropped>0? "−"+fmt(dropped)+" docs":"—"}</span></div>`;
+  }).join("");
+  const maxDocs = stages[0].docs_in;
+  function showStage(i){
+    document.querySelectorAll(".flow .step").forEach(e=>e.classList.toggle("active", +e.dataset.i===i));
+    const s=stages[i];
+    const surv = s.docs_out/maxDocs*100;
+    document.getElementById("survbar").style.width = surv.toFixed(1)+"%";
+    document.getElementById("survlab").textContent =
+      `${fmt(s.docs_out)} docs surviving after ${s.name.split("(")[0].trim()} (${surv.toFixed(1)}% of raw)`;
+    const d=document.getElementById("stage-detail");
+    const tin=s.tokens_in, tout=s.tokens_out;
+    d.innerHTML = `<h4>${s.name}</h4><p class="why">${s.note}</p>
+      <div class="metrics">
+        <div class="m"><div class="mv"><span class="pill p-in">${fmt(s.docs_in)}</span></div><div class="ml">docs in</div></div>
+        <div class="m"><div class="mv"><span class="pill p-out">${fmt(s.docs_out)}</span></div><div class="ml">docs out</div></div>
+        <div class="m"><div class="mv"><span class="pill p-drop">${s.docs_in-s.docs_out>0? "−"+fmt(s.docs_in-s.docs_out):"0"}</span></div><div class="ml">removed</div></div>
+        ${tout!=null?`<div class="m"><div class="mv">${fmt(tout)}</div><div class="ml">tokens surviving</div></div>`:""}
+      </div>`;
+  }
+  flow.querySelectorAll(".step").forEach(e=> e.onclick=()=>showStage(+e.dataset.i));
+  showStage(stages.length-1);
+
+  // before/after samples
+  const sm=S.samples; let sh="";
+  if(sm.normalization) sh+=baBlock("Normalization — HTML entities, invisibles & whitespace",
+     sm.normalization.before, sm.normalization.after);
+  if(sm.ghost_tags) sh+=baBlock(`Format discipline — a "${sm.ghost_tags.source_format}" source unified to canonical special tokens`,
+     sm.ghost_tags.before, sm.ghost_tags.after);
+  if(sm.pii) sh+=baBlock("PII removal — structured identifiers masked",
+     sm.pii.before, sm.pii.after);
+  document.getElementById("samples").innerHTML = sh;
+
+  // per-stage cards (compact)
+  document.getElementById("stage-cards").innerHTML =
+    `<div class="grid2">`+ stages.filter(s=>s.key!=="extraction").map(s=>{
+      const rows=stageDetailRows(s);
+      return `<div class="card"><h4>${s.name}</h4>
+        <p class="lead" style="font-size:13px">${s.note}</p>
+        <table><tbody>${rows}</tbody></table></div>`;
+    }).join("") +`</div>`;
+
+  // other concerns
+  document.getElementById("track-tokens").textContent = fmt(fs.final_tokens);
+  document.getElementById("cross-shard").textContent = fmt(fs.cross_shard_dups)+" of "+fmt(fs.near_dups_removed);
+  document.getElementById("en-bias").textContent = fmt(fs.avg_edu_score!=null? (stageByKey(stages,"quality").detail.en_tuned_would_drop):0)
+     + " ("+pct(stageByKey(stages,"quality").detail.en_tuned_would_drop/stageByKey(stages,"quality").detail.kept*100)+")";
+  document.getElementById("defects").innerHTML = S.extra_defects.map(d=>
+    `<div class="callout warn"><b>${d.title}.</b> ${d.detail}</div>`).join("");
+
+  // KPIs
+  document.getElementById("kpis").innerHTML = [
+    ["v-in", fmt(fs.raw_tokens), "raw tokens in"],
+    ["v-out", fmt(fs.final_tokens), "clean tokens out"],
+    ["v-docdrop", pct(fs.docs_removed_pct), "documents removed"],
+    ["v-tokdrop", pct(fs.tokens_removed_pct), "tokens removed"],
+    ["v-ghost", fmt(fs.ghost_markers_unified), "ghost markers unified"],
+    ["v-dup", fmt(fs.near_dups_removed), "near-dups removed"],
+    ["v-lang", fmt(fs.lang_injected_caught), "mislabels caught"],
+    ["v-det", fs.deterministic?"✓":"✗", "reproducible hash"],
+  ].map(([id,v,l])=>`<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+
+  // before/after table
+  document.querySelector("#ba-table tbody").innerHTML = [
+    ["Documents", fs.raw_docs, fs.final_docs],
+    ["Tokens", fs.raw_tokens, fs.final_tokens],
+  ].map(([k,a,b])=>`<tr><td>${k}</td><td class="num">${fmt(a)}</td><td class="num">→ ${fmt(b)}</td>
+     <td class="num"><span class="pill p-drop">−${pct((a-b)/a*100)}</span></td></tr>`).join("");
+
+  // removed-by-strategy table
+  document.querySelector("#removed-table tbody").innerHTML = [
+    ["Empty / low-quality docs", fs.docs_removed - fs.near_dups_removed - fs.lang_mismatches_removed - fs.contaminated_removed],
+    ["Garbage characters", fs.garbage_chars_removed],
+    ["Ghost markers unified", fs.ghost_markers_unified],
+    ["Near-duplicates", fs.near_dups_removed],
+    ["Language mislabels", fs.lang_mismatches_removed],
+    ["Structured PII masked", fs.pii_structured_masked],
+    ["Names masked (73% Indic FP)", fs.pii_names_masked],
+    ["Contaminated docs", fs.contaminated_removed],
+  ].map(([k,v])=>`<tr><td>${k}</td><td class="num">${fmt(v)}</td></tr>`).join("");
+
+  // manifest
+  const man = stageByKey(stages,"manifest").detail.manifest;
+  const view = {
+    source: man.source, license: man.license, contributor: man.contributor,
+    token_count: man.token_count, language_breakdown: man.language_breakdown,
+    content_sha256: man.content_sha256,
+    content_sha256_recomputed: man.content_sha256_recomputed,
+    cleaning_script_sha256: man.cleaning_script_sha256.slice(0,32)+"…",
+    deterministic: man.determinism_ok, blocked: man.blocked, created: man.created,
+    example_doc_id: stageByKey(stages,"manifest").detail.example_doc_id,
+  };
+  document.getElementById("manifest-json").textContent = JSON.stringify(view,null,2);
+  document.getElementById("foot-runtime").textContent =
+    `Pipeline runtime ${meta.runtime_s}s · content hash ${man.content_sha256.slice(0,16)}…`;
+
+  // downloads
+  document.getElementById("downloads").innerHTML =
+    `<a class="btn" href="stats.json" download>⬇ stats.json (full measured output)</a>`;
+}
+
+function baBlock(title, before, after){
+  return `<div style="margin:12px 0"><div style="font-size:12.5px;color:var(--muted);margin-bottom:4px">${esc(title)}</div>
+    <div class="ba"><div class="box before"><div class="t">before (raw)</div><pre>${esc(before)}</pre></div>
+    <div class="box after"><div class="t">after (cleaned)</div><pre>${esc(after)}</pre></div></div></div>`;
+}
+function stageDetailRows(s){
+  const d=s.detail; const rows=[];
+  const push=(k,v)=>{ if(v!=null) rows.push(`<tr><td>${k}</td><td class="num">${typeof v==="number"?fmt(v):v}</td></tr>`); };
+  switch(s.key){
+    case "normalization": push("HTML entities fixed",d.html_entities); push("Noise chars removed",d.noise_removed);
+      push("Control chars removed",d.control_removed); push("Brahmic joiners KEPT",d.joiners_kept); break;
+    case "format": push("Conversations",d.conversations); push("Ghost markers found",d.ghost_markers_found);
+      push("Unified to canonical",d.unified); push("Pretraining leaks",d.pretrain_ghost_markers); break;
+    case "quality": push("Docs in",d.docs_in); push("Dropped (heuristic)",d.dropped_heuristic);
+      push("Dropped (edu-score)",d.dropped_edu); push("Kept",d.kept); push("Avg edu score",d.avg_edu);
+      push("English-filter would drop",d.en_tuned_would_drop); break;
+    case "dedup": push("Near-dups removed",d.removed); push("Cross-shard (global-only)",d.cross_shard_dups);
+      push("Within-shard (local)",d.local_dups); push("Index footprint (MB)",d.docs_index_mb); break;
+    case "langid": push("Injected Bengali caught",d.removed_injected); push("Genuine false-positives",d.removed_genuine_fp);
+      push("Code-switched flagged",d.code_switched); break;
+    case "pii": push("Emails",d.emails); push("Phones",d.phones); push("URLs",d.urls); push("IDs",d.ids);
+      push("Names masked",d.names_masked); push("→ of which false positives",d.name_false_positives); break;
+    case "decontam": push("Held-out eval items",d.eval_items); push("Fingerprint 13-grams",d.fingerprint_ngrams);
+      push("Contaminated removed",d.contaminated_removed); push("Canary planted",d.canary_planted);
+      push("Canary detected",d.canary_detected); break;
+    case "manifest": push("Token count",d.manifest.token_count);
+      push("Deterministic",d.manifest.determinism_ok?"yes":"no"); push("License block",d.manifest.blocked||"none"); break;
+  }
+  return rows.join("");
+}
+function esc(t){ return (t||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+</script>
+</body>
+</html>
