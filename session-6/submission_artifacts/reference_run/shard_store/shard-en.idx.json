@@ -1,0 +1,294 @@
+{
+  "shard_id": "shard-en",
+  "lane": "en",
+  "token_count": 14811,
+  "doc_spans": [
+    {
+      "doc_id": "en-session-1_QnA.md",
+      "start": 0,
+      "length": 592,
+      "source_id": "repo:session-1/QnA.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-1_assignment-playground_README.md",
+      "start": 592,
+      "length": 968,
+      "source_id": "repo:session-1/assignment-playground/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-1_assignment.md~0",
+      "start": 1560,
+      "length": 33,
+      "source_id": "repo:session-1/assignment.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-1_assignment.md~2",
+      "start": 1593,
+      "length": 688,
+      "source_id": "repo:session-1/assignment.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-1_notes.md",
+      "start": 2281,
+      "length": 684,
+      "source_id": "repo:session-1/notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-1_session_notes.md~0",
+      "start": 2965,
+      "length": 48,
+      "source_id": "repo:session-1/session_notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-1_session_notes.md~1",
+      "start": 3013,
+      "length": 599,
+      "source_id": "repo:session-1/session_notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-1_transcript.md",
+      "start": 3612,
+      "length": 727,
+      "source_id": "repo:session-1/transcript.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_WALKTHROUGH.md~1",
+      "start": 4339,
+      "length": 829,
+      "source_id": "repo:session-10/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_assignment.md~1",
+      "start": 5168,
+      "length": 19,
+      "source_id": "repo:session-10/assignment.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_assignment.md~3",
+      "start": 5187,
+      "length": 463,
+      "source_id": "repo:session-10/assignment.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_plan_plan.md~0",
+      "start": 5650,
+      "length": 151,
+      "source_id": "repo:session-10/plan/plan.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_plan_plan.md~1",
+      "start": 5801,
+      "length": 724,
+      "source_id": "repo:session-10/plan/plan.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_research_research.md~1",
+      "start": 6525,
+      "length": 810,
+      "source_id": "repo:session-10/research/research.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_session-notes.md~1",
+      "start": 7335,
+      "length": 809,
+      "source_id": "repo:session-10/session-notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_training-loop_README.md~0",
+      "start": 8144,
+      "length": 334,
+      "source_id": "repo:session-10/training-loop/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_training-loop_README.md~1",
+      "start": 8478,
+      "length": 17,
+      "source_id": "repo:session-10/training-loop/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-10_training-loop_README.md~2",
+      "start": 8495,
+      "length": 603,
+      "source_id": "repo:session-10/training-loop/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_WALKTHROUGH.md~1",
+      "start": 9098,
+      "length": 839,
+      "source_id": "repo:session-11/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_assignment.md~1",
+      "start": 9937,
+      "length": 18,
+      "source_id": "repo:session-11/assignment.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_assignment.md~3",
+      "start": 9955,
+      "length": 416,
+      "source_id": "repo:session-11/assignment.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_optimizers_README.md~0",
+      "start": 10371,
+      "length": 317,
+      "source_id": "repo:session-11/optimizers/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_optimizers_README.md~1",
+      "start": 10688,
+      "length": 47,
+      "source_id": "repo:session-11/optimizers/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_optimizers_README.md~4",
+      "start": 10735,
+      "length": 331,
+      "source_id": "repo:session-11/optimizers/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_optimizers_README.md~5",
+      "start": 11066,
+      "length": 226,
+      "source_id": "repo:session-11/optimizers/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_plan_plan.md~0",
+      "start": 11292,
+      "length": 56,
+      "source_id": "repo:session-11/plan/plan.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_plan_plan.md~1",
+      "start": 11348,
+      "length": 22,
+      "source_id": "repo:session-11/plan/plan.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_plan_plan.md~2",
+      "start": 11370,
+      "length": 613,
+      "source_id": "repo:session-11/plan/plan.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_plan_plan.md~4",
+      "start": 11983,
+      "length": 133,
+      "source_id": "repo:session-11/plan/plan.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_research_research.md~1",
+      "start": 12116,
+      "length": 970,
+      "source_id": "repo:session-11/research/research.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_session-notes.md~1",
+      "start": 13086,
+      "length": 368,
+      "source_id": "repo:session-11/session-notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_session-notes.md~3",
+      "start": 13454,
+      "length": 23,
+      "source_id": "repo:session-11/session-notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_session-notes.md~5",
+      "start": 13477,
+      "length": 337,
+      "source_id": "repo:session-11/session-notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-11_session-notes.md~6",
+      "start": 13814,
+      "length": 39,
+      "source_id": "repo:session-11/session-notes.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_WALKTHROUGH.md~1",
+      "start": 13853,
+      "length": 365,
+      "source_id": "repo:session-12/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_WALKTHROUGH.md~2",
+      "start": 14218,
+      "length": 185,
+      "source_id": "repo:session-12/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_WALKTHROUGH.md~3",
+      "start": 14403,
+      "length": 20,
+      "source_id": "repo:session-12/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_WALKTHROUGH.md~4",
+      "start": 14423,
+      "length": 116,
+      "source_id": "repo:session-12/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_WALKTHROUGH.md~5",
+      "start": 14539,
+      "length": 86,
+      "source_id": "repo:session-12/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_assignment.md~1",
+      "start": 14625,
+      "length": 18,
+      "source_id": "repo:session-12/assignment.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_assignment.md~3",
+      "start": 14643,
+      "length": 168,
+      "source_id": "repo:session-12/assignment.md",
+      "provenance_tier": "permissive-repo"
+    }
+  ]
+}

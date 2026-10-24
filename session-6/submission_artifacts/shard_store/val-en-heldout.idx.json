@@ -1,0 +1,28 @@
+{
+  "shard_id": "val-en-heldout",
+  "lane": "en",
+  "token_count": 2332,
+  "doc_spans": [
+    {
+      "doc_id": "en-session-12_zero-sim_README.md",
+      "start": 0,
+      "length": 906,
+      "source_id": "repo:session-12/zero-sim/README.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-13_WALKTHROUGH.md",
+      "start": 906,
+      "length": 898,
+      "source_id": "repo:session-13/WALKTHROUGH.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-13_assignment.md",
+      "start": 1804,
+      "length": 528,
+      "source_id": "repo:session-13/assignment.md",
+      "provenance_tier": "permissive-repo"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "rule": "error-diffusion scheduling keeps each lane within one batch of its target, so a stage of n steps may deviate by at most 2/n",
+  "stages": {
+    "general-web-seed": {
+      "steps": 105,
+      "planned": {
+        "code": 0.2,
+        "en": 0.5499999999999998,
+        "indic": 0.1,
+        "math": 0.14999999999999997
+      },
+      "actual": {
+        "code": 0.2,
+        "en": 0.5523809523809524,
+        "indic": 0.09523809523809523,
+        "math": 0.1523809523809524
+      },
+      "max_abs_deviation": 0.0048,
+      "tolerance": 0.019,
+      "floors": {
+        "indic": 0.08,
+        "math": 0.05
+      },
+      "within_tolerance": true
+    },
+    "capability-midtrain": {
+      "steps": 130,
+      "planned": {
+        "code": 0.24512,
+        "en": 0.36952000000000007,
+        "indic": 0.17219199999999993,
+        "math": 0.21316800000000002
+      },
+      "actual": {
+        "code": 0.24615384615384617,
+        "en": 0.36923076923076925,
+        "indic": 0.17692307692307693,
+        "math": 0.2076923076923077
+      },
+      "max_abs_deviation": 0.0055,
+      "tolerance": 0.0154,
+      "floors": {
+        "indic": 0.12,
+        "math": 0.1
+      },
+      "within_tolerance": true
+    },
+    "anneal-indic-reasoning": {
+      "steps": 65,
+      "planned": {
+        "code": 0.20791538461538459,
+        "en": 0.26583076923076915,
+        "indic": 0.28100307692307697,
+        "math": 0.24525076923076924
+      },
+      "actual": {
+        "code": 0.2,
+        "en": 0.26153846153846155,
+        "indic": 0.27692307692307694,
+        "math": 0.26153846153846155
+      },
+      "max_abs_deviation": 0.0163,
+      "tolerance": 0.0308,
+      "floors": {
+        "indic": 0.25,
+        "math": 0.2
+      },
+      "within_tolerance": true
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "counts": {
+    "steps": 300,
+    "raw_positions": 57600,
+    "loss_bearing_tokens": 51477,
+    "trained_tokens": 42419,
+    "by_lane": {
+      "code": {
+        "steps": 66,
+        "raw_positions": 12672,
+        "loss_bearing_tokens": 12462,
+        "trained_tokens": 9664
+      },
+      "en": {
+        "steps": 123,
+        "raw_positions": 23616,
+        "loss_bearing_tokens": 23217,
+        "trained_tokens": 20224
+      },
+      "indic": {
+        "steps": 51,
+        "raw_positions": 9792,
+        "loss_bearing_tokens": 9582,
+        "trained_tokens": 8908
+      },
+      "math": {
+        "steps": 60,
+        "raw_positions": 11520,
+        "loss_bearing_tokens": 6216,
+        "trained_tokens": 3623
+      }
+    }
+  },
+  "reconstructed_from_ledger": {
+    "steps": 300,
+    "raw_positions": 57600,
+    "loss_bearing_tokens": 51477,
+    "trained_tokens": 42419,
+    "by_lane": {
+      "code": {
+        "steps": 66,
+        "raw_positions": 12672,
+        "loss_bearing_tokens": 12462,
+        "trained_tokens": 9664
+      },
+      "en": {
+        "steps": 123,
+        "raw_positions": 23616,
+        "loss_bearing_tokens": 23217,
+        "trained_tokens": 20224
+      },
+      "indic": {
+        "steps": 51,
+        "raw_positions": 9792,
+        "loss_bearing_tokens": 9582,
+        "trained_tokens": 8908
+      },
+      "math": {
+        "steps": 60,
+        "raw_positions": 11520,
+        "loss_bearing_tokens": 6216,
+        "trained_tokens": 3623
+      }
+    }
+  },
+  "reconstructable": true,
+  "wall_seconds": 25.129,
+  "phase_seconds": {
+    "plan_batches": 0.178,
+    "train_steps": 17.129
+  },
+  "data_path_share_of_step_time": 0.0104,
+  "tokens_per_second": {
+    "raw": 2292.1,
+    "loss_bearing": 2048.5,
+    "trained": 1688.0
+  },
+  "steps_per_second": 11.9,
+  "utilization": {
+    "loss_bearing_over_raw": 0.8937,
+    "trained_over_raw": 0.7364
+  },
+  "packing": {
+    "code": {
+      "policy": "concat_chop",
+      "sequences": 219,
+      "positions": 21024,
+      "real_tokens": 20955,
+      "learn_tokens": 20955,
+      "pad_tokens": 41,
+      "boundary_tokens": 28,
+      "utilization": 0.9967,
+      "pad_fraction": 0.002
+    },
+    "en": {
+      "policy": "concat_chop",
+      "sequences": 155,
+      "positions": 14880,
+      "real_tokens": 14811,
+      "learn_tokens": 14811,
+      "pad_tokens": 28,
+      "boundary_tokens": 41,
+      "utilization": 0.9954,
+      "pad_fraction": 0.0019
+    },
+    "indic": {
+      "policy": "concat_chop",
+      "sequences": 159,
+      "positions": 15264,
+      "real_tokens": 15159,
+      "learn_tokens": 15159,
+      "pad_tokens": 85,
+      "boundary_tokens": 20,
+      "utilization": 0.9931,
+      "pad_fraction": 0.0056
+    },
+    "math": {
+      "policy": "structure_preserving",
+      "sequences": 20,
+      "positions": 1920,
+      "real_tokens": 1420,
+      "learn_tokens": 1036,
+      "pad_tokens": 480,
+      "boundary_tokens": 20,
+      "utilization": 0.5396,
+      "pad_fraction": 0.25
+    }
+  },
+  "note": "Counts are deterministic and must equal the ledger reconstruction; rates depend on the machine running the demo."
+}

@@ -1,0 +1,20 @@
+{
+  "seed": 1234,
+  "seq_len": 96,
+  "microbatch_size": 2,
+  "docs_per_lane": 20,
+  "max_steps": 300,
+  "dim": 24,
+  "hidden": 32,
+  "lr": 0.05,
+  "accept_threshold": 1.02,
+  "defer_band": 0.08,
+  "stage_token_scale": 0.5,
+  "packing_policy": {
+    "math": "structure_preserving"
+  },
+  "sft_lanes": [
+    "math"
+  ],
+  "decontaminate": true
+}

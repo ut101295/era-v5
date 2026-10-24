@@ -1,0 +1,567 @@
+{
+  "run": {
+    "command": "python run_demo.py",
+    "python": "3.14.5",
+    "numpy": "2.5.1",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "config_hash": "sha256:06a2292b2092c40b47be147c67fbe6ae8814ef885ec33a68a39c729f88557b4e",
+    "tokenizer_hash": "sha256:e2e5934d5f8f326c8102f6d42efcecd87f6ff4d10916a7ceaaf82c6c064d4b4b",
+    "corpus_snapshot_sha256": "sha256:82ac15dd506ef5452b7a94df844b37a76ee8a8f1f888df90bd9cf6581b11ae04",
+    "elapsed_seconds": 47.1,
+    "run_log_missing_events": []
+  },
+  "overall": "PASS",
+  "requirements": [
+    {
+      "id": "tokenizer_integrity",
+      "requirement": "Tokenizer integrity",
+      "result": "PASS",
+      "evidence": [
+        "manifests/tokenizer.json",
+        "manifests/shards/shard-indic.json",
+        "manifests/shards/shard-en.json",
+        "manifests/shards/shard-code.json",
+        "manifests/shards/shard-math.json"
+      ],
+      "checks": [
+        {
+          "name": "tokenizer_hash_verified",
+          "passed": true,
+          "detail": {
+            "tokenizer_hash": "sha256:e2e5934d5f8f326c8102f6d42efcecd87f6ff4d10916a7ceaaf82c6c064d4b4b"
+          }
+        },
+        {
+          "name": "tokenizer_encoding_deterministic",
+          "passed": true,
+          "detail": {
+            "probes": 5
+          }
+        },
+        {
+          "name": "tokenizer_roundtrip_exact",
+          "passed": true,
+          "detail": {
+            "probes": 5
+          }
+        },
+        {
+          "name": "no_unk_tokens_in_corpus",
+          "passed": true,
+          "detail": {
+            "unk_tokens": 0
+          }
+        },
+        {
+          "name": "manifests_bound_to_frozen_tokenizer",
+          "passed": true,
+          "detail": {
+            "manifests": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "shard_immutability",
+      "requirement": "Shards, manifests and admission",
+      "result": "PASS",
+      "evidence": [
+        "manifests/admission.json",
+        "manifests/index.json",
+        "manifests/corpus.json",
+        "shard_store/"
+      ],
+      "checks": [
+        {
+          "name": "all_train_shards_admitted",
+          "passed": true,
+          "detail": {
+            "shards": [
+              "shard-indic",
+              "shard-en",
+              "shard-code",
+              "shard-math"
+            ]
+          }
+        },
+        {
+          "name": "shard_bytes_match_content_hash",
+          "passed": true,
+          "detail": {}
+        },
+        {
+          "name": "tampered_shard_rejected",
+          "passed": true,
+          "detail": {
+            "reasons": [
+              "content_hash_mismatch_shard_tampered"
+            ]
+          }
+        },
+        {
+          "name": "tokenizer_mismatch_rejected",
+          "passed": true,
+          "detail": {
+            "reasons": [
+              "tokenizer_hash_missing_or_mismatch"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "evaluation_firewall",
+      "requirement": "Evaluation firewall",
+      "result": "PASS",
+      "evidence": [
+        "ledgers/firewall.jsonl",
+        "manifests/eval_registry.json",
+        "reports/decontamination.json",
+        "manifests/admission.json"
+      ],
+      "checks": [
+        {
+          "name": "eval_shard_blocked",
+          "passed": true,
+          "detail": {
+            "reasons": [
+              "content_hash_matches_eval_shard",
+              "canary_string_present",
+              "ngram_overlap:2714"
+            ]
+          }
+        },
+        {
+          "name": "validation_shard_blocked",
+          "passed": true,
+          "detail": {
+            "reasons": [
+              "content_hash_matches_eval_shard",
+              "ngram_overlap:2314"
+            ]
+          }
+        },
+        {
+          "name": "contaminated_candidate_blocked",
+          "passed": true,
+          "detail": {
+            "reasons": [
+              "ngram_overlap:900"
+            ]
+          }
+        },
+        {
+          "name": "eval_shard_refused_by_admission",
+          "passed": true,
+          "detail": {
+            "reasons": [
+              "eval_overlap:test",
+              "non_train_split:test"
+            ]
+          }
+        },
+        {
+          "name": "train_shards_clear_after_decontamination",
+          "passed": true,
+          "detail": {
+            "tokens_removed_by_decontamination": {
+              "shard-indic": 0,
+              "shard-en": 2136,
+              "shard-code": 270,
+              "shard-math": 0
+            }
+          }
+        },
+        {
+          "name": "no_heldout_shard_or_ngram_in_any_trained_batch",
+          "passed": true,
+          "detail": {
+            "heldout_shards": [
+              "eval-en-heldout",
+              "val-en-heldout"
+            ],
+            "ngram_hits": 0,
+            "branches_scanned": [
+              "main",
+              "replay",
+              "fork-seed4321"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "packing_correctness",
+      "requirement": "Packing correctness",
+      "result": "PASS",
+      "evidence": [
+        "reports/packing.json"
+      ],
+      "checks": [
+        {
+          "name": "masks_valid_every_batch",
+          "passed": true,
+          "detail": {
+            "sequences_checked": 600,
+            "failures": [],
+            "invariants": "causal, same-document attention; position ids reset per doc; loss_mask == labels set"
+          }
+        },
+        {
+          "name": "no_loss_across_doc_boundary_or_pad",
+          "passed": true,
+          "detail": {
+            "violations": 0
+          }
+        },
+        {
+          "name": "sft_prompt_tokens_never_bear_loss",
+          "passed": true,
+          "detail": {
+            "violations": 0,
+            "sft_docs": 20
+          }
+        },
+        {
+          "name": "per_lane_packing_policies_applied",
+          "passed": true,
+          "detail": {
+            "chosen": {
+              "code": "concat_chop",
+              "en": "concat_chop",
+              "indic": "concat_chop",
+              "math": "structure_preserving"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "mixture_compliance",
+      "requirement": "Mixture compliance",
+      "result": "PASS",
+      "evidence": [
+        "manifests/mixture_timeline.json",
+        "reports/mixture_compliance.json"
+      ],
+      "checks": [
+        {
+          "name": "planned_vs_actual_shares_within_tolerance",
+          "passed": true,
+          "detail": {
+            "max_deviation": {
+              "general-web-seed": 0.0048,
+              "capability-midtrain": 0.0055,
+              "anneal-indic-reasoning": 0.0163
+            }
+          }
+        },
+        {
+          "name": "curriculum_reached_every_stage",
+          "passed": true,
+          "detail": {
+            "stages": {
+              "general-web-seed": 105,
+              "capability-midtrain": 130,
+              "anneal-indic-reasoning": 65
+            }
+          }
+        },
+        {
+          "name": "consumed_lanes_follow_compiled_schedule",
+          "passed": true,
+          "detail": {
+            "lane_sequence_sha256": "sha256:2b3e7541fd29378cd20ec86d2c310d4c11921f0e38e04cda6be61260d07a782d"
+          }
+        }
+      ]
+    },
+    {
+      "id": "opus_audit_trail",
+      "requirement": "OPUS audit trail",
+      "result": "PASS",
+      "evidence": [
+        "ledgers/opus.jsonl",
+        "reports/opus_summary.json"
+      ],
+      "checks": [
+        {
+          "name": "all_four_outcomes_exercised",
+          "passed": true,
+          "detail": {
+            "counts": {
+              "accepted": 202,
+              "protected": 38,
+              "rejected": 27,
+              "deferred": 33
+            }
+          }
+        },
+        {
+          "name": "every_batch_links_to_its_decision",
+          "passed": true,
+          "detail": {
+            "decisions": 300,
+            "consumption_events": 300
+          }
+        },
+        {
+          "name": "only_accepted_or_protected_batches_update_weights",
+          "passed": true,
+          "detail": {}
+        },
+        {
+          "name": "protected_floor_never_crossed",
+          "passed": true,
+          "detail": {
+            "violations": [],
+            "rule": "no rejection/deferral while the lane's accepted share is below its floor"
+          }
+        }
+      ]
+    },
+    {
+      "id": "checkpoint_binding",
+      "requirement": "Checkpoints tied to ledger offsets",
+      "result": "PASS",
+      "evidence": [
+        "checkpoints/index.json",
+        "checkpoints/"
+      ],
+      "checks": [
+        {
+          "name": "checkpoint_saved",
+          "passed": true,
+          "detail": {
+            "checkpoints": [
+              "ckpt-000049",
+              "ckpt-000099",
+              "ckpt-000149",
+              "ckpt-000199",
+              "ckpt-000249",
+              "ckpt-000299"
+            ]
+          }
+        },
+        {
+          "name": "checkpoint_offsets_point_at_their_step",
+          "passed": true,
+          "detail": {}
+        },
+        {
+          "name": "every_event_names_its_parent_checkpoint",
+          "passed": true,
+          "detail": {}
+        },
+        {
+          "name": "checkpoint_weights_identical_to_reference_run",
+          "passed": true,
+          "detail": {}
+        }
+      ]
+    },
+    {
+      "id": "crash_recovery",
+      "requirement": "Crash recovery",
+      "result": "PASS",
+      "evidence": [
+        "reports/crash_recovery.json",
+        "ledgers/crash_tail/",
+        "ledgers/consumption.jsonl",
+        "reference_run/ledgers/"
+      ],
+      "checks": [
+        {
+          "name": "worker_killed_mid_step",
+          "passed": true,
+          "detail": {
+            "exit_code": -9,
+            "step": 187
+          }
+        },
+        {
+          "name": "partial_step_rolled_back",
+          "passed": true,
+          "detail": {
+            "rolled_back": {
+              "consumption": 37,
+              "learning": 37,
+              "opus": 38
+            }
+          }
+        },
+        {
+          "name": "resume_next_batch_matched",
+          "passed": true,
+          "detail": {
+            "step": 150,
+            "batch_hash": "sha256:f6904baff85621d6595566821d6fda47eca91a90b3a8d7fb9cc8dad938de1e96"
+          }
+        },
+        {
+          "name": "no_batch_skipped_or_repeated",
+          "passed": true,
+          "detail": {
+            "events": 300
+          }
+        },
+        {
+          "name": "resumed_run_bit_identical_to_uninterrupted",
+          "passed": true,
+          "detail": {
+            "ledgers": {
+              "consumption": true,
+              "learning": true,
+              "opus": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "replay",
+      "requirement": "Replay",
+      "result": "PASS",
+      "evidence": [
+        "reports/replay.json",
+        "ledgers/consumption.replay.jsonl"
+      ],
+      "checks": [
+        {
+          "name": "replay_hash_matched",
+          "passed": true,
+          "detail": {
+            "steps": 50,
+            "fields": "batch hash, doc ids, token spans, loss mask hash"
+          }
+        },
+        {
+          "name": "replay_learning_matched",
+          "passed": true,
+          "detail": {
+            "fields": "loss before/after, grad norm, perplexity"
+          }
+        }
+      ]
+    },
+    {
+      "id": "fork",
+      "requirement": "Fork from earlier checkpoint",
+      "result": "PASS",
+      "evidence": [
+        "reports/fork.json",
+        "ledgers/consumption.fork-seed4321.jsonl",
+        "checkpoints/fork-seed4321/"
+      ],
+      "checks": [
+        {
+          "name": "fork_starts_from_parent_checkpoint_weights",
+          "passed": true,
+          "detail": {
+            "parent": "ckpt-000099"
+          }
+        },
+        {
+          "name": "fork_continues_at_next_step",
+          "passed": true,
+          "detail": {}
+        },
+        {
+          "name": "main_branch_untouched",
+          "passed": true,
+          "detail": {}
+        },
+        {
+          "name": "fork_stream_diverges",
+          "passed": true,
+          "detail": {
+            "differing": 40,
+            "of": 40
+          }
+        }
+      ]
+    },
+    {
+      "id": "learning_trace",
+      "requirement": "Learning trace",
+      "result": "PASS",
+      "evidence": [
+        "reports/learning_trace.json",
+        "ledgers/learning.jsonl",
+        "ledgers/token_trace.jsonl",
+        "ledgers/validation.jsonl",
+        "reports/audit.json"
+      ],
+      "checks": [
+        {
+          "name": "learning_events_linked_to_consumption",
+          "passed": true,
+          "detail": {
+            "events": 300
+          }
+        },
+        {
+          "name": "token_losses_traced_to_source_docs",
+          "passed": true,
+          "detail": {
+            "tokens": 120
+          }
+        },
+        {
+          "name": "loss_decreases_on_trained_batches",
+          "passed": true,
+          "detail": {
+            "first25": 7.3998,
+            "last25": 2.9275
+          }
+        },
+        {
+          "name": "validation_read_only",
+          "passed": true,
+          "detail": {
+            "val_loss": {
+              "ckpt-000049": 7.083943,
+              "ckpt-000099": 6.439253,
+              "ckpt-000149": 6.434239,
+              "ckpt-000199": 6.184729,
+              "ckpt-000249": 6.287668,
+              "ckpt-000299": 6.366212
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "throughput",
+      "requirement": "Throughput",
+      "result": "PASS",
+      "evidence": [
+        "performance.json"
+      ],
+      "checks": [
+        {
+          "name": "performance_counts_reconstructed_from_ledger",
+          "passed": true,
+          "detail": {
+            "counts": 51477
+          }
+        },
+        {
+          "name": "main_run_counts_match_reference",
+          "passed": true,
+          "detail": {}
+        },
+        {
+          "name": "packing_utilization_reported",
+          "passed": true,
+          "detail": {
+            "utilization": {
+              "loss_bearing_over_raw": 0.8937,
+              "trained_over_raw": 0.7364
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

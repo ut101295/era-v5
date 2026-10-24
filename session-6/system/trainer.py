@@ -63,6 +63,7 @@ class Trainer:
         seed: int,
         branch_id: str = "main",
         dataloader_version: str = "v1",
+        opus_ledger: Optional[Ledger] = None,
     ):
         self.model = model
         self.optim = optim
@@ -75,6 +76,7 @@ class Trainer:
         self.seed = seed
         self.branch_id = branch_id
         self.dataloader_version = dataloader_version
+        self.opus_ledger = opus_ledger
         self.tokens_consumed = 0
 
     def plan(self, step: int) -> Batch:
@@ -89,12 +91,16 @@ class Trainer:
         # OPUS decision (real model-loss-based value could be used; we pass the
         # batch and let the configured score_fn decide).
         decision = self.opus.decide(batch, stage.name, floors, checkpoint_id)
+        if self.opus_ledger is not None:
+            self.opus_ledger.append({"kind": "opus_decision", "branch_id": self.branch_id,
+                                     "batch_hash": batch.batch_hash, **decision.as_dict()})
 
         # loss BEFORE the update
         loss_before, per_seq_losses, grads = self.model.loss_and_grad(batch.tensors)
         grad_norm = self.model.grad_global_norm(grads)
 
-        if apply_update and decision.status in ("accepted", "protected"):
+        applied = apply_update and decision.status in ("accepted", "protected")
+        if applied:
             self.optim.step(self.model.params, grads)
 
         # loss AFTER the update (same batch) -> real loss delta
@@ -119,6 +125,9 @@ class Trainer:
             mixture_lane=batch.lane, curriculum_stage=stage.name,
             tokenizer_version=self._tok_version(), dataloader_version=self.dataloader_version,
             seed=self.seed, opus_decision_id=decision.candidate_id,
+            opus_status=decision.status, gradient_applied=applied,
+            n_loss_tokens=batch.n_loss_tokens, n_positions=batch.n_positions,
+            token_spans=batch.token_spans,
         ))
         self.learning.append(learning_event(
             global_step=step, branch_id=self.branch_id, lane=batch.lane,

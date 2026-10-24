@@ -10,10 +10,10 @@
 > [`plan/training-data-execution-system.md`](plan/training-data-execution-system.md). This
 > document is the narrative that ties them together and explains *why* each artifact exists.
 >
-> As of this writing we are at the **end of the planning phase**: the assignment is fully
-> understood, the research is done, and the implementation is specified module-by-module and
-> mapped to the 1,000-point rubric. Code has not been written yet — that begins once the four
-> open questions at the end of the plan are answered.
+> **Status: built and passing.** Parts 0–5 below are the planning record, kept as written.
+> The implementation is done: `python run_demo.py` runs the whole path and reports
+> 12/12 requirements PASS, and `pytest -q` runs 45 invariant tests. Part 6 at the end covers
+> the build and what it changed. The [README](README.md) is the short version for reviewers.
 
 ---
 
@@ -232,6 +232,41 @@ evidence bundle proves it."
 
 ---
 
+## Part 6 — The build, and what it changed
+
+The six milestones landed as planned. The library modules came first, with their own tests.
+Then `run_demo.py` wired them into one command, and running the whole path end to end is
+what exposed the problems the unit tests had missed. In the order they surfaced:
+
+- **Fresh clone failed.** The Indic lane read Session 4's `clean_asm.jsonl`, which is
+  gitignored, and returned an empty lane without an error. The English and code lanes read
+  the repo live, so every commit changed the shard hashes. Both now come from a committed
+  `corpus/snapshot.jsonl`.
+- **Decision A changed: the tokenizer.** The plan froze Session 2's original byte-level
+  tokenizer. Its alphabet covers only 148 of 256 bytes, so about 10% of English and code
+  tokens became `<unk>` (every newline, `*`, `_`, `#`, bracket, and capital Q). That's the
+  same bug that got Session 2 regraded to 0. The system now freezes the faithful
+  resubmission, ported to pure Python and checked token-for-token against HuggingFace
+  `tokenizers` (`scripts/verify_tokenizer_port.py`).
+- **Real contamination.** Once the firewall checked the training shards themselves, the
+  English and code lanes turned out to share 13-grams with the held-out sets. That became
+  span-level decontamination (`system/decontam.py`).
+- **Scheduler bug.** Across stage changes, error diffusion re-priced earlier steps at the
+  new weights, and English and code got no batches at all in the anneal stage. The mixture
+  compliance check caught it on the first full run.
+- **Inexact resume.** The OPUS floor counters weren't in the checkpoint, so floor decisions
+  after a resume differed from an uninterrupted run. They are now checkpointed, and the
+  demo checks the resumed run against a straight-through run byte for byte.
+
+**Decision C, partially:** the evidence bundle, tests and JSON reports are built; the
+planned static SVG charts are not. The numbers they would have drawn are in `reports/` and
+`performance.json`.
+
+The README covers the architecture and design decisions; `submission_artifacts/evidence.md`
+is the graded summary.
+
+---
+
 ## Appendix — What's where
 
 - **The assignment (verbatim lesson clip):** [`assignment.md`](assignment.md) /
@@ -241,5 +276,8 @@ evidence bundle proves it."
 - **The build design (graded spec of the system):**
   [`plan/training-data-execution-system.md`](plan/training-data-execution-system.md)
 - **This narrative:** `WALKTHROUGH.md`
-- **Reusable assets:** Session 2 `tokenizer.json`, Session 4 `clean_asm.jsonl`, Session 4
-  `.venv` (numpy 2.5.1)
+- **The system:** [`README.md`](README.md), [`run_demo.py`](run_demo.py),
+  [`system/`](system/), [`tests/`](tests/), generated
+  [`submission_artifacts/`](submission_artifacts/)
+- **Reused inputs:** Session 2 faithful `tokenizer.json`; Session 4 cleaned Assamese, frozen
+  into [`corpus/snapshot.jsonl`](corpus/snapshot.jsonl)

@@ -1,0 +1,12 @@
+{
+  "shard_set_hash": "sha256:78e77b8a3c3fcc1ff9e65cc12fa604305a882d190be7b0fd372678aae6a51688",
+  "tokenizer_hash": "sha256:e2e5934d5f8f326c8102f6d42efcecd87f6ff4d10916a7ceaaf82c6c064d4b4b",
+  "corpus_snapshot_sha256": "sha256:82ac15dd506ef5452b7a94df844b37a76ee8a8f1f888df90bd9cf6581b11ae04",
+  "config_hash": "sha256:06a2292b2092c40b47be147c67fbe6ae8814ef885ec33a68a39c729f88557b4e",
+  "train_shards": {
+    "shard-indic": "sha256:0e1304405484c3eee1887c9a4af0e300cbeaa4cde5d4d19b39030421e88a385c",
+    "shard-en": "sha256:7487eefafcce1d47b35bb84836ba770129139456b2c6e7d6fbf23683807cb57b",
+    "shard-code": "sha256:02d60596be41cf8fecec29a03aa098bac5b2968be11b74d67eeaa5a63d48f0cd",
+    "shard-math": "sha256:0f289d04814ee05fc6ee1d5a52608b685ca2dc25632743d49b2dafe418563192"
+  }
+}

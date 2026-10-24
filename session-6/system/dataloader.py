@@ -54,9 +54,30 @@ class Batch:
     n_positions: int               # total token positions (microbatch_size * seq_len)
     utilization: float
     seq_indices: List[int]         # which permuted sequence indices were consumed
+    token_spans: List[Dict] = field(default_factory=list)  # (seq, doc, start, end, loss tokens)
 
     def as_ledger_span_ids(self) -> List[str]:
         return [f"{sid}#{did}" for sid, did in zip(self.shard_ids, self.member_doc_ids)]
+
+
+def _doc_spans(k: int, seq: PackedSequence, bt: BatchTensors,
+               shard_ids: List[str]) -> List[Dict]:
+    """Contiguous runs of one document inside packed sequence `k`."""
+    out: List[Dict] = []
+    doc = seq.doc_ids
+    i, L = 0, len(doc)
+    while i < L:
+        if doc[i] < 0:
+            i += 1
+            continue
+        j = i
+        while j < L and doc[j] == doc[i]:
+            j += 1
+        out.append({"seq": k, "doc_id": seq.member_doc_ids[int(doc[i])],
+                    "start": i, "end": j,
+                    "loss_tokens": int(bt.loss_mask[i:j].sum())})
+        i = j
+    return out
 
 
 # Lane schedule signature: (seed, step) -> lane name.
@@ -76,6 +97,8 @@ class PlanContext:
         lane_schedule: Optional[LaneSchedule] = None,
         sft_agentic_spans: Optional[Dict[str, List]] = None,
     ):
+        # doc_id -> [(start, end)] learn spans; docs not listed learn on every token.
+        self.sft_agentic_spans = sft_agentic_spans or {}
         self.seq_len = seq_len
         self.microbatch_size = microbatch_size
         self.vocab_size = vocab_size
@@ -97,7 +120,8 @@ class PlanContext:
                     ids = toks[span.start:span.start + span.length]
                     if not ids:
                         continue
-                    items.append(PackItem(doc_id=span.doc_id, lane=lane, token_ids=ids))
+                    items.append(PackItem(doc_id=span.doc_id, lane=lane, token_ids=ids,
+                                          learn_spans=list(self.sft_agentic_spans.get(span.doc_id, []))))
                     item_shard.append(shard.shard_id)
             policy = self.packing_policy_by_lane.get(lane, "concat_chop")
             seqs = pack(items, seq_len, policy, vocab_size)
@@ -148,6 +172,7 @@ class PlanContext:
         member_docs: List[str] = []
         shard_ids: set = set()
         n_loss = n_pad = 0
+        token_spans: List[Dict] = []
         for k in range(self.microbatch_size):
             pos = (cursor * self.microbatch_size + k) % n   # epoch wraparound
             si = int(perm[pos])
@@ -156,6 +181,7 @@ class PlanContext:
             seq_indices.append(si)
             tensors.append(bt)
             member_docs.extend(seq.member_doc_ids)
+            token_spans.extend(_doc_spans(k, seq, bt, stream.seq_shard_ids[si]))
             shard_ids.update(stream.seq_shard_ids[si])
             n_loss += bt.n_loss_tokens()
             n_pad += seq.pad_count
@@ -168,7 +194,7 @@ class PlanContext:
             tensors=tensors, batch_hash=batch_hash,
             n_loss_tokens=n_loss, n_pad=n_pad, n_positions=n_positions,
             utilization=n_loss / n_positions if n_positions else 0.0,
-            seq_indices=seq_indices,
+            seq_indices=seq_indices, token_spans=token_spans,
         )
 
     def _hash_batch(self, step: int, lane: str, tensors: List[BatchTensors]) -> str:

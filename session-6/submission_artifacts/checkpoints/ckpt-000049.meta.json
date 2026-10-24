@@ -1,0 +1,30 @@
+{
+  "checkpoint_id": "ckpt-000049",
+  "step": 49,
+  "seed": 1234,
+  "branch_id": "main",
+  "consumption_offset": 50,
+  "learning_offset": 50,
+  "tokens_consumed": 8862,
+  "opt_t": 41,
+  "code_config_hash": "sha256:06a2292b2092c40b47be147c67fbe6ae8814ef885ec33a68a39c729f88557b4e",
+  "model_dims": {
+    "V": 10002,
+    "d": 24,
+    "h": 32,
+    "max_pos": 96
+  },
+  "extra_state": {
+    "opus": {
+      "lane_accepted": {
+        "en": 25,
+        "code": 10,
+        "math": 2,
+        "indic": 4
+      },
+      "total_accepted": 41
+    },
+    "opus_offset": 50,
+    "weights_hash": "sha256:7304aae19b081d7656101b5959abaeb932c1096675d3cea5a1c398ce7ba02c0b"
+  }
+}

@@ -55,3 +55,7 @@ session-4/pipeline/*.log
 
 # Faithful corpus raw HTML snapshots (regenerable via build_wiki_faithful_markdown.py)
 *.raw.html
+
+# Session 6 checkpoint weights (13 MB each, regenerated bit-identically by
+# run_demo.py; their sha256s are committed in submission_artifacts/checkpoints/index.json)
+session-6/submission_artifacts/**/*.npz

@@ -1,0 +1,55 @@
+{
+  "crash": {
+    "worker_exit_code": -9,
+    "signal": "SIGKILL",
+    "inside_step": 187,
+    "consumption_events_before_resume": 187,
+    "opus_decisions_before_resume": 188
+  },
+  "resume": {
+    "checkpoint": "ckpt-000149",
+    "checkpoint_step": 149,
+    "resume_step": 150,
+    "worker_exit_code": 0,
+    "rolled_back": {
+      "consumption": 37,
+      "learning": 37,
+      "opus": 38
+    },
+    "rolled_back_steps": {
+      "consumption": [
+        150,
+        186
+      ],
+      "learning": [
+        150,
+        186
+      ],
+      "opus": [
+        150,
+        187
+      ]
+    }
+  },
+  "next_batch": {
+    "expected_from_crashed_run_ledger": "sha256:f6904baff85621d6595566821d6fda47eca91a90b3a8d7fb9cc8dad938de1e96",
+    "resumed": "sha256:f6904baff85621d6595566821d6fda47eca91a90b3a8d7fb9cc8dad938de1e96",
+    "planned": "sha256:f6904baff85621d6595566821d6fda47eca91a90b3a8d7fb9cc8dad938de1e96",
+    "expected_doc_ids": [
+      "shard-indic#indic-sha256:1bfebb36927453ab"
+    ],
+    "resumed_doc_ids": [
+      "shard-indic#indic-sha256:1bfebb36927453ab"
+    ]
+  },
+  "ledger_steps_exactly_once": true,
+  "bit_identical_to_uninterrupted": {
+    "ledgers_byte_identical": {
+      "consumption": true,
+      "learning": true,
+      "opus": true
+    },
+    "final_weights_main": "sha256:b765688a4b80ec5a80fba4bf5a2ac126338f910375907bffae8a3cc2fee14794",
+    "final_weights_reference": "sha256:b765688a4b80ec5a80fba4bf5a2ac126338f910375907bffae8a3cc2fee14794"
+  }
+}

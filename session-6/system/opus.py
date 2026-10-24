@@ -114,6 +114,17 @@ class Opus:
             self._total_accepted += 1
         return dec
 
+    # ------------------------------------------------------------- state
+    def state_dict(self) -> Dict:
+        """Running floor counters. Saved in checkpoints: without them a resumed
+        run would re-evaluate protected floors from zero and diverge."""
+        return {"lane_accepted": dict(self._lane_accepted),
+                "total_accepted": self._total_accepted}
+
+    def load_state_dict(self, sd: Dict) -> None:
+        self._lane_accepted = dict(sd["lane_accepted"])
+        self._total_accepted = int(sd["total_accepted"])
+
     # ------------------------------------------------------------- audit
     def ledgers(self) -> Dict[str, List[Dict]]:
         """Four ledgers: accepted / rejected / deferred / protected (assignment §10)."""

@@ -1,0 +1,43 @@
+{
+  "interval": [
+    50,
+    100
+  ],
+  "from_checkpoint": "ckpt-000049",
+  "compared_fields": [
+    "global_step",
+    "batch_hash",
+    "packed_sample_ids",
+    "shard_ids",
+    "token_spans",
+    "loss_mask_hash",
+    "mixture_lane",
+    "curriculum_stage",
+    "opus_status",
+    "gradient_applied",
+    "loss_before",
+    "loss_after",
+    "gradient_norm",
+    "avg_token_perplexity"
+  ],
+  "steps": 50,
+  "mismatched_steps": [],
+  "mismatched_learning_steps": [],
+  "sample": [
+    {
+      "step": 50,
+      "original": "sha256:47e47855482f39b92aba83c7ecc476713f46e3543e33c69251dda982e5d9443b",
+      "replay": "sha256:47e47855482f39b92aba83c7ecc476713f46e3543e33c69251dda982e5d9443b"
+    },
+    {
+      "step": 51,
+      "original": "sha256:2e9723cd03a787891026791d1e86bbca716ab2d797df5f99bb5db29a4dc9c86a",
+      "replay": "sha256:2e9723cd03a787891026791d1e86bbca716ab2d797df5f99bb5db29a4dc9c86a"
+    },
+    {
+      "step": 52,
+      "original": "sha256:0a2dd44eae38c772c44f3610f6d93dc512b61f9e6d5e35f00a763eb00d6a8f42",
+      "replay": "sha256:0a2dd44eae38c772c44f3610f6d93dc512b61f9e6d5e35f00a763eb00d6a8f42"
+    }
+  ]
+}

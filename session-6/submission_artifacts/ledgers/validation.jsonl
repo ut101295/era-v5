@@ -1,0 +1,6 @@
+{"checkpoint_id": "ckpt-000049", "kind": "validation", "loss_tokens": 2305, "shard_id": "val-en-heldout", "split": "validation", "step": 49, "val_loss": 7.083943, "weights_unchanged": true}
+{"checkpoint_id": "ckpt-000099", "kind": "validation", "loss_tokens": 2305, "shard_id": "val-en-heldout", "split": "validation", "step": 99, "val_loss": 6.439253, "weights_unchanged": true}
+{"checkpoint_id": "ckpt-000149", "kind": "validation", "loss_tokens": 2305, "shard_id": "val-en-heldout", "split": "validation", "step": 149, "val_loss": 6.434239, "weights_unchanged": true}
+{"checkpoint_id": "ckpt-000199", "kind": "validation", "loss_tokens": 2305, "shard_id": "val-en-heldout", "split": "validation", "step": 199, "val_loss": 6.184729, "weights_unchanged": true}
+{"checkpoint_id": "ckpt-000249", "kind": "validation", "loss_tokens": 2305, "shard_id": "val-en-heldout", "split": "validation", "step": 249, "val_loss": 6.287668, "weights_unchanged": true}
+{"checkpoint_id": "ckpt-000299", "kind": "validation", "loss_tokens": 2305, "shard_id": "val-en-heldout", "split": "validation", "step": 299, "val_loss": 6.366212, "weights_unchanged": true}

@@ -91,19 +91,27 @@ class Timeline:
 
     # ---------------------------------------------------------------- build
     def build(self, max_steps: int) -> "Timeline":
-        """Precompute the deterministic lane sequence via error-diffusion."""
+        """Precompute the deterministic lane sequence via error-diffusion.
+
+        Each lane's target is the running sum of its per-step weight, so a
+        stage change only affects steps from that point on. (Using
+        `current_weight * total_steps` instead would re-price the whole history
+        at the new stage's weights: a lane over-served earlier would then be
+        starved for an entire later stage to pay the difference back.)
+        """
         consumed = {l: 0.0 for l in self.lanes}
+        target = {l: 0.0 for l in self.lanes}
         self._lane_seq = []
         self._weights_seq = []
         for step in range(max_steps):
             w = self.weights_for_step(step)
             self._weights_seq.append(w)
-            total_after = step + 1
+            for lane in self.lanes:
+                target[lane] += w.get(lane, 0.0)
             # sampling error = target_count - consumed; pick the max (ties: lane name)
             best_lane, best_err = None, None
             for lane in self.lanes:
-                target = w.get(lane, 0.0) * total_after
-                err = target - consumed[lane]
+                err = target[lane] - consumed[lane]
                 key = (err, -ord(lane[0]))  # deterministic tiebreak
                 if best_err is None or key > best_err:
                     best_err, best_lane = key, lane
@@ -155,34 +163,41 @@ class Timeline:
         return report
 
 
-def default_timeline(tokens_per_step: int) -> Timeline:
+def default_timeline(tokens_per_step: int, token_scale: float = 1.0) -> Timeline:
     """A small 3-stage curriculum for the demo: general -> capability -> anneal.
 
     Weights echo Session 5's mixture spirit (web-heavy start, capability-heavy
     midtrain, Indic/reasoning-upsampled anneal), with protected floors on the
     scarce lanes so OPUS can never starve them.
+
+    `token_scale` shrinks every stage boundary and warmup band proportionally, so
+    a short run can still pass through all three stages without changing the
+    stage shapes.
     """
+    def t(n: int) -> int:
+        return int(round(n * token_scale))
+
     stages = [
         Stage(
             name="general-web-seed",
-            token_start=0, token_end=40_000,
+            token_start=0, token_end=t(40_000),
             weights={"en": 0.55, "code": 0.20, "math": 0.15, "indic": 0.10},
             floors={"indic": 0.08, "math": 0.05},
             warmup_tokens=0,
         ),
         Stage(
             name="capability-midtrain",
-            token_start=40_000, token_end=90_000,
+            token_start=t(40_000), token_end=t(90_000),
             weights={"en": 0.35, "code": 0.25, "math": 0.22, "indic": 0.18},
             floors={"indic": 0.12, "math": 0.10},
-            warmup_tokens=10_000,
+            warmup_tokens=t(10_000),
         ),
         Stage(
             name="anneal-indic-reasoning",
-            token_start=90_000, token_end=10_000_000,
+            token_start=t(90_000), token_end=t(10_000_000),
             weights={"en": 0.25, "code": 0.20, "math": 0.25, "indic": 0.30},
             floors={"indic": 0.25, "math": 0.20},
-            warmup_tokens=8_000,
+            warmup_tokens=t(8_000),
         ),
     ]
     return Timeline(stages, tokens_per_step, anneal_reserve_lanes=["indic", "math"])
