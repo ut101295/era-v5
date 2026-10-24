@@ -1,0 +1,203 @@
+{
+  "shard_id": "shard-code",
+  "lane": "code",
+  "token_count": 20955,
+  "doc_spans": [
+    {
+      "doc_id": "code-session-10_training-loop_build_notebook.py",
+      "start": 0,
+      "length": 1180,
+      "source_id": "repo:session-10/training-loop/build_notebook.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-10_training-loop_train_loop.py",
+      "start": 1180,
+      "length": 1043,
+      "source_id": "repo:session-10/training-loop/train_loop.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-11_optimizers_adam_lab.py",
+      "start": 2223,
+      "length": 1045,
+      "source_id": "repo:session-11/optimizers/adam_lab.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-11_optimizers_build_notebook.py",
+      "start": 3268,
+      "length": 1177,
+      "source_id": "repo:session-11/optimizers/build_notebook.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_build_notebook.py~0",
+      "start": 4445,
+      "length": 316,
+      "source_id": "repo:session-12/zero-sim/build_notebook.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_build_notebook.py~1",
+      "start": 4761,
+      "length": 97,
+      "source_id": "repo:session-12/zero-sim/build_notebook.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_build_notebook.py~2",
+      "start": 4858,
+      "length": 759,
+      "source_id": "repo:session-12/zero-sim/build_notebook.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_zero_sim.py~2",
+      "start": 5617,
+      "length": 28,
+      "source_id": "repo:session-12/zero-sim/zero_sim.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_zero_sim.py~3",
+      "start": 5645,
+      "length": 110,
+      "source_id": "repo:session-12/zero-sim/zero_sim.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_zero_sim.py~4",
+      "start": 5755,
+      "length": 47,
+      "source_id": "repo:session-12/zero-sim/zero_sim.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_zero_sim.py~5",
+      "start": 5802,
+      "length": 297,
+      "source_id": "repo:session-12/zero-sim/zero_sim.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_zero_sim.py~6",
+      "start": 6099,
+      "length": 18,
+      "source_id": "repo:session-12/zero-sim/zero_sim.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-12_zero-sim_zero_sim.py~7",
+      "start": 6117,
+      "length": 383,
+      "source_id": "repo:session-12/zero-sim/zero_sim.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-13_reversible-llm_build_notebook.py",
+      "start": 6500,
+      "length": 1186,
+      "source_id": "repo:session-13/reversible-llm/build_notebook.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-13_reversible-llm_reversible_lab.py~0",
+      "start": 7686,
+      "length": 82,
+      "source_id": "repo:session-13/reversible-llm/reversible_lab.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-13_reversible-llm_reversible_lab.py~3",
+      "start": 7768,
+      "length": 769,
+      "source_id": "repo:session-13/reversible-llm/reversible_lab.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-14_moe-upcycle_build_notebook.py",
+      "start": 8537,
+      "length": 1219,
+      "source_id": "repo:session-14/moe-upcycle/build_notebook.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-14_moe-upcycle_moe_lab.py",
+      "start": 9756,
+      "length": 1006,
+      "source_id": "repo:session-14/moe-upcycle/moe_lab.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-2_faithful-tokenizer_build_wiki_faithful_markdown.py",
+      "start": 10762,
+      "length": 1100,
+      "source_id": "repo:session-2/faithful-tokenizer/build_wiki_faithful_markdown.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-2_faithful-tokenizer_evaluate_tokenizer.py",
+      "start": 11862,
+      "length": 1138,
+      "source_id": "repo:session-2/faithful-tokenizer/evaluate_tokenizer.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-2_faithful-tokenizer_train_tokenizer.py",
+      "start": 13000,
+      "length": 1020,
+      "source_id": "repo:session-2/faithful-tokenizer/train_tokenizer.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-2_multilingual-tokenizer_bpe_tokenizer.py",
+      "start": 14020,
+      "length": 1008,
+      "source_id": "repo:session-2/multilingual-tokenizer/bpe_tokenizer.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-2_multilingual-tokenizer_fetch_data.py",
+      "start": 15028,
+      "length": 1064,
+      "source_id": "repo:session-2/multilingual-tokenizer/fetch_data.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-2_multilingual-tokenizer_train.py",
+      "start": 16092,
+      "length": 1052,
+      "source_id": "repo:session-2/multilingual-tokenizer/train.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-4_pipeline_decontam.py",
+      "start": 17144,
+      "length": 766,
+      "source_id": "repo:session-4/pipeline/decontam.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-4_pipeline_dedup.py",
+      "start": 17910,
+      "length": 1032,
+      "source_id": "repo:session-4/pipeline/dedup.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-4_pipeline_fetch_data.py",
+      "start": 18942,
+      "length": 1017,
+      "source_id": "repo:session-4/pipeline/fetch_data.py",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "code-session-4_pipeline_formats.py",
+      "start": 19959,
+      "length": 996,
+      "source_id": "repo:session-4/pipeline/formats.py",
+      "provenance_tier": "permissive-repo"
+    }
+  ]
+}

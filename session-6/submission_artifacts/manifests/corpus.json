@@ -1,0 +1,12 @@
+{
+  "snapshot": "corpus/snapshot.jsonl",
+  "snapshot_sha256": "sha256:82ac15dd506ef5452b7a94df844b37a76ee8a8f1f888df90bd9cf6581b11ae04",
+  "documents": 174,
+  "lane_counts": {
+    "indic": 60,
+    "en": 30,
+    "code": 24,
+    "math": 60
+  },
+  "cleaning_pipeline_hash": "sha256:session4-pipeline-v1"
+}

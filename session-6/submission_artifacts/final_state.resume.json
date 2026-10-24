@@ -1,0 +1,14 @@
+{
+  "last_step": 299,
+  "weights_hash": "sha256:b765688a4b80ec5a80fba4bf5a2ac126338f910375907bffae8a3cc2fee14794",
+  "opus_state": {
+    "lane_accepted": {
+      "en": 107,
+      "code": 51,
+      "math": 35,
+      "indic": 47
+    },
+    "total_accepted": 240
+  },
+  "tokens_consumed": 51477
+}

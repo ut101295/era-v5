@@ -27,7 +27,7 @@ def checkpoint_id(step: int) -> str:
 def save_checkpoint(
     ckpt_dir: str, model: TinyLM, optim: Adam, *, step: int, seed: int,
     branch_id: str, consumption_offset: int, learning_offset: int,
-    tokens_consumed: int, code_config_hash: str,
+    tokens_consumed: int, code_config_hash: str, extra_state: Dict | None = None,
 ) -> str:
     os.makedirs(ckpt_dir, exist_ok=True)
     cid = checkpoint_id(step)
@@ -47,6 +47,7 @@ def save_checkpoint(
         "tokens_consumed": tokens_consumed, "opt_t": opt_sd["t"],
         "code_config_hash": code_config_hash,
         "model_dims": {"V": model.V, "d": model.d, "h": model.h, "max_pos": model.max_pos},
+        "extra_state": extra_state or {},
     }
     with open(os.path.join(ckpt_dir, f"{cid}.meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)

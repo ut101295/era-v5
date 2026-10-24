@@ -1,0 +1,38 @@
+{
+  "mean_loss_first25_trained_steps": 7.3998,
+  "mean_loss_last25_trained_steps": 2.9275,
+  "loss_by_lane": {
+    "code": {
+      "first5": 6.706,
+      "last5": 5.171,
+      "trained_steps": 51
+    },
+    "en": {
+      "first5": 8.4282,
+      "last5": 5.4743,
+      "trained_steps": 107
+    },
+    "indic": {
+      "first5": 5.7623,
+      "last5": 1.5346,
+      "trained_steps": 47
+    },
+    "math": {
+      "first5": 6.7344,
+      "last5": 1.5524,
+      "trained_steps": 35
+    }
+  },
+  "usefulness": {
+    "useful": 240,
+    "neutral": 60
+  },
+  "validation_loss_by_checkpoint": {
+    "ckpt-000049": 7.083943,
+    "ckpt-000099": 6.439253,
+    "ckpt-000149": 6.434239,
+    "ckpt-000199": 6.184729,
+    "ckpt-000249": 6.287668,
+    "ckpt-000299": 6.366212
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "tokens_per_step": 192,
+  "steps": 300,
+  "lane_sequence_sha256": "sha256:2b3e7541fd29378cd20ec86d2c310d4c11921f0e38e04cda6be61260d07a782d",
+  "anneal_reserve_lanes": [
+    "indic",
+    "math"
+  ],
+  "stages": [
+    {
+      "name": "general-web-seed",
+      "token_start": 0,
+      "token_end": 20000,
+      "warmup_tokens": 0,
+      "weights": {
+        "en": 0.55,
+        "code": 0.2,
+        "math": 0.15,
+        "indic": 0.1
+      },
+      "floors": {
+        "indic": 0.08,
+        "math": 0.05
+      },
+      "normalized_weights": {
+        "en": 0.55,
+        "code": 0.2,
+        "math": 0.15,
+        "indic": 0.1
+      },
+      "steps": [
+        0,
+        104
+      ]
+    },
+    {
+      "name": "capability-midtrain",
+      "token_start": 20000,
+      "token_end": 45000,
+      "warmup_tokens": 5000,
+      "weights": {
+        "en": 0.35,
+        "code": 0.25,
+        "math": 0.22,
+        "indic": 0.18
+      },
+      "floors": {
+        "indic": 0.12,
+        "math": 0.1
+      },
+      "normalized_weights": {
+        "en": 0.35,
+        "code": 0.25,
+        "math": 0.22,
+        "indic": 0.18
+      },
+      "steps": [
+        105,
+        234
+      ]
+    },
+    {
+      "name": "anneal-indic-reasoning",
+      "token_start": 45000,
+      "token_end": 5000000,
+      "warmup_tokens": 4000,
+      "weights": {
+        "en": 0.25,
+        "code": 0.2,
+        "math": 0.25,
+        "indic": 0.3
+      },
+      "floors": {
+        "indic": 0.25,
+        "math": 0.2
+      },
+      "normalized_weights": {
+        "en": 0.25,
+        "code": 0.2,
+        "math": 0.25,
+        "indic": 0.3
+      },
+      "steps": [
+        235,
+        299
+      ]
+    }
+  ],
+  "planned_shares_overall": {
+    "code": 0.22,
+    "en": 0.41,
+    "indic": 0.17,
+    "math": 0.2
+  },
+  "scarcity": {
+    "code": {
+      "demand_sequences": 132.0,
+      "supply_sequences": 219,
+      "epochs_required": 0.6,
+      "needs_repetition_or_synthesis": false,
+      "anneal_reserved": false
+    },
+    "en": {
+      "demand_sequences": 246.0,
+      "supply_sequences": 155,
+      "epochs_required": 1.59,
+      "needs_repetition_or_synthesis": true,
+      "anneal_reserved": false
+    },
+    "indic": {
+      "demand_sequences": 102.0,
+      "supply_sequences": 159,
+      "epochs_required": 0.64,
+      "needs_repetition_or_synthesis": false,
+      "anneal_reserved": true
+    },
+    "math": {
+      "demand_sequences": 120.0,
+      "supply_sequences": 20,
+      "epochs_required": 6.0,
+      "needs_repetition_or_synthesis": true,
+      "anneal_reserved": true
+    }
+  }
+}

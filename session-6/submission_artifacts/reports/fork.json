@@ -1,0 +1,27 @@
+{
+  "branch": "fork-seed4321",
+  "parent_branch": "main",
+  "parent_checkpoint": "ckpt-000099",
+  "parent_consumption_offset": 100,
+  "inherits": "main consumption ledger events [0, 100)",
+  "changed": {
+    "seed": [
+      1234,
+      4321
+    ]
+  },
+  "config_hash": {
+    "parent": "sha256:06a2292b2092c40b47be147c67fbe6ae8814ef885ec33a68a39c729f88557b4e",
+    "fork": "sha256:15d0354fb38e2843c998339066b176232bac61ea5f97325332e91e8298f271fb"
+  },
+  "start_weights_hash": "sha256:9fbc0e4a091279d24be2718334a1791c3307865f07fd6e6fd76ec7183268045a",
+  "parent_checkpoint_weights_hash": "sha256:9fbc0e4a091279d24be2718334a1791c3307865f07fd6e6fd76ec7183268045a",
+  "steps": [
+    100,
+    139
+  ],
+  "batches_differing_from_main": 40,
+  "batches": 40,
+  "main_ledger_sha256_before": "sha256:ee4829afb26feafd90afedc08f3792af2510bfd8224de460264ed122846b3908",
+  "main_ledger_sha256_after": "sha256:ee4829afb26feafd90afedc08f3792af2510bfd8224de460264ed122846b3908"
+}

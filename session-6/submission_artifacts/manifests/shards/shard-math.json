@@ -1,0 +1,57 @@
+{
+  "shard_id": "shard-math",
+  "content_hash": "sha256:8fd13c8fcb7f7741d8155267e9bc344f69a1ff302437c6f1287fc6dcf1ad1fbb",
+  "tokenizer_hash": "sha256:e2e5934d5f8f326c8102f6d42efcecd87f6ff4d10916a7ceaaf82c6c064d4b4b",
+  "storage_format": "indexed_bin",
+  "source_ids": [
+    "synthetic-arithmetic-cot"
+  ],
+  "document_ids": [
+    "math-0",
+    "math-1",
+    "math-2",
+    "math-3",
+    "math-4",
+    "math-5",
+    "math-6",
+    "math-7",
+    "math-8",
+    "math-9",
+    "math-10",
+    "math-11",
+    "math-12",
+    "math-13",
+    "math-14",
+    "math-15",
+    "math-16",
+    "math-17",
+    "math-18",
+    "math-19"
+  ],
+  "token_count": 1420,
+  "language": "en",
+  "script": "Latn",
+  "capability_lane": "math",
+  "license": "generated",
+  "provenance_tier": "synthetic",
+  "cleaning_pipeline_hash": "sha256:session4-pipeline-v1",
+  "dedup_status": {
+    "exact": true,
+    "minhash_lsh": false,
+    "semantic": false
+  },
+  "contamination_status": "clean",
+  "eval_overlap_status": "none",
+  "split": "train",
+  "parent_shard_ids": [],
+  "canary": null,
+  "decontamination": {
+    "docs_in": 20,
+    "docs_touched": 0,
+    "tokens_in": 1420,
+    "tokens_removed": 0,
+    "pieces_dropped_short": 0,
+    "docs_out": 20
+  },
+  "manifest_hash": "sha256:0f289d04814ee05fc6ee1d5a52608b685ca2dc25632743d49b2dafe418563192"
+}

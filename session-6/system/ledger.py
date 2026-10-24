@@ -66,6 +66,9 @@ def consumption_event(
     shard_ids: List[str], batch_hash: str, loss_mask_hash: str,
     mixture_lane: str, curriculum_stage: str, tokenizer_version: str,
     dataloader_version: str, seed: int, opus_decision_id: str | None,
+    opus_status: str | None = None, gradient_applied: bool | None = None,
+    n_loss_tokens: int | None = None, n_positions: int | None = None,
+    token_spans: List[Dict] | None = None,
 ) -> Dict:
     return {
         "kind": "consumption",
@@ -77,6 +80,9 @@ def consumption_event(
         "mixture_lane": mixture_lane, "curriculum_stage": curriculum_stage,
         "tokenizer_version": tokenizer_version, "dataloader_version": dataloader_version,
         "opus_decision_id": opus_decision_id, "seed": seed,
+        "opus_status": opus_status, "gradient_applied": gradient_applied,
+        "n_loss_tokens": n_loss_tokens, "n_positions": n_positions,
+        "token_spans": token_spans or [],
     }
 
 

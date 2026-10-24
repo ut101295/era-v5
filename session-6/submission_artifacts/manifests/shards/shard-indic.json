@@ -1,0 +1,57 @@
+{
+  "shard_id": "shard-indic",
+  "content_hash": "sha256:fae4528c519313e0cf31e93f7e6f7911544e8f66457f0253083988c4a25fe42e",
+  "tokenizer_hash": "sha256:e2e5934d5f8f326c8102f6d42efcecd87f6ff4d10916a7ceaaf82c6c064d4b4b",
+  "storage_format": "indexed_bin",
+  "source_ids": [
+    "session4-clean-asm"
+  ],
+  "document_ids": [
+    "indic-sha256:eecbca6cac609004",
+    "indic-sha256:b99dfcae82e0ff6d",
+    "indic-sha256:0ece2774f7f2d841",
+    "indic-sha256:fcbf1de45c6ba944",
+    "indic-sha256:b65e3fbf16e68a6a",
+    "indic-sha256:d7b442db0b42aa27",
+    "indic-sha256:aa5590b4fd695e84",
+    "indic-sha256:76550c1795272ddd",
+    "indic-sha256:097de896632f619b",
+    "indic-sha256:4d925f3cfe16f135",
+    "indic-sha256:d00c3cbc7f9f684b",
+    "indic-sha256:8399c4644482221d",
+    "indic-sha256:d212e87d68826a39",
+    "indic-sha256:0d7b7bc75e5f0f81",
+    "indic-sha256:a890b3c3eb88d35e",
+    "indic-sha256:1bfebb36927453ab",
+    "indic-sha256:698e0355a3c4c0db",
+    "indic-sha256:fab4ee8bfe33ddfd",
+    "indic-sha256:5ca6ebb5b9794f15",
+    "indic-sha256:c5b5863f8eb10ade"
+  ],
+  "token_count": 15159,
+  "language": "asm",
+  "script": "Beng",
+  "capability_lane": "indic",
+  "license": "CC-BY-SA-4.0",
+  "provenance_tier": "verified-native",
+  "cleaning_pipeline_hash": "sha256:session4-pipeline-v1",
+  "dedup_status": {
+    "exact": true,
+    "minhash_lsh": false,
+    "semantic": false
+  },
+  "contamination_status": "clean",
+  "eval_overlap_status": "none",
+  "split": "train",
+  "parent_shard_ids": [],
+  "canary": null,
+  "decontamination": {
+    "docs_in": 20,
+    "docs_touched": 0,
+    "tokens_in": 15159,
+    "tokens_removed": 0,
+    "pieces_dropped_short": 0,
+    "docs_out": 20
+  },
+  "manifest_hash": "sha256:0e1304405484c3eee1887c9a4af0e300cbeaa4cde5d4d19b39030421e88a385c"
+}

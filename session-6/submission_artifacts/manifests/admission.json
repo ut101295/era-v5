@@ -1,0 +1,45 @@
+{
+  "train_shards": [
+    {
+      "shard_id": "shard-indic",
+      "admitted": true,
+      "reasons": []
+    },
+    {
+      "shard_id": "shard-en",
+      "admitted": true,
+      "reasons": []
+    },
+    {
+      "shard_id": "shard-code",
+      "admitted": true,
+      "reasons": []
+    },
+    {
+      "shard_id": "shard-math",
+      "admitted": true,
+      "reasons": []
+    }
+  ],
+  "negative_controls": {
+    "tampered_shard_byte_flipped": {
+      "admitted": false,
+      "reasons": [
+        "content_hash_mismatch_shard_tampered"
+      ]
+    },
+    "wrong_tokenizer_hash": {
+      "admitted": false,
+      "reasons": [
+        "tokenizer_hash_missing_or_mismatch"
+      ]
+    },
+    "eval_shard_offered_as_train": {
+      "admitted": false,
+      "reasons": [
+        "eval_overlap:test",
+        "non_train_split:test"
+      ]
+    }
+  }
+}

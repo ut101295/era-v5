@@ -17,7 +17,16 @@ from typing import Dict, List
 
 from .build import Bundle, Config, build_system
 from .checkpoint import (checkpoint_id, load_checkpoint, save_checkpoint)
+from .hashing import sha256_bytes
 from .model import Adam, TinyLM
+
+
+def weights_hash(model: TinyLM) -> str:
+    """sha256 over every parameter's raw bytes, in sorted-key order."""
+    h = bytearray()
+    for k in sorted(model.params):
+        h += k.encode() + model.params[k].tobytes()
+    return sha256_bytes(bytes(h))
 
 
 def train_through(bundle: Bundle, start: int, end: int, ckpt_dir: str,
@@ -42,7 +51,19 @@ def _save(bundle: Bundle, step: int, ckpt_dir: str) -> str:
         learning_offset=bundle.learning.offset(),
         tokens_consumed=bundle.trainer.tokens_consumed,
         code_config_hash=bundle.config.hash(),
+        extra_state={"opus": bundle.opus.state_dict(),
+                     "opus_offset": bundle.opus_ledger.offset(),
+                     "weights_hash": weights_hash(bundle.model)},
     )
+
+
+def restore(bundle: Bundle, ckpt_dir: str, cid: str) -> Dict:
+    """Load a checkpoint into `bundle`: model, optimizer, OPUS counters, token count."""
+    meta = load_checkpoint(ckpt_dir, cid, bundle.model, bundle.optim)
+    bundle.trainer.tokens_consumed = meta["tokens_consumed"]
+    if meta.get("extra_state", {}).get("opus"):
+        bundle.opus.load_state_dict(meta["extra_state"]["opus"])
+    return meta
 
 
 def crash_and_resume(artifacts_dir: str, config: Config, ckpt_dir: str,
@@ -61,6 +82,7 @@ def crash_and_resume(artifacts_dir: str, config: Config, ckpt_dir: str,
     log(f"[PASS] checkpoint_saved {cid}")
     committed_cons = b.consumption.offset()
     committed_learn = b.learning.offset()
+    committed_opus = b.opus_ledger.offset()
 
     # The batch we EXPECT to consume next (recorded before the crash).
     expected = b.trainer.plan(checkpoint_at + 1).batch_hash
@@ -72,11 +94,11 @@ def crash_and_resume(artifacts_dir: str, config: Config, ckpt_dir: str,
     # ---- CRASH: discard in-memory state, roll ledgers back to the checkpoint ----
     b.consumption.truncate_to(committed_cons)
     b.learning.truncate_to(committed_learn)
+    b.opus_ledger.truncate_to(committed_opus)
 
     # ---- RESUME: fresh objects, load checkpoint, continue ----
     b2 = build_system(artifacts_dir, config)
-    meta = load_checkpoint(ckpt_dir, cid, b2.model, b2.optim)
-    b2.trainer.tokens_consumed = meta["tokens_consumed"]
+    meta = restore(b2, ckpt_dir, cid)
     resume_step = meta["step"] + 1
     r = b2.trainer.train_step(resume_step, checkpoint_id=cid)
 
@@ -131,7 +153,7 @@ def fork(artifacts_dir: str, config: Config, ckpt_dir: str, fork_at: int,
     # new branch: same checkpoint, new seed -> divergent data stream (declared)
     fork_config = Config(**{**config.__dict__, "seed": new_seed})
     b2 = build_system(artifacts_dir, fork_config, branch_id=f"fork-{new_seed}")
-    load_checkpoint(ckpt_dir, cid, b2.model, b2.optim)
+    restore(b2, ckpt_dir, cid)
     fork_next = b2.trainer.plan(fork_at + 1).batch_hash
     b2.trainer.train_step(fork_at + 1, checkpoint_id=cid)
 

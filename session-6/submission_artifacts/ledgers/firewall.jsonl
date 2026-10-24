@@ -1,0 +1,7 @@
+{"blocked": true, "candidate": "eval_shard_as_train", "kind": "firewall", "overlap_ratio": 1.0, "reasons": ["content_hash_matches_eval_shard", "canary_string_present", "ngram_overlap:2714"], "shard_id": "eval-en-heldout", "split": "test"}
+{"blocked": true, "candidate": "validation_shard_as_train", "kind": "firewall", "overlap_ratio": 1.0, "reasons": ["content_hash_matches_eval_shard", "ngram_overlap:2314"], "shard_id": "val-en-heldout", "split": "validation"}
+{"blocked": true, "candidate": "contaminated_train_candidate", "kind": "firewall", "overlap_ratio": 0.6032, "reasons": ["ngram_overlap:900"], "shard_id": "cand-contaminated-en", "split": "train"}
+{"blocked": false, "candidate": "train:shard-indic", "kind": "firewall", "overlap_ratio": 0.0, "reasons": [], "shard_id": "shard-indic", "split": "train"}
+{"blocked": false, "candidate": "train:shard-en", "kind": "firewall", "overlap_ratio": 0.0, "reasons": [], "shard_id": "shard-en", "split": "train"}
+{"blocked": false, "candidate": "train:shard-code", "kind": "firewall", "overlap_ratio": 0.0, "reasons": [], "shard_id": "shard-code", "split": "train"}
+{"blocked": false, "candidate": "train:shard-math", "kind": "firewall", "overlap_ratio": 0.0, "reasons": [], "shard_id": "shard-math", "split": "train"}

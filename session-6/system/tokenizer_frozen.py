@@ -1,4 +1,21 @@
-"""Frozen byte-level BPE tokenizer (pure Python, stdlib only).
+"""Frozen BPE tokenizer (pure Python, stdlib only).
+
+Two tokenizer.json formats are supported, selected from the file itself:
+
+  * metaspace + byte_fallback (DEFAULT) -- Session 2's *faithful* resubmission
+    (`session-2/faithful-tokenizer/tokenizer.json`): NFC, spaces -> U+2581,
+    char-level BPE, and any symbol outside the vocab falls back to its UTF-8
+    bytes as `<0xHH>` tokens. Every character round-trips; [UNK] never appears
+    for real text. Ported from that widget's `engine.mjs` and checked
+    token-for-token against HuggingFace `tokenizers` by
+    `scripts/verify_tokenizer_port.py`.
+  * byte-level (legacy) -- Session 2's original submission, documented below.
+    Kept so older artifacts stay loadable, but NOT used: its alphabet covers only
+    148 of 256 bytes, so newlines, `*`, `_`, `#`, brackets and capital Q all
+    encode to <unk> (about 10% of English/code tokens in this corpus). That is
+    the bug that got Session 2 regraded to 0.
+
+Legacy byte-level notes:
 
 This is a faithful Python port of Session 2's browser widget BPE
 (`session-2/tokenizer-widget/index.html`), which is itself a verified port of
@@ -38,8 +55,7 @@ _DEFAULT_TOKENIZER_PATH = os.path.normpath(
         "..",
         "..",
         "session-2",
-        "multilingual-tokenizer",
-        "output",
+        "faithful-tokenizer",
         "tokenizer.json",
     )
 )
@@ -63,8 +79,11 @@ def _byte_to_unicode() -> Dict[int, str]:
     return {b: chr(c) for b, c in zip(bs, cs)}
 
 
+METASPACE = "\u2581"
+
+
 class FrozenTokenizer:
-    """Immutable byte-level BPE tokenizer loaded from a frozen tokenizer.json."""
+    """Immutable BPE tokenizer loaded from a frozen tokenizer.json."""
 
     def __init__(self, path: str | None = None):
         self.path = path or _DEFAULT_TOKENIZER_PATH
@@ -86,8 +105,19 @@ class FrozenTokenizer:
             pair = tuple(m) if isinstance(m, list) else tuple(m.split(" "))
             self.rank[(pair[0], pair[1])] = i
 
-        self.unk_token = model.get("unk_token", "<unk>")
+        self.unk_token = model.get("unk_token") or "<unk>"
         self.unk_id = self.vocab.get(self.unk_token, 0)
+
+        pre = tk.get("pre_tokenizer") or {}
+        self.mode = ("metaspace_byte_fallback"
+                     if pre.get("type") == "Metaspace" and model.get("byte_fallback")
+                     else "byte_level")
+        if self.mode == "metaspace_byte_fallback":
+            assert pre.get("prepend_scheme", "never") == "never", "unsupported Metaspace scheme"
+            assert not model.get("fuse_unk"), "fuse_unk is not supported"
+            self._byte_ids = [self.vocab.get(f"<0x{b:02X}>") for b in range(256)]
+            assert all(i is not None for i in self._byte_ids), \
+                "byte_fallback needs all 256 <0xHH> tokens in the vocab"
 
         self._b2u = _byte_to_unicode()
         self._u2b = {u: b for b, u in self._b2u.items()}
@@ -162,20 +192,65 @@ class FrozenTokenizer:
             i = nxt[i]
         return out
 
+    def _pre_tokenize(self, text: str) -> List[str]:
+        """Metaspace(split=True, prepend_scheme=never): only U+0020 becomes the
+        metaspace, and each metaspace starts a new pre-token. Newlines and tabs
+        stay inside pre-tokens."""
+        s = unicodedata.normalize("NFC", text).replace(" ", METASPACE)
+        pre, cur = [], ""
+        for ch in s:
+            if ch == METASPACE:
+                if cur:
+                    pre.append(cur)
+                cur = METASPACE
+            else:
+                cur += ch
+        if cur:
+            pre.append(cur)
+        return pre
+
+    def _symbol_ids(self, sym: str) -> List[int]:
+        tid = self.vocab.get(sym)
+        if tid is not None:
+            return [tid]
+        return [self._byte_ids[b] for b in sym.encode("utf-8")]
+
     def encode(self, text: str) -> List[int]:
         """Text -> list of token IDs."""
+        if self.mode == "metaspace_byte_fallback":
+            ids: List[int] = []
+            for pt in self._pre_tokenize(text):
+                for sym in self._bpe(list(pt)):
+                    ids.extend(self._symbol_ids(sym))
+            return ids
         symbols = self._bpe(self._text_to_symbols(text))
         return [self.vocab.get(s, self.unk_id) for s in symbols]
 
     def encode_tokens(self, text: str) -> List[str]:
-        """Text -> list of token strings (visible-Unicode form). For debugging."""
-        return self._bpe(self._text_to_symbols(text))
+        """Text -> list of token strings. For debugging."""
+        return [self.id_to_token[i] for i in self.encode(text)]
 
     # ------------------------------------------------------------------ decode
     def decode(self, ids: List[int]) -> str:
-        """Token IDs -> text. Roundtrip is exact except newlines are dropped on
-        decode (a known Session 2 property that does not affect correctness of
-        IDs or scores)."""
+        """Token IDs -> text. Exact round-trip in metaspace mode; the legacy
+        byte-level mode drops characters its alphabet lacks."""
+        if self.mode == "metaspace_byte_fallback":
+            out: List[str] = []
+            buf = bytearray()
+            for i in ids:
+                if i in self.special_ids:
+                    continue
+                t = self.id_to_token.get(i, "")
+                if len(t) == 6 and t.startswith("<0x") and t.endswith(">"):
+                    buf.append(int(t[3:5], 16))
+                    continue
+                if buf:
+                    out.append(buf.decode("utf-8", errors="replace"))
+                    buf = bytearray()
+                out.append(t)
+            if buf:
+                out.append(buf.decode("utf-8", errors="replace"))
+            return "".join(out).replace(METASPACE, " ")
         pieces = "".join(self.id_to_token.get(i, "") for i in ids)
         data = bytes(self._u2b[ch] for ch in pieces if ch in self._u2b)
         return data.decode("utf-8", errors="replace")

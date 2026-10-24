@@ -13,20 +13,30 @@ from system.corpus import load_corpus, lane_counts
 from system.shards import build_shard, write_shard, verify_shard, load_tokens, shard_set_hash
 from system.manifest import build_manifest, admit
 
-# Known-good Session 2 token counts (from session-2/.../stats.json) -> proves the
-# pure-Python BPE port matches the HF tokenizer exactly.
+# Session 2's published token counts for the faithful tokenizer (metrics.json,
+# re-verified against HF `tokenizers` there) -> proves the pure-Python port
+# reproduces the reference tokenizer exactly on its own corpus.
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-_EXPECTED_TOKENS = {"en": 11795, "hi": 14062, "te": 4473, "mr": 8500}
+_FAITHFUL = os.path.join(_REPO, "session-2", "faithful-tokenizer")
 CLEANING_HASH = "sha256:session4-pipeline-v1"
 
 
 def test_tokenizer_matches_session2_exactly():
+    import json
     tk = load_frozen_tokenizer()
     assert tk.vocab_size == 10000
-    for lang, expected in _EXPECTED_TOKENS.items():
-        path = os.path.join(_REPO, "session-2", "tokenizer-widget", "corpus", f"{lang}.txt")
+    assert tk.mode == "metaspace_byte_fallback"
+    expected = json.load(open(os.path.join(_FAITHFUL, "metrics.json")))["token_counts"]
+    for lang, count in expected.items():
+        path = os.path.join(_FAITHFUL, "widget", "corpus", f"{lang}.faithful.txt")
         text = open(path, encoding="utf-8").read()
-        assert len(tk.encode(text)) == expected, f"{lang} token count drifted"
+        assert len(tk.encode(text)) == count, f"{lang} token count drifted"
+
+
+def test_tokenizer_never_emits_unk_on_corpus():
+    tk = load_frozen_tokenizer()
+    for d in load_corpus():
+        assert tk.unk_id not in tk.encode(d.text), f"[UNK] in {d.doc_id}"
 
 
 def test_tokenizer_frozen_hash_stable():

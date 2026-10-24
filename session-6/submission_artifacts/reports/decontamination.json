@@ -1,0 +1,154 @@
+{
+  "shard-indic": {
+    "docs_in": 20,
+    "docs_touched": 0,
+    "tokens_in": 15159,
+    "tokens_removed": 0,
+    "pieces_dropped_short": 0,
+    "per_doc": {},
+    "docs_out": 20
+  },
+  "shard-en": {
+    "docs_in": 20,
+    "docs_touched": 16,
+    "tokens_in": 16947,
+    "tokens_removed": 2136,
+    "pieces_dropped_short": 21,
+    "per_doc": {
+      "en-session-1_assignment.md": {
+        "tokens_in": 850,
+        "tokens_removed": 129,
+        "pieces_kept": 2,
+        "pieces_dropped": 1
+      },
+      "en-session-1_session_notes.md": {
+        "tokens_in": 749,
+        "tokens_removed": 102,
+        "pieces_kept": 2,
+        "pieces_dropped": 0
+      },
+      "en-session-10_WALKTHROUGH.md": {
+        "tokens_in": 883,
+        "tokens_removed": 54,
+        "pieces_kept": 1,
+        "pieces_dropped": 1
+      },
+      "en-session-10_assignment.md": {
+        "tokens_in": 809,
+        "tokens_removed": 327,
+        "pieces_kept": 2,
+        "pieces_dropped": 2
+      },
+      "en-session-10_plan_plan.md": {
+        "tokens_in": 917,
+        "tokens_removed": 42,
+        "pieces_kept": 2,
+        "pieces_dropped": 0
+      },
+      "en-session-10_research_research.md": {
+        "tokens_in": 854,
+        "tokens_removed": 44,
+        "pieces_kept": 1,
+        "pieces_dropped": 1
+      },
+      "en-session-10_session-notes.md": {
+        "tokens_in": 867,
+        "tokens_removed": 58,
+        "pieces_kept": 1,
+        "pieces_dropped": 1
+      },
+      "en-session-10_training-loop_README.md": {
+        "tokens_in": 998,
+        "tokens_removed": 44,
+        "pieces_kept": 3,
+        "pieces_dropped": 0
+      },
+      "en-session-11_WALKTHROUGH.md": {
+        "tokens_in": 894,
+        "tokens_removed": 55,
+        "pieces_kept": 1,
+        "pieces_dropped": 1
+      },
+      "en-session-11_assignment.md": {
+        "tokens_in": 791,
+        "tokens_removed": 357,
+        "pieces_kept": 2,
+        "pieces_dropped": 3
+      },
+      "en-session-11_optimizers_README.md": {
+        "tokens_in": 1069,
+        "tokens_removed": 148,
+        "pieces_kept": 4,
+        "pieces_dropped": 2
+      },
+      "en-session-11_plan_plan.md": {
+        "tokens_in": 942,
+        "tokens_removed": 118,
+        "pieces_kept": 4,
+        "pieces_dropped": 1
+      },
+      "en-session-11_research_research.md": {
+        "tokens_in": 1013,
+        "tokens_removed": 43,
+        "pieces_kept": 1,
+        "pieces_dropped": 1
+      },
+      "en-session-11_session-notes.md": {
+        "tokens_in": 918,
+        "tokens_removed": 151,
+        "pieces_kept": 4,
+        "pieces_dropped": 3
+      },
+      "en-session-12_WALKTHROUGH.md": {
+        "tokens_in": 902,
+        "tokens_removed": 130,
+        "pieces_kept": 5,
+        "pieces_dropped": 1
+      },
+      "en-session-12_assignment.md": {
+        "tokens_in": 520,
+        "tokens_removed": 334,
+        "pieces_kept": 2,
+        "pieces_dropped": 3
+      }
+    },
+    "docs_out": 41
+  },
+  "shard-code": {
+    "docs_in": 20,
+    "docs_touched": 3,
+    "tokens_in": 21225,
+    "tokens_removed": 270,
+    "pieces_dropped_short": 4,
+    "per_doc": {
+      "code-session-12_zero-sim_build_notebook.py": {
+        "tokens_in": 1222,
+        "tokens_removed": 50,
+        "pieces_kept": 3,
+        "pieces_dropped": 0
+      },
+      "code-session-12_zero-sim_zero_sim.py": {
+        "tokens_in": 1040,
+        "tokens_removed": 157,
+        "pieces_kept": 6,
+        "pieces_dropped": 2
+      },
+      "code-session-13_reversible-llm_reversible_lab.py": {
+        "tokens_in": 914,
+        "tokens_removed": 63,
+        "pieces_kept": 2,
+        "pieces_dropped": 2
+      }
+    },
+    "docs_out": 28
+  },
+  "shard-math": {
+    "docs_in": 20,
+    "docs_touched": 0,
+    "tokens_in": 1420,
+    "tokens_removed": 0,
+    "pieces_dropped_short": 0,
+    "per_doc": {},
+    "docs_out": 20
+  }
+}

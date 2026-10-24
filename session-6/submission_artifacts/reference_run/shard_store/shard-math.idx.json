@@ -1,0 +1,147 @@
+{
+  "shard_id": "shard-math",
+  "lane": "math",
+  "token_count": 1420,
+  "doc_spans": [
+    {
+      "doc_id": "math-0",
+      "start": 0,
+      "length": 75,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-1",
+      "start": 75,
+      "length": 69,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-2",
+      "start": 144,
+      "length": 74,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-3",
+      "start": 218,
+      "length": 73,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-4",
+      "start": 291,
+      "length": 69,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-5",
+      "start": 360,
+      "length": 75,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-6",
+      "start": 435,
+      "length": 70,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-7",
+      "start": 505,
+      "length": 74,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-8",
+      "start": 579,
+      "length": 63,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-9",
+      "start": 642,
+      "length": 74,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-10",
+      "start": 716,
+      "length": 70,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-11",
+      "start": 786,
+      "length": 70,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-12",
+      "start": 856,
+      "length": 67,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-13",
+      "start": 923,
+      "length": 73,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-14",
+      "start": 996,
+      "length": 70,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-15",
+      "start": 1066,
+      "length": 71,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-16",
+      "start": 1137,
+      "length": 69,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-17",
+      "start": 1206,
+      "length": 70,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-18",
+      "start": 1276,
+      "length": 69,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    },
+    {
+      "doc_id": "math-19",
+      "start": 1345,
+      "length": 75,
+      "source_id": "synthetic-arithmetic-cot",
+      "provenance_tier": "synthetic"
+    }
+  ]
+}

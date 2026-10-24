@@ -1,0 +1,28 @@
+{
+  "shard_id": "eval-en-heldout",
+  "lane": "en",
+  "token_count": 2884,
+  "doc_spans": [
+    {
+      "doc_id": "en-session-12_plan_plan.md",
+      "start": 0,
+      "length": 986,
+      "source_id": "repo:session-12/plan/plan.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_research_research.md",
+      "start": 986,
+      "length": 935,
+      "source_id": "repo:session-12/research/research.md",
+      "provenance_tier": "permissive-repo"
+    },
+    {
+      "doc_id": "en-session-12_session-notes.md",
+      "start": 1921,
+      "length": 963,
+      "source_id": "repo:session-12/session-notes.md",
+      "provenance_tier": "permissive-repo"
+    }
+  ]
+}

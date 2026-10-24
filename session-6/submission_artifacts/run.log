@@ -1,0 +1,79 @@
+[   0.00s] Training Data Execution System demo -> /Users/utkarshupadhyay/Projects/era-v5/session-6/submission_artifacts
+[   0.20s] [PASS] tokenizer_hash_verified
+[   0.20s] [PASS] tokenizer_encoding_deterministic
+[   0.20s] [PASS] tokenizer_roundtrip_exact
+[   0.20s] [PASS] no_unk_tokens_in_corpus
+[   0.74s] shards created: 4 train shards (shard-indic=15159 tok, shard-en=14811 tok, shard-code=20955 tok, shard-math=1420 tok) + held-out eval-en-heldout (test) and val-en-heldout (validation)
+[   0.74s] [PASS] manifests_bound_to_frozen_tokenizer
+[   0.75s] [PASS] all_train_shards_admitted
+[   0.75s] [PASS] shard_bytes_match_content_hash
+[   0.75s] [PASS] tampered_shard_rejected
+[   0.75s] [PASS] tokenizer_mismatch_rejected
+[   0.75s] manifests validated: all train shards admitted; tampered, mis-tokenized and held-out shards refused
+[   0.91s] [PASS] eval_shard_blocked
+[   0.91s] [PASS] validation_shard_blocked
+[   0.91s] [PASS] contaminated_candidate_blocked
+[   0.91s] [PASS] eval_shard_refused_by_admission
+[   0.91s] [PASS] train_shards_clear_after_decontamination
+[   0.91s] evaluation data blocked: eval/validation/contaminated candidates refused; decontamination removed {'shard-indic': 0, 'shard-en': 2136, 'shard-code': 270, 'shard-math': 0} overlapping tokens from train lanes
+[   0.91s] mixture compiled: general-web-seed steps 0-104, capability-midtrain steps 105-234, anneal-indic-reasoning steps 235-299; floors [{'indic': 0.08, 'math': 0.05}, {'indic': 0.12, 'math': 0.1}, {'indic': 0.25, 'math': 0.2}]
+[   2.33s] [PASS] masks_valid_every_batch
+[   2.33s] [PASS] no_loss_across_doc_boundary_or_pad
+[   2.33s] [PASS] sft_prompt_tokens_never_bear_loss
+[   2.33s] [PASS] per_lane_packing_policies_applied
+[   2.33s] batches packed: 600 sequences checked; policies {'code': 'concat_chop', 'en': 'concat_chop', 'indic': 'concat_chop', 'math': 'structure_preserving'}
+[  12.74s]   [worker:train] OPUS decisions recorded through step 49: {'accepted': 38, 'deferred': 4, 'protected': 3, 'rejected': 5}
+[  12.75s]   [worker:train] [PASS] checkpoint_saved ckpt-000049 (consumption_offset=50, weights=7304aae19b08)
+[  12.75s]   [worker:train] OPUS decisions recorded through step 99: {'accepted': 73, 'deferred': 11, 'protected': 5, 'rejected': 11}
+[  12.75s]   [worker:train] [PASS] checkpoint_saved ckpt-000099 (consumption_offset=100, weights=9fbc0e4a0912)
+[  12.75s]   [worker:train] OPUS decisions recorded through step 149: {'accepted': 107, 'deferred': 15, 'protected': 13, 'rejected': 15}
+[  12.75s]   [worker:train] [PASS] checkpoint_saved ckpt-000149 (consumption_offset=150, weights=db4996479977)
+[  12.75s]   [worker:train] crash simulated: SIGKILL inside step 187 (weights updated in memory, consumption event not yet written)
+[  12.75s] checkpoint saved: ckpt-000049, ckpt-000099, ckpt-000149 before the crash; latest ckpt-000149 at consumption offset 150
+[  12.75s] crash simulated: worker exit code -9 (SIGKILL) inside step 187; ledger holds 187 consumption events (last step 186) and 188 OPUS decisions
+[  21.43s]   [worker:resume] run resumed from ckpt-000149: weights=db4996479977, rolled back uncommitted events {'consumption': 37, 'learning': 37, 'opus': 38}, next step 150
+[  21.43s]   [worker:resume] OPUS decisions recorded through step 199: {'accepted': 140, 'deferred': 21, 'protected': 17, 'rejected': 22}
+[  21.43s]   [worker:resume] [PASS] checkpoint_saved ckpt-000199 (consumption_offset=200, weights=c85ac2c12bfe)
+[  21.43s]   [worker:resume] OPUS decisions recorded through step 249: {'accepted': 170, 'deferred': 29, 'protected': 24, 'rejected': 27}
+[  21.43s]   [worker:resume] [PASS] checkpoint_saved ckpt-000249 (consumption_offset=250, weights=d2a8a1a6f2cc)
+[  21.43s]   [worker:resume] OPUS decisions recorded through step 299: {'accepted': 202, 'deferred': 33, 'protected': 38, 'rejected': 27}
+[  21.43s]   [worker:resume] [PASS] checkpoint_saved ckpt-000299 (consumption_offset=300, weights=b765688a4b80)
+[  21.43s]   [worker:resume] worker resume finished at step 299
+[  21.44s] run resumed: from ckpt-000149, rolled back {'consumption': 37, 'learning': 37, 'opus': 38} uncommitted events, finished at step 299 (exit code 0)
+[  39.37s] reference run: same config, uninterrupted, 300 steps in 17.4s
+[  39.38s] [PASS] worker_killed_mid_step
+[  39.38s] [PASS] partial_step_rolled_back
+[  39.38s] [PASS] resume_next_batch_matched
+[  39.38s] [PASS] no_batch_skipped_or_repeated
+[  39.38s] [PASS] resumed_run_bit_identical_to_uninterrupted
+[  39.65s] [PASS] checkpoint_saved
+[  39.65s] [PASS] checkpoint_offsets_point_at_their_step
+[  39.65s] [PASS] every_event_names_its_parent_checkpoint
+[  39.65s] [PASS] checkpoint_weights_identical_to_reference_run
+[  39.66s] OPUS decisions recorded: {'accepted': 202, 'protected': 38, 'rejected': 27, 'deferred': 33} across 300 candidates
+[  39.66s] [PASS] all_four_outcomes_exercised
+[  39.66s] [PASS] every_batch_links_to_its_decision
+[  39.66s] [PASS] only_accepted_or_protected_batches_update_weights
+[  39.66s] [PASS] protected_floor_never_crossed
+[  39.66s] [PASS] planned_vs_actual_shares_within_tolerance
+[  39.66s] [PASS] curriculum_reached_every_stage
+[  39.66s] [PASS] consumed_lanes_follow_compiled_schedule
+[  42.77s] historical stream replayed: steps 50-99 re-run from ckpt-000049
+[  42.77s] [PASS] replay_hash_matched
+[  42.77s] [PASS] replay_learning_matched
+[  45.38s] branch forked: fork-seed4321 from ckpt-000099, steps 100-139, 40/40 batches differ from main
+[  45.38s] [PASS] fork_starts_from_parent_checkpoint_weights
+[  45.38s] [PASS] fork_continues_at_next_step
+[  45.38s] [PASS] main_branch_untouched
+[  45.38s] [PASS] fork_stream_diverges
+[  46.82s] [PASS] learning_events_linked_to_consumption
+[  46.82s] [PASS] token_losses_traced_to_source_docs
+[  46.82s] [PASS] loss_decreases_on_trained_batches
+[  46.82s] [PASS] validation_read_only
+[  47.06s] [PASS] no_heldout_shard_or_ngram_in_any_trained_batch
+[  47.07s] audit completed: steps 120-159 trained 53 documents from 4 shards
+[  47.08s] performance measured: 2292.1 raw tok/s, 2048.5 loss-bearing tok/s, 1688.0 trained tok/s; utilization 0.8937
+[  47.08s] [PASS] performance_counts_reconstructed_from_ledger
+[  47.08s] [PASS] main_run_counts_match_reference
+[  47.08s] [PASS] packing_utilization_reported
+[  47.11s] evidence written: 12/12 requirements PASS

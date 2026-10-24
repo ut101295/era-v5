@@ -1,0 +1,1682 @@
+{
+  "seq_len": 96,
+  "microbatch_size": 2,
+  "sequences_checked": 600,
+  "policy_comparison": {
+    "code": {
+      "chosen": "concat_chop",
+      "doc_tokens": 20955,
+      "by_policy": {
+        "pad_only": {
+          "sequences": 28,
+          "utilization": 0.9133,
+          "tokens_lost_to_truncation": 18500
+        },
+        "concat_chop": {
+          "sequences": 219,
+          "utilization": 0.9967,
+          "tokens_lost_to_truncation": 0
+        },
+        "best_fit": {
+          "sequences": 26,
+          "utilization": 0.9836,
+          "tokens_lost_to_truncation": 18500
+        },
+        "structure_preserving": {
+          "sequences": 26,
+          "utilization": 0.9836,
+          "tokens_lost_to_truncation": 18500
+        }
+      }
+    },
+    "en": {
+      "chosen": "concat_chop",
+      "doc_tokens": 14811,
+      "by_policy": {
+        "pad_only": {
+          "sequences": 41,
+          "utilization": 0.7891,
+          "tokens_lost_to_truncation": 11705
+        },
+        "concat_chop": {
+          "sequences": 155,
+          "utilization": 0.9954,
+          "tokens_lost_to_truncation": 0
+        },
+        "best_fit": {
+          "sequences": 34,
+          "utilization": 0.9516,
+          "tokens_lost_to_truncation": 11705
+        },
+        "structure_preserving": {
+          "sequences": 34,
+          "utilization": 0.9516,
+          "tokens_lost_to_truncation": 11705
+        }
+      }
+    },
+    "indic": {
+      "chosen": "concat_chop",
+      "doc_tokens": 15159,
+      "by_policy": {
+        "pad_only": {
+          "sequences": 20,
+          "utilization": 0.9896,
+          "tokens_lost_to_truncation": 13259
+        },
+        "concat_chop": {
+          "sequences": 159,
+          "utilization": 0.9931,
+          "tokens_lost_to_truncation": 0
+        },
+        "best_fit": {
+          "sequences": 20,
+          "utilization": 0.9896,
+          "tokens_lost_to_truncation": 13259
+        },
+        "structure_preserving": {
+          "sequences": 20,
+          "utilization": 0.9896,
+          "tokens_lost_to_truncation": 13259
+        }
+      }
+    },
+    "math": {
+      "chosen": "structure_preserving",
+      "doc_tokens": 1420,
+      "by_policy": {
+        "pad_only": {
+          "sequences": 20,
+          "utilization": 0.5396,
+          "tokens_lost_to_truncation": 0
+        },
+        "concat_chop": {
+          "sequences": 15,
+          "utilization": 0.7194,
+          "tokens_lost_to_truncation": 0
+        },
+        "best_fit": {
+          "sequences": 20,
+          "utilization": 0.5396,
+          "tokens_lost_to_truncation": 0
+        },
+        "structure_preserving": {
+          "sequences": 20,
+          "utilization": 0.5396,
+          "tokens_lost_to_truncation": 0
+        }
+      }
+    }
+  },
+  "sft_lanes": [
+    "math"
+  ],
+  "examples": {
+    "math": {
+      "global_step": 3,
+      "batch_hash": "sha256:5fdb82d40bc4a347d50bc91677f5ffce319f950792d4410c70919bac50bb184c",
+      "token_spans": [
+        {
+          "seq": 0,
+          "doc_id": "math-16",
+          "start": 0,
+          "end": 69,
+          "loss_tokens": 51
+        }
+      ],
+      "tokens": [
+        {
+          "pos": 0,
+          "token": "Qu",
+          "doc": 0,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 1,
+          "token": "es",
+          "doc": 0,
+          "position_id": 1,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 2,
+          "token": "tion",
+          "doc": 0,
+          "position_id": 2,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 3,
+          "token": ":",
+          "doc": 0,
+          "position_id": 3,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 4,
+          "token": "▁w",
+          "doc": 0,
+          "position_id": 4,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 5,
+          "token": "hat",
+          "doc": 0,
+          "position_id": 5,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 6,
+          "token": "▁is",
+          "doc": 0,
+          "position_id": 6,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 7,
+          "token": "▁16",
+          "doc": 0,
+          "position_id": 7,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 8,
+          "token": "▁+",
+          "doc": 0,
+          "position_id": 8,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 9,
+          "token": "▁8",
+          "doc": 0,
+          "position_id": 9,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 10,
+          "token": "7,",
+          "doc": 0,
+          "position_id": 10,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 11,
+          "token": "▁and",
+          "doc": 0,
+          "position_id": 11,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 12,
+          "token": "▁16",
+          "doc": 0,
+          "position_id": 12,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 13,
+          "token": "▁*",
+          "doc": 0,
+          "position_id": 13,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 14,
+          "token": "▁8",
+          "doc": 0,
+          "position_id": 14,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 15,
+          "token": "7",
+          "doc": 0,
+          "position_id": 15,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 16,
+          "token": "?",
+          "doc": 0,
+          "position_id": 16,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 17,
+          "token": "\n",
+          "doc": 0,
+          "position_id": 17,
+          "loss": true,
+          "target": "Re"
+        },
+        {
+          "pos": 18,
+          "token": "Re",
+          "doc": 0,
+          "position_id": 18,
+          "loss": true,
+          "target": "ason"
+        },
+        {
+          "pos": 19,
+          "token": "ason",
+          "doc": 0,
+          "position_id": 19,
+          "loss": true,
+          "target": "ing"
+        },
+        {
+          "pos": 20,
+          "token": "ing",
+          "doc": 0,
+          "position_id": 20,
+          "loss": true,
+          "target": ":"
+        },
+        {
+          "pos": 21,
+          "token": ":",
+          "doc": 0,
+          "position_id": 21,
+          "loss": true,
+          "target": "▁ad"
+        },
+        {
+          "pos": 22,
+          "token": "▁ad",
+          "doc": 0,
+          "position_id": 22,
+          "loss": true,
+          "target": "d"
+        },
+        {
+          "pos": 23,
+          "token": "d",
+          "doc": 0,
+          "position_id": 23,
+          "loss": true,
+          "target": "▁the"
+        },
+        {
+          "pos": 24,
+          "token": "▁the",
+          "doc": 0,
+          "position_id": 24,
+          "loss": true,
+          "target": "▁two"
+        },
+        {
+          "pos": 25,
+          "token": "▁two",
+          "doc": 0,
+          "position_id": 25,
+          "loss": true,
+          "target": "▁number"
+        },
+        {
+          "pos": 26,
+          "token": "▁number",
+          "doc": 0,
+          "position_id": 26,
+          "loss": true,
+          "target": "s:"
+        },
+        {
+          "pos": 27,
+          "token": "s:",
+          "doc": 0,
+          "position_id": 27,
+          "loss": true,
+          "target": "▁16"
+        },
+        {
+          "pos": 28,
+          "token": "▁16",
+          "doc": 0,
+          "position_id": 28,
+          "loss": true,
+          "target": "▁+"
+        },
+        {
+          "pos": 29,
+          "token": "▁+",
+          "doc": 0,
+          "position_id": 29,
+          "loss": true,
+          "target": "▁8"
+        },
+        {
+          "pos": 30,
+          "token": "▁8",
+          "doc": 0,
+          "position_id": 30,
+          "loss": true,
+          "target": "7"
+        },
+        {
+          "pos": 31,
+          "token": "7",
+          "doc": 0,
+          "position_id": 31,
+          "loss": true,
+          "target": "▁"
+        },
+        {
+          "pos": 32,
+          "token": "▁",
+          "doc": 0,
+          "position_id": 32,
+          "loss": true,
+          "target": "="
+        },
+        {
+          "pos": 33,
+          "token": "=",
+          "doc": 0,
+          "position_id": 33,
+          "loss": true,
+          "target": "▁10"
+        },
+        {
+          "pos": 34,
+          "token": "▁10",
+          "doc": 0,
+          "position_id": 34,
+          "loss": true,
+          "target": "3."
+        },
+        {
+          "pos": 35,
+          "token": "3.",
+          "doc": 0,
+          "position_id": 35,
+          "loss": true,
+          "target": "▁th"
+        },
+        {
+          "pos": 36,
+          "token": "▁th",
+          "doc": 0,
+          "position_id": 36,
+          "loss": true,
+          "target": "en"
+        },
+        {
+          "pos": 37,
+          "token": "en",
+          "doc": 0,
+          "position_id": 37,
+          "loss": true,
+          "target": "▁m"
+        },
+        {
+          "pos": 38,
+          "token": "▁m",
+          "doc": 0,
+          "position_id": 38,
+          "loss": true,
+          "target": "ulti"
+        },
+        {
+          "pos": 39,
+          "token": "ulti",
+          "doc": 0,
+          "position_id": 39,
+          "loss": true,
+          "target": "p"
+        },
+        {
+          "pos": 40,
+          "token": "p",
+          "doc": 0,
+          "position_id": 40,
+          "loss": true,
+          "target": "ly"
+        },
+        {
+          "pos": 41,
+          "token": "ly",
+          "doc": 0,
+          "position_id": 41,
+          "loss": true,
+          "target": ":"
+        },
+        {
+          "pos": 42,
+          "token": ":",
+          "doc": 0,
+          "position_id": 42,
+          "loss": true,
+          "target": "▁16"
+        },
+        {
+          "pos": 43,
+          "token": "▁16",
+          "doc": 0,
+          "position_id": 43,
+          "loss": true,
+          "target": "▁*"
+        },
+        {
+          "pos": 44,
+          "token": "▁*",
+          "doc": 0,
+          "position_id": 44,
+          "loss": true,
+          "target": "▁8"
+        },
+        {
+          "pos": 45,
+          "token": "▁8",
+          "doc": 0,
+          "position_id": 45,
+          "loss": true,
+          "target": "7"
+        },
+        {
+          "pos": 46,
+          "token": "7",
+          "doc": 0,
+          "position_id": 46,
+          "loss": true,
+          "target": "▁"
+        },
+        {
+          "pos": 47,
+          "token": "▁",
+          "doc": 0,
+          "position_id": 47,
+          "loss": true,
+          "target": "="
+        },
+        {
+          "pos": 48,
+          "token": "=",
+          "doc": 0,
+          "position_id": 48,
+          "loss": true,
+          "target": "▁1"
+        },
+        {
+          "pos": 49,
+          "token": "▁1",
+          "doc": 0,
+          "position_id": 49,
+          "loss": true,
+          "target": "39"
+        },
+        {
+          "pos": 50,
+          "token": "39",
+          "doc": 0,
+          "position_id": 50,
+          "loss": true,
+          "target": "2.\n"
+        },
+        {
+          "pos": 51,
+          "token": "2.\n",
+          "doc": 0,
+          "position_id": 51,
+          "loss": true,
+          "target": "A"
+        },
+        {
+          "pos": 52,
+          "token": "A",
+          "doc": 0,
+          "position_id": 52,
+          "loss": true,
+          "target": "ns"
+        },
+        {
+          "pos": 53,
+          "token": "ns",
+          "doc": 0,
+          "position_id": 53,
+          "loss": true,
+          "target": "w"
+        },
+        {
+          "pos": 54,
+          "token": "w",
+          "doc": 0,
+          "position_id": 54,
+          "loss": true,
+          "target": "er"
+        },
+        {
+          "pos": 55,
+          "token": "er",
+          "doc": 0,
+          "position_id": 55,
+          "loss": true,
+          "target": ":"
+        },
+        {
+          "pos": 56,
+          "token": ":",
+          "doc": 0,
+          "position_id": 56,
+          "loss": true,
+          "target": "▁s"
+        },
+        {
+          "pos": 57,
+          "token": "▁s",
+          "doc": 0,
+          "position_id": 57,
+          "loss": true,
+          "target": "um"
+        },
+        {
+          "pos": 58,
+          "token": "um",
+          "doc": 0,
+          "position_id": 58,
+          "loss": true,
+          "target": "▁is"
+        },
+        {
+          "pos": 59,
+          "token": "▁is",
+          "doc": 0,
+          "position_id": 59,
+          "loss": true,
+          "target": "▁10"
+        },
+        {
+          "pos": 60,
+          "token": "▁10",
+          "doc": 0,
+          "position_id": 60,
+          "loss": true,
+          "target": "3"
+        },
+        {
+          "pos": 61,
+          "token": "3",
+          "doc": 0,
+          "position_id": 61,
+          "loss": true,
+          "target": "▁and"
+        },
+        {
+          "pos": 62,
+          "token": "▁and",
+          "doc": 0,
+          "position_id": 62,
+          "loss": true,
+          "target": "▁pro"
+        },
+        {
+          "pos": 63,
+          "token": "▁pro",
+          "doc": 0,
+          "position_id": 63,
+          "loss": true,
+          "target": "duct"
+        },
+        {
+          "pos": 64,
+          "token": "duct",
+          "doc": 0,
+          "position_id": 64,
+          "loss": true,
+          "target": "▁is"
+        },
+        {
+          "pos": 65,
+          "token": "▁is",
+          "doc": 0,
+          "position_id": 65,
+          "loss": true,
+          "target": "▁1"
+        },
+        {
+          "pos": 66,
+          "token": "▁1",
+          "doc": 0,
+          "position_id": 66,
+          "loss": true,
+          "target": "39"
+        },
+        {
+          "pos": 67,
+          "token": "39",
+          "doc": 0,
+          "position_id": 67,
+          "loss": true,
+          "target": "2."
+        },
+        {
+          "pos": 68,
+          "token": "2.",
+          "doc": 0,
+          "position_id": 68,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 69,
+          "token": "<EOS>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 70,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 71,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 72,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 73,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 74,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 75,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 76,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 77,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 78,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 79,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 80,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 81,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 82,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 83,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 84,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 85,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 86,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 87,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 88,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 89,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 90,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 91,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 92,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 93,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 94,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        },
+        {
+          "pos": 95,
+          "token": "<PAD>",
+          "doc": -1,
+          "position_id": 0,
+          "loss": false,
+          "target": null
+        }
+      ]
+    },
+    "en": {
+      "global_step": 0,
+      "batch_hash": "sha256:81728d5cd9347d2b2fa87f4397a4df5f41ff6eb3b0b6ffa417120432b263cb1f",
+      "token_spans": [
+        {
+          "seq": 0,
+          "doc_id": "en-session-10_WALKTHROUGH.md~1",
+          "start": 0,
+          "end": 96,
+          "loss_tokens": 95
+        }
+      ],
+      "tokens": [
+        {
+          "pos": 0,
+          "token": "ding",
+          "doc": 0,
+          "position_id": 0,
+          "loss": true,
+          "target": "▁a"
+        },
+        {
+          "pos": 1,
+          "token": "▁a",
+          "doc": 0,
+          "position_id": 1,
+          "loss": true,
+          "target": "\n"
+        },
+        {
+          "pos": 2,
+          "token": "\n",
+          "doc": 0,
+          "position_id": 2,
+          "loss": true,
+          "target": "b"
+        },
+        {
+          "pos": 3,
+          "token": "b",
+          "doc": 0,
+          "position_id": 3,
+          "loss": true,
+          "target": "ug"
+        },
+        {
+          "pos": 4,
+          "token": "ug",
+          "doc": 0,
+          "position_id": 4,
+          "loss": true,
+          "target": "."
+        },
+        {
+          "pos": 5,
+          "token": ".",
+          "doc": 0,
+          "position_id": 5,
+          "loss": true,
+          "target": "▁E"
+        },
+        {
+          "pos": 6,
+          "token": "▁E",
+          "doc": 0,
+          "position_id": 6,
+          "loss": true,
+          "target": "very"
+        },
+        {
+          "pos": 7,
+          "token": "very",
+          "doc": 0,
+          "position_id": 7,
+          "loss": true,
+          "target": "th"
+        },
+        {
+          "pos": 8,
+          "token": "th",
+          "doc": 0,
+          "position_id": 8,
+          "loss": true,
+          "target": "ing"
+        },
+        {
+          "pos": 9,
+          "token": "ing",
+          "doc": 0,
+          "position_id": 9,
+          "loss": true,
+          "target": "▁is"
+        },
+        {
+          "pos": 10,
+          "token": "▁is",
+          "doc": 0,
+          "position_id": 10,
+          "loss": true,
+          "target": "▁gen"
+        },
+        {
+          "pos": 11,
+          "token": "▁gen",
+          "doc": 0,
+          "position_id": 11,
+          "loss": true,
+          "target": "er"
+        },
+        {
+          "pos": 12,
+          "token": "er",
+          "doc": 0,
+          "position_id": 12,
+          "loss": true,
+          "target": "ated"
+        },
+        {
+          "pos": 13,
+          "token": "ated",
+          "doc": 0,
+          "position_id": 13,
+          "loss": true,
+          "target": "▁from"
+        },
+        {
+          "pos": 14,
+          "token": "▁from",
+          "doc": 0,
+          "position_id": 14,
+          "loss": true,
+          "target": "▁one"
+        },
+        {
+          "pos": 15,
+          "token": "▁one",
+          "doc": 0,
+          "position_id": 15,
+          "loss": true,
+          "target": "▁fi"
+        },
+        {
+          "pos": 16,
+          "token": "▁fi",
+          "doc": 0,
+          "position_id": 16,
+          "loss": true,
+          "target": "le"
+        },
+        {
+          "pos": 17,
+          "token": "le",
+          "doc": 0,
+          "position_id": 17,
+          "loss": true,
+          "target": "▁("
+        },
+        {
+          "pos": 18,
+          "token": "▁(",
+          "doc": 0,
+          "position_id": 18,
+          "loss": true,
+          "target": "`"
+        },
+        {
+          "pos": 19,
+          "token": "`",
+          "doc": 0,
+          "position_id": 19,
+          "loss": true,
+          "target": "tra"
+        },
+        {
+          "pos": 20,
+          "token": "tra",
+          "doc": 0,
+          "position_id": 20,
+          "loss": true,
+          "target": "in"
+        },
+        {
+          "pos": 21,
+          "token": "in",
+          "doc": 0,
+          "position_id": 21,
+          "loss": true,
+          "target": "_"
+        },
+        {
+          "pos": 22,
+          "token": "_",
+          "doc": 0,
+          "position_id": 22,
+          "loss": true,
+          "target": "l"
+        },
+        {
+          "pos": 23,
+          "token": "l",
+          "doc": 0,
+          "position_id": 23,
+          "loss": true,
+          "target": "oo"
+        },
+        {
+          "pos": 24,
+          "token": "oo",
+          "doc": 0,
+          "position_id": 24,
+          "loss": true,
+          "target": "p"
+        },
+        {
+          "pos": 25,
+          "token": "p",
+          "doc": 0,
+          "position_id": 25,
+          "loss": true,
+          "target": ".p"
+        },
+        {
+          "pos": 26,
+          "token": ".p",
+          "doc": 0,
+          "position_id": 26,
+          "loss": true,
+          "target": "y"
+        },
+        {
+          "pos": 27,
+          "token": "y",
+          "doc": 0,
+          "position_id": 27,
+          "loss": true,
+          "target": "`"
+        },
+        {
+          "pos": 28,
+          "token": "`",
+          "doc": 0,
+          "position_id": 28,
+          "loss": true,
+          "target": ")"
+        },
+        {
+          "pos": 29,
+          "token": ")",
+          "doc": 0,
+          "position_id": 29,
+          "loss": true,
+          "target": "▁into"
+        },
+        {
+          "pos": 30,
+          "token": "▁into",
+          "doc": 0,
+          "position_id": 30,
+          "loss": true,
+          "target": "▁one"
+        },
+        {
+          "pos": 31,
+          "token": "▁one",
+          "doc": 0,
+          "position_id": 31,
+          "loss": true,
+          "target": "▁"
+        },
+        {
+          "pos": 32,
+          "token": "▁",
+          "doc": 0,
+          "position_id": 32,
+          "loss": true,
+          "target": "note"
+        },
+        {
+          "pos": 33,
+          "token": "note",
+          "doc": 0,
+          "position_id": 33,
+          "loss": true,
+          "target": "book"
+        },
+        {
+          "pos": 34,
+          "token": "book",
+          "doc": 0,
+          "position_id": 34,
+          "loss": true,
+          "target": "▁that"
+        },
+        {
+          "pos": 35,
+          "token": "▁that",
+          "doc": 0,
+          "position_id": 35,
+          "loss": true,
+          "target": "▁r"
+        },
+        {
+          "pos": 36,
+          "token": "▁r",
+          "doc": 0,
+          "position_id": 36,
+          "loss": true,
+          "target": "uns"
+        },
+        {
+          "pos": 37,
+          "token": "uns",
+          "doc": 0,
+          "position_id": 37,
+          "loss": true,
+          "target": "▁top"
+        },
+        {
+          "pos": 38,
+          "token": "▁top",
+          "doc": 0,
+          "position_id": 38,
+          "loss": true,
+          "target": "\n"
+        },
+        {
+          "pos": 39,
+          "token": "\n",
+          "doc": 0,
+          "position_id": 39,
+          "loss": true,
+          "target": "to"
+        },
+        {
+          "pos": 40,
+          "token": "to",
+          "doc": 0,
+          "position_id": 40,
+          "loss": true,
+          "target": "▁b"
+        },
+        {
+          "pos": 41,
+          "token": "▁b",
+          "doc": 0,
+          "position_id": 41,
+          "loss": true,
+          "target": "ott"
+        },
+        {
+          "pos": 42,
+          "token": "ott",
+          "doc": 0,
+          "position_id": 42,
+          "loss": true,
+          "target": "om"
+        },
+        {
+          "pos": 43,
+          "token": "om",
+          "doc": 0,
+          "position_id": 43,
+          "loss": true,
+          "target": "▁with"
+        },
+        {
+          "pos": 44,
+          "token": "▁with",
+          "doc": 0,
+          "position_id": 44,
+          "loss": true,
+          "target": "▁"
+        },
+        {
+          "pos": 45,
+          "token": "▁",
+          "doc": 0,
+          "position_id": 45,
+          "loss": true,
+          "target": "ou"
+        },
+        {
+          "pos": 46,
+          "token": "ou",
+          "doc": 0,
+          "position_id": 46,
+          "loss": true,
+          "target": "tp"
+        },
+        {
+          "pos": 47,
+          "token": "tp",
+          "doc": 0,
+          "position_id": 47,
+          "loss": true,
+          "target": "ut"
+        },
+        {
+          "pos": 48,
+          "token": "ut",
+          "doc": 0,
+          "position_id": 48,
+          "loss": true,
+          "target": "s"
+        },
+        {
+          "pos": 49,
+          "token": "s",
+          "doc": 0,
+          "position_id": 49,
+          "loss": true,
+          "target": "▁and"
+        },
+        {
+          "pos": 50,
+          "token": "▁and",
+          "doc": 0,
+          "position_id": 50,
+          "loss": true,
+          "target": "▁both"
+        },
+        {
+          "pos": 51,
+          "token": "▁both",
+          "doc": 0,
+          "position_id": 51,
+          "loss": true,
+          "target": "▁p"
+        },
+        {
+          "pos": 52,
+          "token": "▁p",
+          "doc": 0,
+          "position_id": 52,
+          "loss": true,
+          "target": "lo"
+        },
+        {
+          "pos": 53,
+          "token": "lo",
+          "doc": 0,
+          "position_id": 53,
+          "loss": true,
+          "target": "ts"
+        },
+        {
+          "pos": 54,
+          "token": "ts",
+          "doc": 0,
+          "position_id": 54,
+          "loss": true,
+          "target": "▁"
+        },
+        {
+          "pos": 55,
+          "token": "▁",
+          "doc": 0,
+          "position_id": 55,
+          "loss": true,
+          "target": "emb"
+        },
+        {
+          "pos": 56,
+          "token": "emb",
+          "doc": 0,
+          "position_id": 56,
+          "loss": true,
+          "target": "ed"
+        },
+        {
+          "pos": 57,
+          "token": "ed",
+          "doc": 0,
+          "position_id": 57,
+          "loss": true,
+          "target": "d"
+        },
+        {
+          "pos": 58,
+          "token": "d",
+          "doc": 0,
+          "position_id": 58,
+          "loss": true,
+          "target": "ed."
+        },
+        {
+          "pos": 59,
+          "token": "ed.",
+          "doc": 0,
+          "position_id": 59,
+          "loss": true,
+          "target": "▁The"
+        },
+        {
+          "pos": 60,
+          "token": "▁The",
+          "doc": 0,
+          "position_id": 60,
+          "loss": true,
+          "target": "▁the"
+        },
+        {
+          "pos": 61,
+          "token": "▁the",
+          "doc": 0,
+          "position_id": 61,
+          "loss": true,
+          "target": "me"
+        },
+        {
+          "pos": 62,
+          "token": "me",
+          "doc": 0,
+          "position_id": 62,
+          "loss": true,
+          "target": "▁through"
+        },
+        {
+          "pos": 63,
+          "token": "▁through",
+          "doc": 0,
+          "position_id": 63,
+          "loss": true,
+          "target": "out"
+        },
+        {
+          "pos": 64,
+          "token": "out",
+          "doc": 0,
+          "position_id": 64,
+          "loss": true,
+          "target": "▁—"
+        },
+        {
+          "pos": 65,
+          "token": "▁—",
+          "doc": 0,
+          "position_id": 65,
+          "loss": true,
+          "target": "▁s"
+        },
+        {
+          "pos": 66,
+          "token": "▁s",
+          "doc": 0,
+          "position_id": 66,
+          "loss": true,
+          "target": "tra"
+        },
+        {
+          "pos": 67,
+          "token": "tra",
+          "doc": 0,
+          "position_id": 67,
+          "loss": true,
+          "target": "ight"
+        },
+        {
+          "pos": 68,
+          "token": "ight",
+          "doc": 0,
+          "position_id": 68,
+          "loss": true,
+          "target": "▁from"
+        },
+        {
+          "pos": 69,
+          "token": "▁from",
+          "doc": 0,
+          "position_id": 69,
+          "loss": true,
+          "target": "▁the"
+        },
+        {
+          "pos": 70,
+          "token": "▁the",
+          "doc": 0,
+          "position_id": 70,
+          "loss": true,
+          "target": "\n"
+        },
+        {
+          "pos": 71,
+          "token": "\n",
+          "doc": 0,
+          "position_id": 71,
+          "loss": true,
+          "target": "le"
+        },
+        {
+          "pos": 72,
+          "token": "le",
+          "doc": 0,
+          "position_id": 72,
+          "loss": true,
+          "target": "cture"
+        },
+        {
+          "pos": 73,
+          "token": "cture",
+          "doc": 0,
+          "position_id": 73,
+          "loss": true,
+          "target": "▁—"
+        },
+        {
+          "pos": 74,
+          "token": "▁—",
+          "doc": 0,
+          "position_id": 74,
+          "loss": true,
+          "target": "▁is"
+        },
+        {
+          "pos": 75,
+          "token": "▁is",
+          "doc": 0,
+          "position_id": 75,
+          "loss": true,
+          "target": "▁*"
+        },
+        {
+          "pos": 76,
+          "token": "▁*",
+          "doc": 0,
+          "position_id": 76,
+          "loss": true,
+          "target": "a"
+        },
+        {
+          "pos": 77,
+          "token": "a",
+          "doc": 0,
+          "position_id": 77,
+          "loss": true,
+          "target": "▁p"
+        },
+        {
+          "pos": 78,
+          "token": "▁p",
+          "doc": 0,
+          "position_id": 78,
+          "loss": true,
+          "target": "la"
+        },
+        {
+          "pos": 79,
+          "token": "la",
+          "doc": 0,
+          "position_id": 79,
+          "loss": true,
+          "target": "usi"
+        },
+        {
+          "pos": 80,
+          "token": "usi",
+          "doc": 0,
+          "position_id": 80,
+          "loss": true,
+          "target": "b"
+        },
+        {
+          "pos": 81,
+          "token": "b",
+          "doc": 0,
+          "position_id": 81,
+          "loss": true,
+          "target": "le"
+        },
+        {
+          "pos": 82,
+          "token": "le",
+          "doc": 0,
+          "position_id": 82,
+          "loss": true,
+          "target": "▁number"
+        },
+        {
+          "pos": 83,
+          "token": "▁number",
+          "doc": 0,
+          "position_id": 83,
+          "loss": true,
+          "target": "▁is"
+        },
+        {
+          "pos": 84,
+          "token": "▁is",
+          "doc": 0,
+          "position_id": 84,
+          "loss": true,
+          "target": "▁not"
+        },
+        {
+          "pos": 85,
+          "token": "▁not",
+          "doc": 0,
+          "position_id": 85,
+          "loss": true,
+          "target": "▁e"
+        },
+        {
+          "pos": 86,
+          "token": "▁e",
+          "doc": 0,
+          "position_id": 86,
+          "loss": true,
+          "target": "vid"
+        },
+        {
+          "pos": 87,
+          "token": "vid",
+          "doc": 0,
+          "position_id": 87,
+          "loss": true,
+          "target": "ence"
+        },
+        {
+          "pos": 88,
+          "token": "ence",
+          "doc": 0,
+          "position_id": 88,
+          "loss": true,
+          "target": "*,"
+        },
+        {
+          "pos": 89,
+          "token": "*,",
+          "doc": 0,
+          "position_id": 89,
+          "loss": true,
+          "target": "▁s"
+        },
+        {
+          "pos": 90,
+          "token": "▁s",
+          "doc": 0,
+          "position_id": 90,
+          "loss": true,
+          "target": "o"
+        },
+        {
+          "pos": 91,
+          "token": "o",
+          "doc": 0,
+          "position_id": 91,
+          "loss": true,
+          "target": "▁no"
+        },
+        {
+          "pos": 92,
+          "token": "▁no",
+          "doc": 0,
+          "position_id": 92,
+          "loss": true,
+          "target": "th"
+        },
+        {
+          "pos": 93,
+          "token": "th",
+          "doc": 0,
+          "position_id": 93,
+          "loss": true,
+          "target": "ing"
+        },
+        {
+          "pos": 94,
+          "token": "ing",
+          "doc": 0,
+          "position_id": 94,
+          "loss": true,
+          "target": "▁is"
+        },
+        {
+          "pos": 95,
+          "token": "▁is",
+          "doc": 0,
+          "position_id": 95,
+          "loss": false,
+          "target": null
+        }
+      ]
+    }
+  }
+}

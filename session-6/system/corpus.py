@@ -13,6 +13,13 @@ every capability lane here is backed by something real and provenance-stamped
 Documents are deterministic and capped so the end-to-end demo runs in seconds.
 Each document carries the provenance fields Session 3 requires and Session 4
 admits on: source_id, language, script, license, provenance_tier.
+
+Frozen snapshot. The sources above live outside this directory: the Assamese
+file is gitignored (40 MB) and the repo's own Markdown/Python changes with every
+commit. Reading them live would make shard hashes drift between machines, so
+`load_corpus()` reads `corpus/snapshot.jsonl`, a committed copy of exactly the
+documents the system uses. `python -m system.corpus --rebuild` regenerates it
+from the original sources; its sha256 is recorded in the manifests.
 """
 from __future__ import annotations
 
@@ -22,7 +29,11 @@ import os
 from dataclasses import dataclass, asdict
 from typing import Dict, List
 
+from .hashing import sha256_bytes
+
 _REPO = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+SNAPSHOT_PATH = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "corpus", "snapshot.jsonl"))
 _CLEAN_ASM = os.path.join(_REPO, "session-4", "pipeline", "data", "clean_asm.jsonl")
 
 
@@ -131,11 +142,11 @@ def _gen_math(cap: int) -> List[Document]:
     return docs
 
 
-def load_corpus() -> List[Document]:
-    """Load all four lanes, deterministically ordered (indic, en, code, math)."""
+def load_corpus_from_sources() -> List[Document]:
+    """Load all four lanes from the original assets (indic, en, code, math)."""
     docs: List[Document] = []
     docs += _load_indic(_CAPS["indic"])
-    docs += _load_glob("en", ["*.md", "session-*/**/*.md"], "en", "Latn",
+    docs += _load_glob("en", ["session-*/**/*.md"], "en", "Latn",
                        "permissive-repo", _CAPS["en"])
     docs += _load_glob("code", ["session-*/**/*.py"], "code", "Zyyy",
                        "permissive-repo", _CAPS["code"])
@@ -143,8 +154,43 @@ def load_corpus() -> List[Document]:
     return docs
 
 
+def write_snapshot(docs: List[Document], path: str = SNAPSHOT_PATH) -> str:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        for d in docs:
+            f.write(json.dumps(d.as_dict(), ensure_ascii=False, sort_keys=True) + "\n")
+    return path
+
+
+def snapshot_hash(path: str = SNAPSHOT_PATH) -> str:
+    with open(path, "rb") as f:
+        return sha256_bytes(f.read())
+
+
+def load_corpus(path: str = SNAPSHOT_PATH) -> List[Document]:
+    """Load the frozen corpus snapshot (deterministic order: indic, en, code, math)."""
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            f"corpus snapshot missing: {path}. "
+            "Rebuild it with `python -m system.corpus --rebuild`.")
+    with open(path, encoding="utf-8") as f:
+        return [Document(**json.loads(line)) for line in f if line.strip()]
+
+
 def lane_counts(docs: List[Document]) -> Dict[str, int]:
     out: Dict[str, int] = {}
     for d in docs:
         out[d.lane] = out.get(d.lane, 0) + 1
     return out
+
+
+if __name__ == "__main__":
+    import sys
+    if "--rebuild" not in sys.argv:
+        sys.exit("usage: python -m system.corpus --rebuild")
+    docs = load_corpus_from_sources()
+    counts = lane_counts(docs)
+    if not all(counts.get(l, 0) for l in ("indic", "en", "code", "math")):
+        sys.exit(f"refusing to write a snapshot with an empty lane: {counts}")
+    out = write_snapshot(docs)
+    print(f"wrote {len(docs)} docs {counts} -> {out} ({snapshot_hash(out)})")

@@ -1,0 +1,62 @@
+{
+  "ckpt-000049": {
+    "step": 49,
+    "consumption_offset": 50,
+    "learning_offset": 50,
+    "opus_offset": 50,
+    "weights_hash": "sha256:7304aae19b081d7656101b5959abaeb932c1096675d3cea5a1c398ce7ba02c0b",
+    "npz_sha256": "sha256:db8891ebac93ca33c364ed5cd58f165dc0e28355d5b786d185f069b9fe605a3b",
+    "matches_reference_run": true,
+    "offset_points_at_its_step": true
+  },
+  "ckpt-000099": {
+    "step": 99,
+    "consumption_offset": 100,
+    "learning_offset": 100,
+    "opus_offset": 100,
+    "weights_hash": "sha256:9fbc0e4a091279d24be2718334a1791c3307865f07fd6e6fd76ec7183268045a",
+    "npz_sha256": "sha256:dc543192b1932a2e29f81b64ed8adbda92ac5539e02a04eb1f4c2567ee089a40",
+    "matches_reference_run": true,
+    "offset_points_at_its_step": true
+  },
+  "ckpt-000149": {
+    "step": 149,
+    "consumption_offset": 150,
+    "learning_offset": 150,
+    "opus_offset": 150,
+    "weights_hash": "sha256:db499647997772b8c0bc5f8cf2bd7d9bb457d34f354763f63cce5469b6edf331",
+    "npz_sha256": "sha256:06d8b391aecbca101ed97df4c8df44670e5c0e22b4cf8394678ff0fd035b269d",
+    "matches_reference_run": true,
+    "offset_points_at_its_step": true
+  },
+  "ckpt-000199": {
+    "step": 199,
+    "consumption_offset": 200,
+    "learning_offset": 200,
+    "opus_offset": 200,
+    "weights_hash": "sha256:c85ac2c12bfe469a397c341aacdf00feca47d6cb8d8eddb0abd906c8e28cd306",
+    "npz_sha256": "sha256:627b4e30a926ddaf99a4706cc44b1cf326ce4cb5b9e1fb2ad870ddd07aa0f84f",
+    "matches_reference_run": true,
+    "offset_points_at_its_step": true
+  },
+  "ckpt-000249": {
+    "step": 249,
+    "consumption_offset": 250,
+    "learning_offset": 250,
+    "opus_offset": 250,
+    "weights_hash": "sha256:d2a8a1a6f2cc3ef17f10b084242a7cf392ee57b160ca400842dcb1efb3dce49f",
+    "npz_sha256": "sha256:5ee027a1e1d62fa8c5c852a2c90f07572d2b06f2036057e4a9bfe5736d2b05bd",
+    "matches_reference_run": true,
+    "offset_points_at_its_step": true
+  },
+  "ckpt-000299": {
+    "step": 299,
+    "consumption_offset": 300,
+    "learning_offset": 300,
+    "opus_offset": 300,
+    "weights_hash": "sha256:b765688a4b80ec5a80fba4bf5a2ac126338f910375907bffae8a3cc2fee14794",
+    "npz_sha256": "sha256:0759163db6bebfad0ba31b014bebe18e36ea94e470060a84e97b21e2c19ce952",
+    "matches_reference_run": true,
+    "offset_points_at_its_step": true
+  }
+}

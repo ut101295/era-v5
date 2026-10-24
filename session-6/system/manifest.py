@@ -35,6 +35,7 @@ def build_manifest(
     contamination_status: str = "clean",
     eval_overlap_status: str = "none",
     capability_lane: str | None = None,
+    extra: Dict | None = None,
 ) -> Dict:
     """Assemble the manifest dict for a shard (schema from research/03 §5)."""
     manifest = {
@@ -58,6 +59,7 @@ def build_manifest(
         "parent_shard_ids": shard.parent_shard_ids,
         "canary": shard.canary,
     }
+    manifest.update(extra or {})
     # A manifest's own hash lets the ledger reference it immutably.
     manifest["manifest_hash"] = sha256_json(manifest)
     return manifest

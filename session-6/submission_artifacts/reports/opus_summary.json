@@ -1,0 +1,56 @@
+{
+  "accept_threshold": 1.02,
+  "defer_band": 0.08,
+  "status_counts": {
+    "accepted": 202,
+    "protected": 38,
+    "rejected": 27,
+    "deferred": 33
+  },
+  "by_lane": {
+    "code": {
+      "accepted": 51,
+      "deferred": 15
+    },
+    "en": {
+      "accepted": 107,
+      "deferred": 15,
+      "rejected": 1
+    },
+    "indic": {
+      "accepted": 44,
+      "protected": 3,
+      "deferred": 3,
+      "rejected": 1
+    },
+    "math": {
+      "protected": 35,
+      "rejected": 25
+    }
+  },
+  "by_stage": {
+    "general-web-seed": {
+      "accepted": 77,
+      "protected": 6,
+      "rejected": 11,
+      "deferred": 11
+    },
+    "capability-midtrain": {
+      "accepted": 86,
+      "deferred": 15,
+      "protected": 13,
+      "rejected": 16
+    },
+    "anneal-indic-reasoning": {
+      "protected": 19,
+      "accepted": 39,
+      "deferred": 7
+    }
+  },
+  "rejection_reasons": {
+    "score>=threshold": 202,
+    "protected_floor_override": 38,
+    "low_proxy_utility": 27,
+    "near_threshold_deferred": 33
+  }
+}
