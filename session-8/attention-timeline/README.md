@@ -5,7 +5,7 @@ Session 8 in the order it was actually launched**, and explains each one as the
 answer to a problem that existed at that moment. Zero build, zero dependencies —
 one `index.html` you can open locally or drag onto Netlify.
 
-**Live link:** _<paste your Netlify/Vercel URL here after deploy>_
+**Live link:** https://era-v5-s8-attn-timeline.netlify.app
 
 ## Why chronological
 
