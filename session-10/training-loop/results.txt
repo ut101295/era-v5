@@ -1,0 +1,73 @@
+/Users/utkarshupadhyay/Projects/era-v5/session-10/training-loop/train_loop.py:267: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/Users/utkarshupadhyay/Projects/era-v5/session-10/training-loop/train_loop.py:335: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  fig.tight_layout(); plt.savefig("fig_gradnorm.png", dpi=110); plt.show()
+device = mps
+======================================================================
+(1) SHAPES — one forward+loss, every tensor and what its dims mean
+  input_ids    (4, 16)        [B, T]      B sequences, T tokens each
+  targets      (4, 16)        [B, T]      next token for each position
+  tok+pos emb  (4, 16, 128)    [B, T, D]   a D-vector per token
+  logits       (4, 16, 256) [B, T, V]   a score per vocab item per position
+  flat logits  (64, 256)     [B*T, V]    flattened for cross-entropy
+  flat targets (64,)         [B*T]       one target id per row
+  loss         ()             []          one scalar the optimiser minimises
+======================================================================
+(2) GRADIENT CHECK — central finite difference vs backward()
+  weight interrogated : head.weight[3,5]
+  loss(w)             : 3.3858608214
+  loss(w+eps)         : 3.3858608029   (eps = 1e-06)
+  loss(w-eps)         : 3.3858608399
+  numeric  (ΔL/2eps)  : -0.0184935556
+  analytic (backward) : -0.0184935553
+  abs difference      : 2.490e-10
+  rel difference      : 1.346e-08  -> agree
+======================================================================
+(3) GRAD ACCUMULATION BUG — correct (by token) vs naive (avg of avgs)
+  lecture case  tokens=[4, 4, 2] means=[2.0, 2.0, 5.0]
+    correct (ΣlossΣtokens) = 2.6000
+    naive   (mean of means) = 3.0000
+    naive is 15.4% too high
+  token counts per micro-batch: [120, 120, 24] (two long + one short, uneven)
+  final  correct (Σloss/Σtok) : 0.5656
+  final  naive   (mean-of-means): 2.0033
+  gap at last step: +1.4376 (+254.2% too high)
+  control with equal token counts: correct 0.0279  naive 0.0279  (gap 0.0000 — the bug hides here)
+  wrote fig_accum.png
+======================================================================
+(4) GRAD NORM — logged every step; find where it moved before the loss
+  grad-norm spike at step 20: norm 0.935 -> 4.155  (4.4x in one step)
+    eval loss entering step 20:   1.6992  (flat — unmoved)
+    eval loss entering step 21: 1.7146  (+0.0154 — a step later, and tiny)
+  the point: the SAME anomaly moved the norm 4.4x but the loss only +0.0154 —
+  the grad norm is the sensitive early-warning trace; the loss is nearly blind to it.
+  wrote fig_gradnorm.png
+======================================================================
+(5) MFU — measured on this device, reported honestly
+  parameters N         : 3,323,392
+  tokens / second      : 38,555
+  achieved             : 0.77 TFLOP/s   (6·N·tok/s)
+  assumed device peak  : 28 TFLOP/s   (mps, stated, not queried)
+  MFU                  : 2.75%   (healthy is 35–50%)
+  distance to 40% is spent on: a tiny model (memory-/launch-bound, not
+  compute-bound), an eager Python step loop, a small batch, no fused
+  attention or torch.compile, and generic kernels on this device.
+======================================================================
+(6) 0.1 WRITTEN OUT — fp32 / bf16 / fp8 E4M3, bits shown
+  fp32  (1 sign | 8 exp | 23 mantissa)
+    bits  0 01111011 10011001100110011001101
+    hex   0x3DCCCCCD   stores 0.10000000149011612
+  bf16  (1 sign | 8 exp | 7 mantissa)  — same 8 exponent bits as fp32
+    bits  0 01111011 1001101
+    hex   0x3DCD       stores 0.10009765625
+  fp8 E4M3  (1 sign | 4 exp | 3 mantissa)
+    bits  0 0011 101
+    hex   0x1D         stores 0.1015625
+  Which would I train in?  bf16.  It keeps all 8 of fp32's exponent bits,
+  so its range matches fp32 and tiny late-training gradients never flush to
+  zero — no loss-scaling apparatus to tune and get wrong. fp8 E4M3 is for
+  throughput once proven, but only with per-block scaling and attention left
+  in higher precision; fp32 is the master-copy/precision fallback, not the
+  per-step compute format.
+======================================================================
+done — all six checks above; plots in fig_accum.png, fig_gradnorm.png

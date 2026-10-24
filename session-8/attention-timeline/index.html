@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Evolution of Attention — a chronological timeline</title>
+<style>
+  :root{
+    --bg:#0d0d0d; --surface:#1a1a19; --surface-2:#222221;
+    --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781; --hair:#2c2c2a;
+    /* category hues (dark steps from the validated palette, slots 5,1,2,3,4) */
+    --cat-baseline:#d55181; --cat-compute:#3987e5; --cat-memory:#d95926;
+    --cat-position:#199e70; --cat-linear:#c98500;
+    color-scheme:dark;
+  }
+  :root[data-theme="light"]{
+    --bg:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f2ee;
+    --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781; --hair:#e1e0d9;
+    --cat-baseline:#e87ba4; --cat-compute:#2a78d6; --cat-memory:#eb6834;
+    --cat-position:#1baf7a; --cat-linear:#eda100;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--cat-compute);text-decoration:none}
+  a:hover{text-decoration:underline}
+  header{max-width:900px;margin:0 auto;padding:48px 24px 8px}
+  h1{font-size:2rem;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--ink-2);font-size:1.05rem;margin:0 0 4px}
+  .meta{color:var(--muted);font-size:.85rem;margin-top:10px}
+  main{max-width:900px;margin:0 auto;padding:0 24px 80px}
+  section{margin-top:40px}
+  h2{font-size:1.3rem;letter-spacing:-.01em;border-bottom:1px solid var(--hair);
+    padding-bottom:8px;margin-bottom:16px}
+  p.lead{color:var(--ink-2)}
+  .toolbar{position:sticky;top:0;z-index:10;background:var(--bg);
+    padding:14px 0;border-bottom:1px solid var(--hair);display:flex;
+    flex-wrap:wrap;gap:8px;align-items:center}
+  .chip{border:1px solid var(--hair);background:var(--surface);color:var(--ink-2);
+    padding:5px 11px;border-radius:999px;font-size:.82rem;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;user-select:none}
+  .chip[aria-pressed="true"]{color:var(--ink);border-color:var(--ink-2)}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .spacer{flex:1}
+  .toggle{margin-left:auto}
+  /* timeline */
+  .timeline{position:relative;margin-top:8px;padding-left:28px}
+  .timeline::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;
+    width:2px;background:var(--hair)}
+  .card{position:relative;background:var(--surface);border:1px solid var(--hair);
+    border-left:4px solid var(--cat);border-radius:10px;padding:16px 18px;
+    margin-bottom:14px}
+  .card::before{content:"";position:absolute;left:-28px;top:20px;width:12px;
+    height:12px;border-radius:50%;background:var(--cat);
+    box-shadow:0 0 0 3px var(--bg)}
+  .card.hidden{display:none}
+  .card h3{margin:0;font-size:1.12rem;display:flex;flex-wrap:wrap;gap:8px;
+    align-items:baseline}
+  .date{color:var(--muted);font-size:.82rem;font-variant-numeric:tabular-nums}
+  .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--cat);border:1px solid var(--cat);border-radius:5px;
+    padding:1px 6px;font-weight:600}
+  .problem{color:var(--ink-2);margin:10px 0 12px}
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+  @media(max-width:620px){.pc{grid-template-columns:1fr}}
+  .pc h4{margin:0 0 4px;font-size:.78rem;text-transform:uppercase;
+    letter-spacing:.04em;color:var(--muted)}
+  .pc ul{margin:0;padding-left:16px;font-size:.92rem}
+  .pc li{margin-bottom:3px}
+  .when{margin-top:12px;font-size:.9rem;color:var(--ink-2);
+    background:var(--surface-2);border-radius:7px;padding:8px 11px}
+  .when b{color:var(--ink)}
+  .src{margin-top:10px;font-size:.8rem}
+  /* attention demo */
+  .demo{background:var(--surface);border:1px solid var(--hair);border-radius:10px;
+    padding:18px}
+  .grid{display:grid;gap:3px;margin-top:12px}
+  .cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;
+    justify-content:center;font-size:.7rem;color:#fff;
+    font-variant-numeric:tabular-nums}
+  .rowlab,.collab{color:var(--muted);font-size:.78rem;display:flex;
+    align-items:center;justify-content:center}
+  .slider{display:flex;align-items:center;gap:12px;margin-top:14px;
+    font-size:.88rem;color:var(--ink-2)}
+  input[type=range]{flex:1}
+  .note{color:var(--muted);font-size:.8rem;margin-top:10px}
+  .story li{margin-bottom:8px}
+  .story b{color:var(--ink)}
+  footer{max-width:900px;margin:0 auto;padding:24px;color:var(--muted);
+    font-size:.82rem;border-top:1px solid var(--hair)}
+</style>
+</head>
+<body>
+<header>
+  <h1>The Evolution of Attention</h1>
+  <p class="sub">Every mechanism from Session 8, in the order it was actually launched — each one an answer to the bill the previous one left behind.</p>
+  <p class="meta">Dates verified against the original paper / release (see sources on each card and in the README). Built for ERA V5 · Session 8.</p>
+</header>
+
+<main>
+  <section>
+    <p class="lead">Vanilla attention was not wrong — it was <em>expensive</em>. Everything after it is somebody looking at that bill and trying to pay less of one line on it: the <b>compute</b> (comparing every token with every other), the <b>memory</b> (the KV cache you must keep), or the <b>length</b> (how far the position scheme still works). Laid out by date instead of by family, you can watch the field change its mind about which bill hurts most. Use the filters to isolate one thread.</p>
+  </section>
+
+  <!-- Standard attention demo -->
+  <section>
+    <h2>0 · Start here: scaled dot-product attention</h2>
+    <p class="lead">Each token forms a <b>query</b> (what am I looking for?), every token advertises a <b>key</b> (what do I contain?) and a <b>value</b> (what I'll give you). Scores are <code>softmax(QKᵀ/√d)</code>; the grid below is one causal score matrix for <em>"the cat sat on the mat"</em>. Drag temperature to watch attention sharpen or spread — the exact behaviour the whole rest of the page is trying to make cheaper.</p>
+    <div class="demo">
+      <div id="attn" class="grid"></div>
+      <div class="slider">
+        <label for="temp">temperature</label>
+        <input id="temp" type="range" min="0.3" max="3" step="0.1" value="1">
+        <span id="tempval" style="font-variant-numeric:tabular-nums">1.0</span>
+      </div>
+      <p class="note">Illustrative: scores are fixed and re-softmaxed live; a real layer computes them from learned Q/K. Row = querying token, column = attended token (causal, so upper triangle is masked).</p>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section>
+    <h2>The timeline</h2>
+    <div class="toolbar" id="filters">
+      <span style="font-size:.82rem;color:var(--muted)">filter:</span>
+      <button class="chip" data-cat="all" aria-pressed="true">All</button>
+      <button class="chip" data-cat="baseline" aria-pressed="true"><span class="dot" style="background:var(--cat-baseline)"></span>Baseline</button>
+      <button class="chip" data-cat="compute" aria-pressed="true"><span class="dot" style="background:var(--cat-compute)"></span>Compute (fewer pairs)</button>
+      <button class="chip" data-cat="memory" aria-pressed="true"><span class="dot" style="background:var(--cat-memory)"></span>Memory (KV cache)</button>
+      <button class="chip" data-cat="position" aria-pressed="true"><span class="dot" style="background:var(--cat-position)"></span>Position / length</button>
+      <button class="chip" data-cat="linear" aria-pressed="true"><span class="dot" style="background:var(--cat-linear)"></span>Linear / recurrent</button>
+      <button class="chip toggle" id="themeBtn">◐ theme</button>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <!-- Synthesis -->
+  <section class="story">
+    <h2>What the timeline shows (that a list can't)</h2>
+    <p class="lead">Sorted by date, the mechanisms stop looking like a menu and start looking like an argument the field is having with itself. Four things jump out:</p>
+    <ol>
+      <li><b>It oscillates, it doesn't progress.</b> First it chases <b>exactness while cutting compute</b> (Sparse 2019, top-k 2019, sliding window 2020). Then it wants <b>memory back</b> (MQA 2019 → GQA 2023 → MLA 2024). Then it wants <b>length</b> (RoPE 2021, ALiBi 2021, NTK 2023, YaRN 2023, sinks 2023). Then it wants <b>memory back again</b>, this time by throwing out the quadratic core entirely (linear 2020, delta 2021, DeltaNet 2024, Gated DeltaNet 2024). The same worry returns in a new costume every couple of years.</li>
+      <li><b>The two 2019 papers are the whole fork.</b> MQA (cut memory) and Sparse Transformers (cut compute) appear months apart and every later branch descends from one or the other. The split that organises the entire field is visible in a single year.</li>
+      <li><b>Position encoding is a 2017 decision the field never stopped paying for.</b> Sinusoidal → RoPE → ALiBi → NTK → YaRN → DroPE is one unbroken eight-year thread of patching the same original choice, ending (2025) with a paper arguing you should <em>drop</em> positional embeddings after training — i.e. that the fix is to undo the 2017 move.</li>
+      <li><b>2024–25 is convergence, not divergence.</b> MLA, NSA and Gated DeltaNet each <em>combine</em> earlier threads (compression + sparsity + gated recurrence) rather than inventing a new axis. That's what a maturing field looks like — and it predicts the next step is a hybrid that pays all three bills at once.</li>
+    </ol>
+    <p class="note">The chronology is the point: you cannot see an oscillation from an alphabetised list, only from a date axis.</p>
+  </section>
+</main>
+
+<footer>
+  <p><b>Sources.</b> Every date is the first public release — arXiv v1 submission date, or the community post for NTK-aware scaling. Full citation list in the repo README. Known trap: <b>DroPE</b> (Sakana AI, "dropping positional embeddings", Dec 2025) is a different paper from <b>DRoPE</b> (directional RoPE for driving agents, Mar 2025) — this timeline uses the former.</p>
+</footer>
+
+<script>
+// ---- mechanism data (chronological) --------------------------------------
+const CATS = {
+  baseline:"Baseline", compute:"Compute (fewer pairs)", memory:"Memory (KV cache)",
+  position:"Position / length", linear:"Linear / recurrent"
+};
+const M = [
+  {d:"2017-06-12",name:"Scaled dot-product attention",cat:"baseline",
+   problem:"RNNs read tokens one at a time: no parallelism and weak long-range links. Need every token to read every other token at once.",
+   pros:["Exact all-pairs mixing","Fully parallel in training","Strong quality, simple to implement"],
+   cons:["O(T²) compute & memory in length","KV cache grows with context at inference","No built-in sense of order"],
+   when:"The default. Short-to-medium contexts where quality matters and length is bounded.",
+   src:"Vaswani et al., ‘Attention Is All You Need’",url:"https://arxiv.org/abs/1706.03762"},
+  {d:"2017-06-12",name:"Sinusoidal position",cat:"position",
+   problem:"Attention is permutation-invariant — ‘dog bites man’ = ‘man bites dog’. Inject order without a table that can't extrapolate.",
+   pros:["Parameter-free","Defined for any position (some extrapolation)","Deterministic"],
+   cons:["Additive signal the model must disentangle","Extrapolation weak in practice","Absolute, not relative"],
+   when:"Simple baselines, or when you want zero position parameters.",
+   src:"Vaswani et al., same paper",url:"https://arxiv.org/abs/1706.03762"},
+  {d:"2017-06-12",name:"Learned absolute positions",cat:"position",
+   problem:"Maybe a trainable position vector per slot fits the data better than a fixed sinusoid.",
+   pros:["Flexible — learns task-specific position structure","Trivial lookup"],
+   cons:["Hard wall at max_position: rows past training length are untrained noise","No extrapolation"],
+   when:"Fixed, known context length (GPT-2 style).",
+   src:"Used in the Transformer paper & GPT/BERT",url:"https://arxiv.org/abs/1706.03762"},
+  {d:"2019-04-23",name:"Sparse Transformers",cat:"compute",
+   problem:"O(T²) blocks very long sequences (images, audio, long text). Pay less by attending to a fixed sparse pattern.",
+   pros:["O(T·√T) compute","Unlocks tens-of-thousands-long sequences","Fixed patterns are hardware-friendly"],
+   cons:["Fixed patterns can miss important long-range pairs","Pattern design is manual/task-specific","Quality trade-off vs full attention"],
+   when:"Very long, structured sequences where a known pattern captures the dependencies.",
+   src:"Child et al. (OpenAI), ‘Generating Long Sequences…’",url:"https://arxiv.org/abs/1904.10509"},
+  {d:"2019-11-06",name:"Multi-Query Attention (MQA)",cat:"memory",
+   problem:"At inference the KV cache (one K,V per head) dominates memory bandwidth and caps decode throughput.",
+   pros:["One shared K,V head for all query heads → KV cache slashed","Large decode speedup","Tiny code change"],
+   cons:["Noticeable quality drop vs MHA","Can destabilise training","Often too aggressive for big models"],
+   when:"Inference-bound decoding where memory bandwidth is the bottleneck.",
+   src:"Shazeer, ‘Fast Transformer Decoding’",url:"https://arxiv.org/abs/1911.02150"},
+  {d:"2019-12-25",name:"Explicit Sparse Transformer (top-k)",cat:"compute",
+   problem:"Softmax spreads credit over all tokens, diluting focus and spending compute on irrelevant context.",
+   pros:["Keep only the top-k scores before softmax → sharper focus","Less attention noise","Faster than dense"],
+   cons:["k is a fixed hyperparameter","Hard selection is non-smooth","Can drop useful diffuse context"],
+   when:"Tasks with clearly sparse dependencies, or when attention noise hurts.",
+   src:"Zhao et al., ‘Explicit Sparse Transformer’",url:"https://arxiv.org/abs/1912.11637"},
+  {d:"2020-04-10",name:"Sliding-window attention (Longformer)",cat:"compute",
+   problem:"Documents dwarf the quadratic budget, and most dependencies are local anyway.",
+   pros:["O(T·w) local window + a few global tokens","Linear in length","Drop-in replacement"],
+   cons:["Pure local window sees far only after many layers","Global tokens must be chosen per task","Still approximate"],
+   when:"Long documents where locality dominates (QA, summarisation). Later a production default in Mistral 7B (Sep 2023).",
+   src:"Beltagy et al., ‘Longformer’",url:"https://arxiv.org/abs/2004.05150"},
+  {d:"2020-06-29",name:"Linear attention (Transformers are RNNs)",cat:"linear",
+   problem:"Want O(T) attention and O(1)-per-step inference memory — i.e. attention that runs like an RNN.",
+   pros:["Linear time via kernel feature maps","Constant-size recurrent state","Up to ~1000× faster long autoregressive decoding"],
+   cons:["Kernel approximation underperforms softmax","Weak on in-context retrieval/recall","Fixed state loses information"],
+   when:"Extreme lengths where softmax is infeasible and recall demands are modest.",
+   src:"Katharopoulos et al.",url:"https://arxiv.org/abs/2006.16236"},
+  {d:"2021-02-22",name:"Delta rule / Fast Weight Programmers",cat:"linear",
+   problem:"Additive linear-attention memory can't overwrite a stored association → capacity limits and recall failure.",
+   pros:["Delta-rule update edits the key→value memory (write with correction)","Better associative recall than plain linear attention","Reconnects attention to ’90s fast-weights theory"],
+   cons:["Originally sequential — hard to parallelise/train at scale","Still a fixed-size state","More complex update"],
+   when:"Linear-time models needing better recall than vanilla linear attention.",
+   src:"Schlag, Irie, Schmidhuber",url:"https://arxiv.org/abs/2102.11174"},
+  {d:"2021-04-20",name:"RoPE (rotary position embedding)",cat:"position",
+   problem:"Encode relative position directly inside the attention score, cheaply, with some extrapolation.",
+   pros:["Rotates Q/K by position → scores depend on relative offset","No added parameters","De-facto modern standard; caches cleanly"],
+   cons:["Degrades past trained context without scaling tricks","Frequency base matters","Still struggles at very long range"],
+   when:"Almost every modern LLM's default position scheme.",
+   src:"Su et al., ‘RoFormer’",url:"https://arxiv.org/abs/2104.09864"},
+  {d:"2021-08-27",name:"ALiBi",cat:"position",
+   problem:"Train short, test long: extrapolate to longer sequences than seen in training, without retraining.",
+   pros:["Linear distance penalty on scores — no position embeddings","Strong train-short/test-long extrapolation","Very cheap"],
+   cons:["Monotonic recency bias de-emphasises distant tokens","Can hurt tasks needing far lookback","Less expressive in-distribution than RoPE"],
+   when:"You need robust length extrapolation and a recency bias is acceptable.",
+   src:"Press et al., ‘Train Short, Test Long’",url:"https://arxiv.org/abs/2108.12409"},
+  {d:"2023-05-22",name:"Grouped-Query Attention (GQA)",cat:"memory",
+   problem:"MQA saves memory but loses quality; MHA keeps quality but is memory-heavy. Find the middle.",
+   pros:["Query heads grouped to share K,V → most of MQA's saving, most of MHA's quality","Convertible from existing MHA checkpoints","Tunable via group count"],
+   cons:["Still a quality/throughput trade you must tune","Not as small as MQA","A compromise, not a redesign"],
+   when:"The modern large-model default (Llama-2/3, etc.).",
+   src:"Ainslie et al., ‘GQA’",url:"https://arxiv.org/abs/2305.13245"},
+  {d:"2023-06-28",name:"NTK-aware scaled RoPE",cat:"position",
+   problem:"Naive position interpolation to extend context loses high-frequency detail.",
+   pros:["Scale RoPE base per-frequency (less on high freq) → extend context with little/no fine-tuning","Training-free","Cheap to apply"],
+   cons:["Heuristic, community-derived","Superseded by the more principled YaRN","Imperfect at large extensions"],
+   when:"Quick context extension of a pretrained RoPE model without retraining.",
+   src:"u/bloc97, r/LocalLLaMA (community)",url:"https://www.reddit.com/r/LocalLLaMA/comments/14lz7j5/ntkaware_scaled_rope_allows_llama_models_to_have/"},
+  {d:"2023-08-31",name:"YaRN",cat:"position",
+   problem:"Extend context efficiently with minimal fine-tuning and better quality than PI/NTK.",
+   pros:["Combines interpolation strategies + attention temperature","Strong extension with ~0.1% of pretraining tokens","Widely adopted"],
+   cons:["Still needs some fine-tuning for best results","Adds hyperparameters","A patch on RoPE, not a redesign"],
+   when:"Production context extension of RoPE models.",
+   src:"Peng et al., ‘YaRN’",url:"https://arxiv.org/abs/2309.00071"},
+  {d:"2023-09-29",name:"StreamingLLM / attention sinks",cat:"position",
+   problem:"With a rolling KV window, dropping the first tokens collapses quality — models dump attention onto initial ‘sink’ tokens.",
+   pros:["Keep a few initial sink tokens + a sliding window → stable infinite-length streaming","Bounded memory","No fine-tuning"],
+   cons:["Does NOT extend effective context — can't recall evicted tokens","A stability fix, not true long-context","Window still limits reach"],
+   when:"Endless streaming / chat with bounded memory.",
+   src:"Xiao et al., ‘Efficient Streaming LMs with Attention Sinks’",url:"https://arxiv.org/abs/2309.17453"},
+  {d:"2024-05-07",name:"Multi-head Latent Attention (MLA)",cat:"memory",
+   problem:"KV cache still dominates inference memory even with GQA; compress more without losing quality.",
+   pros:["Low-rank latent compresses K,V → KV cache far smaller than GQA","Quality ≥ MHA","Big throughput gains at scale"],
+   cons:["More complex (needs decoupled RoPE handling)","Newer — less tooling","An architecture-level commitment"],
+   when:"Large-scale inference where KV memory is the binding constraint.",
+   src:"DeepSeek-V2",url:"https://arxiv.org/abs/2405.04434"},
+  {d:"2024-06-10",name:"DeltaNet (parallelized delta rule)",cat:"linear",
+   problem:"The delta rule improved recall but didn't parallelise across sequence length → untrainable at scale.",
+   pros:["Chunkwise-parallel training (Householder/WY) → scalable","Beats Mamba/GLA on recall at size","Linear-time inference"],
+   cons:["Still trails softmax on the hardest retrieval","Fixed-size state","Training speed lags GLA"],
+   when:"Linear-time LLMs needing strong associative recall.",
+   src:"Yang et al., ‘Parallelizing Linear Transformers with the Delta Rule’",url:"https://arxiv.org/abs/2406.06484"},
+  {d:"2024-12-09",name:"Gated DeltaNet",cat:"linear",
+   problem:"Delta-rule state needs adaptive forgetting — when to decay old memory — like gated SSMs.",
+   pros:["Adds gating/decay to the delta rule (Mamba2 + delta)","Better long-context memory management","Strong hybrid architectures"],
+   cons:["More moving parts","Still a fixed-state linear model","Decay/recency needs tuning"],
+   when:"Linear / hybrid models balancing recall against forgetting.",
+   src:"Yang et al., ‘Gated Delta Networks’",url:"https://arxiv.org/abs/2412.06464"},
+  {d:"2025-02-16",name:"Native Sparse Attention (NSA)",cat:"compute",
+   problem:"Sparse attention is usually bolted on at inference and isn't trainable end-to-end; make sparsity native and hardware-aligned.",
+   pros:["Compression + fine-grained selection + sliding window, natively trainable","Hardware-aligned → big speedups at 64k","Matches or beats full-attention quality"],
+   cons:["Complex multi-branch design","Implementation/hardware-specific","Very new"],
+   when:"Training long-context models efficiently from scratch.",
+   src:"DeepSeek, ‘Native Sparse Attention’",url:"https://arxiv.org/abs/2502.11089"},
+  {d:"2025-12-13",name:"DroPE (dropping positional embeddings)",cat:"position",
+   problem:"RoPE speeds training but becomes the bottleneck for length generalisation — the very thing that helped now hurts.",
+   pros:["Treat PE as a training scaffold — drop it after pretraining + short recalibration","Strong zero-shot context extension","Beats RoPE-scaling baselines"],
+   cons:["Very new (Dec 2025)","Needs a recalibration phase","Easily confused with the unrelated ‘DRoPE’ driving paper"],
+   when:"Extending a pretrained model's context when RoPE scaling plateaus.",
+   src:"Sakana AI, ‘DroPE’",url:"https://arxiv.org/abs/2512.12167"},
+];
+
+// ---- render timeline ------------------------------------------------------
+const tl = document.getElementById("timeline");
+function fmt(d){const [y,m,day]=d.split("-");
+  const mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `${mn[+m-1]} ${+day}, ${y}`;}
+M.forEach(m=>{
+  const el=document.createElement("article");
+  el.className="card"; el.dataset.cat=m.cat;
+  el.style.setProperty("--cat",`var(--cat-${m.cat})`);
+  el.innerHTML=`
+    <h3>${m.name} <span class="tag">${CATS[m.cat]}</span> <span class="date">${fmt(m.d)}</span></h3>
+    <p class="problem">${m.problem}</p>
+    <div class="pc">
+      <div><h4>Buys you</h4><ul>${m.pros.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      <div><h4>Costs you</h4><ul>${m.cons.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+    </div>
+    <div class="when"><b>Pick it when:</b> ${m.when}</div>
+    <div class="src">Source: <a href="${m.url}" target="_blank" rel="noopener">${m.src}</a></div>`;
+  tl.appendChild(el);
+});
+
+// ---- category filter ------------------------------------------------------
+const active=new Set(Object.keys(CATS));
+const filters=document.getElementById("filters");
+filters.addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b||!b.dataset.cat) return;
+  const c=b.dataset.cat;
+  if(c==="all"){
+    active.clear(); Object.keys(CATS).forEach(k=>active.add(k));
+    filters.querySelectorAll("[data-cat]").forEach(x=>{
+      if(x.dataset.cat!=="all") x.setAttribute("aria-pressed","true");});
+  } else {
+    if(active.has(c)){active.delete(c);b.setAttribute("aria-pressed","false");}
+    else{active.add(c);b.setAttribute("aria-pressed","true");}
+  }
+  document.querySelectorAll(".card").forEach(card=>{
+    card.classList.toggle("hidden",!active.has(card.dataset.cat));});
+});
+
+// ---- theme toggle ---------------------------------------------------------
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  const r=document.documentElement;
+  r.dataset.theme = r.dataset.theme==="light" ? "dark" : "light";
+});
+
+// ---- attention demo -------------------------------------------------------
+const toks=["the","cat","sat","on","the","mat"];
+// fixed illustrative pre-softmax scores (causal); row=query, col=key
+const base=[
+  [2.0,0,0,0,0,0],
+  [0.4,2.2,0,0,0,0],
+  [0.3,2.4,1.6,0,0,0],
+  [0.2,0.6,1.2,1.4,0,0],
+  [1.8,0.5,0.4,0.6,1.2,0],
+  [0.3,1.9,1.1,0.8,0.4,1.5],
+];
+function softmaxRow(r,t){
+  const vals=r.map(v=>v/t), mx=Math.max(...vals);
+  const ex=vals.map(v=>Math.exp(v-mx)); const s=ex.reduce((a,b)=>a+b,0);
+  return ex.map(v=>v/s);
+}
+function color(w){ // blue sequential ramp by weight
+  const a=Math.min(1,Math.max(0,w));
+  const c0=[26,26,25], c1=[57,135,229];
+  const c=c0.map((v,i)=>Math.round(v+(c1[i]-v)*a));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+const grid=document.getElementById("attn");
+function drawAttn(t){
+  grid.innerHTML="";
+  grid.style.gridTemplateColumns=`60px repeat(${toks.length},1fr)`;
+  grid.appendChild(cellLab(""));
+  toks.forEach(tk=>grid.appendChild(cellLab(tk,"collab")));
+  base.forEach((row,i)=>{
+    grid.appendChild(cellLab(toks[i],"rowlab"));
+    const masked=row.map((v,j)=>j<=i?v:-1e9);
+    const w=softmaxRow(masked,t);
+    w.forEach((p,j)=>{
+      const c=document.createElement("div"); c.className="cell";
+      if(j>i){c.style.background="transparent";}
+      else{c.style.background=color(p); c.textContent=p>=0.08?p.toFixed(2):"";}
+      grid.appendChild(c);
+    });
+  });
+}
+function cellLab(txt,cls="rowlab"){const d=document.createElement("div");
+  d.className=cls;d.textContent=txt;return d;}
+const temp=document.getElementById("temp"), tv=document.getElementById("tempval");
+temp.addEventListener("input",()=>{tv.textContent=(+temp.value).toFixed(1);
+  drawAttn(+temp.value);});
+drawAttn(1);
+</script>
+</body>
+</html>

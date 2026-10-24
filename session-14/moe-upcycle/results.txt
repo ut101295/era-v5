@@ -1,0 +1,17 @@
+Session 14 — dense -> MoE (sparse upcycling), results
+device: mps
+
+config: {'n_layer': 4, 'd': 256, 'n_head': 8, 'inner': 512, 'block_size': 128}, experts=8, top-k=2
+
+Parameter accounting:
+  dense : total 2.66M   active/token 2.62M
+  MoE   : total 13.68M   active/token 4.20M
+  -> MoE has 5.1x the parameters at 1.60x the per-token compute
+
+Upcycling continuity:
+  |MoE CE - dense CE| at conversion = 3.35e-05  (same prediction, no jump)
+
+Loss (reduces throughout):
+  dense         start 5.5946  final 0.0412
+  MoE upcycled  start 0.0512  final 0.0448
+  MoE scratch   start 5.5898  final 0.0598

@@ -1,0 +1,47 @@
+device = cpu
+======================================================================
+(1) ADAM BY HAND vs PyTorch — one weight, five gradients
+   t     g        m          v       m̂       v̂        step    w(hand)   w(torch)       |Δ|
+   1  0.50   0.0500   0.000250   0.5000   0.2500   -0.001000   0.999000   0.999000   1.3e-08
+   2  0.40   0.0850   0.000410   0.4474   0.2050   -0.000988   0.998012   0.998012   1.3e-08
+   3  0.60   0.1365   0.000769   0.5037   0.2567   -0.000994   0.997018   0.997018   7.0e-09
+   4  0.45   0.1678   0.000971   0.4881   0.2431   -0.000990   0.996028   0.996028   6.3e-10
+   5  0.55   0.2061   0.001273   0.5032   0.2550   -0.000996   0.995031   0.995031   1.3e-08
+  max |hand − torch| over 5 steps: 1.32e-08  -> agree to ~7 decimals
+======================================================================
+(2) BIAS CORRECTION — step size with correction vs without
+  step 1:  corrected = 1.000η   uncorrected = 3.162η   (the textbook 1.00 vs 3.16)
+  m-correction (β1) negligible (<1%) by step ~44
+  full step within 1% of corrected by step ~3925  (β2=0.999 makes v-correction the long pole)
+  verdict: it 'stops mattering' around step ~3925 at the 1% bar, NOT within 20 — the plot shows the first 60 steps still far apart.
+  wrote fig_bias_correction.png
+======================================================================
+(3) UPDATE/WEIGHT RATIO per layer — find where warmup stops changing it
+  warmup length set to 40 steps
+  ratio peaks at step ~43 — the LR ramp ends there; warmup stops driving it
+  ratio per layer at the end: layer0=1.59e-03, layer1=1.87e-03, layer2=2.45e-03  (all in the healthy ~1e-3 band)
+  wrote fig_update_ratio.png
+======================================================================
+(4) COSINE vs WSD — both stopped at step 200 of a 300-step plan
+  cosine (planned 300), loss at step 200      : 0.6349  (mid-decay, LR still 8.6e-04)
+  WSD    (planned 300), loss at step 200      : 0.5378  (still at flat peak LR 3.0e-03)
+  WSD checkpoint@200 decayed as its own run   : 0.5533  (LR annealed to 1.7e-04)
+  which to keep: WSD. Cosine committed to a 300-step horizon — at 200 its LR
+  is still high and the loss hasn't settled; finishing properly means running to 300.
+  WSD's flat phase lets you branch the step-200 checkpoint and decay it cheaply,
+  reaching 0.5533 — the best model AND you never pre-committed to a length.
+  wrote fig_schedules.png
+======================================================================
+(5) LR SWEEP at widths 256 / 512 / 1024 — the optimum drifts with width
+  width  256: best LR = 1.00e-02  (loss 0.0114)
+  width  512: best LR = 3.16e-03  (loss 0.0044)
+  width 1024: best LR = 1.00e-03  (loss 0.0057)
+  wrote fig_lr_sweep.png
+  observed per-doubling LR ratio: 0.32  (1/width theory predicts 0.50)
+  extrapolated best LR at width 4096: ~1.00e-04
+  confidence: LOW-to-MODERATE. This is two doublings beyond the data under the
+  standard parameterization, where the 1/width rule is only approximate. The
+  robust fix is muP: it flattens the optimum so width-256's value transfers to
+  4096 exactly — one small sweep instead of a risky extrapolation.
+======================================================================
+done — five checks; plots: fig_bias_correction / fig_update_ratio / fig_schedules / fig_lr_sweep

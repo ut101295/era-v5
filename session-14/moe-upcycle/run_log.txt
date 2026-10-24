@@ -1,0 +1,113 @@
+device: mps
+corpus: 30272 bytes, vocab 256
+
+=== 1. Train the dense model ===
+  [dense] step    0/400  loss 5.5946
+  [dense] step   16/400  loss 4.2534
+  [dense] step   32/400  loss 3.5699
+  [dense] step   48/400  loss 2.7789
+  [dense] step   64/400  loss 2.2784
+  [dense] step   80/400  loss 1.9370
+  [dense] step   96/400  loss 1.5944
+  [dense] step  112/400  loss 1.1829
+  [dense] step  128/400  loss 0.8694
+  [dense] step  144/400  loss 0.5949
+  [dense] step  160/400  loss 0.3671
+  [dense] step  176/400  loss 0.2838
+  [dense] step  192/400  loss 0.1736
+  [dense] step  208/400  loss 0.1484
+  [dense] step  224/400  loss 0.0948
+  [dense] step  240/400  loss 0.1005
+  [dense] step  256/400  loss 0.0897
+  [dense] step  272/400  loss 0.0682
+  [dense] step  288/400  loss 0.0618
+  [dense] step  304/400  loss 0.0529
+  [dense] step  320/400  loss 0.0575
+  [dense] step  336/400  loss 0.0562
+  [dense] step  352/400  loss 0.0471
+  [dense] step  368/400  loss 0.0476
+  [dense] step  384/400  loss 0.0440
+  [dense] step  399/400  loss 0.0466
+  [dense] done in 73.1s, final loss 0.0466
+
+=== 2. Upcycle dense -> MoE (8 experts, top-2) and check equivalence ===
+  upcycled MoE vs dense cross-entropy at init: |Δ| = 8.48e-06 (same output -> no jump)
+
+=== 3. Continue training the upcycled MoE ===
+  [moe-upcycled] step    0/400  loss 0.0486  load-cv 1.852
+  [moe-upcycled] step   16/400  loss 0.0486  load-cv 0.163
+  [moe-upcycled] step   32/400  loss 0.0526  load-cv 0.212
+  [moe-upcycled] step   48/400  loss 0.0563  load-cv 0.188
+  [moe-upcycled] step   64/400  loss 0.0600  load-cv 0.150
+  [moe-upcycled] step   80/400  loss 0.0525  load-cv 0.212
+  [moe-upcycled] step   96/400  loss 0.0541  load-cv 0.188
+  [moe-upcycled] step  112/400  loss 0.0536  load-cv 0.199
+  [moe-upcycled] step  128/400  loss 0.0544  load-cv 0.251
+  [moe-upcycled] step  144/400  loss 0.0546  load-cv 0.264
+  [moe-upcycled] step  160/400  loss 0.0559  load-cv 0.205
+  [moe-upcycled] step  176/400  loss 0.0493  load-cv 0.261
+  [moe-upcycled] step  192/400  loss 0.0462  load-cv 0.267
+  [moe-upcycled] step  208/400  loss 0.0460  load-cv 0.177
+  [moe-upcycled] step  224/400  loss 0.0458  load-cv 0.202
+  [moe-upcycled] step  240/400  loss 0.0483  load-cv 0.235
+  [moe-upcycled] step  256/400  loss 0.0469  load-cv 0.186
+  [moe-upcycled] step  272/400  loss 0.0493  load-cv 0.190
+  [moe-upcycled] step  288/400  loss 0.0499  load-cv 0.278
+  [moe-upcycled] step  304/400  loss 0.0523  load-cv 0.189
+  [moe-upcycled] step  320/400  loss 0.0426  load-cv 0.197
+  [moe-upcycled] step  336/400  loss 0.0482  load-cv 0.247
+  [moe-upcycled] step  352/400  loss 0.0511  load-cv 0.224
+  [moe-upcycled] step  368/400  loss 0.0439  load-cv 0.218
+  [moe-upcycled] step  384/400  loss 0.0418  load-cv 0.234
+  [moe-upcycled] step  399/400  loss 0.0403  load-cv 0.132
+  [moe-upcycled] done in 329.2s, final loss 0.0403
+
+=== 4. For contrast: train an MoE of the same size FROM SCRATCH ===
+  [moe-scratch] step    0/400  loss 5.5898  load-cv 0.608
+  [moe-scratch] step   16/400  loss 4.2914  load-cv 0.522
+  [moe-scratch] step   32/400  loss 3.5407  load-cv 0.630
+  [moe-scratch] step   48/400  loss 2.6453  load-cv 0.561
+  [moe-scratch] step   64/400  loss 2.0925  load-cv 0.351
+  [moe-scratch] step   80/400  loss 1.5378  load-cv 0.311
+  [moe-scratch] step   96/400  loss 1.0931  load-cv 0.304
+  [moe-scratch] step  112/400  loss 0.6977  load-cv 0.302
+  [moe-scratch] step  128/400  loss 0.4857  load-cv 0.270
+  [moe-scratch] step  144/400  loss 0.3286  load-cv 0.269
+  [moe-scratch] step  160/400  loss 0.2256  load-cv 0.281
+  [moe-scratch] step  176/400  loss 0.2035  load-cv 0.282
+  [moe-scratch] step  192/400  loss 0.1437  load-cv 0.269
+  [moe-scratch] step  208/400  loss 0.1124  load-cv 0.225
+  [moe-scratch] step  224/400  loss 0.0994  load-cv 0.225
+  [moe-scratch] step  240/400  loss 0.1048  load-cv 0.237
+  [moe-scratch] step  256/400  loss 0.0759  load-cv 0.208
+  [moe-scratch] step  272/400  loss 0.0745  load-cv 0.197
+  [moe-scratch] step  288/400  loss 0.0768  load-cv 0.178
+  [moe-scratch] step  304/400  loss 0.0602  load-cv 0.204
+  [moe-scratch] step  320/400  loss 0.0610  load-cv 0.218
+  [moe-scratch] step  336/400  loss 0.0593  load-cv 0.177
+  [moe-scratch] step  352/400  loss 0.0549  load-cv 0.202
+  [moe-scratch] step  368/400  loss 0.0590  load-cv 0.206
+  [moe-scratch] step  384/400  loss 0.0551  load-cv 0.171
+  [moe-scratch] step  399/400  loss 0.0562  load-cv 0.203
+  [moe-scratch] done in 225.4s, final loss 0.0562
+wrote fig_moe.png
+
+Session 14 — dense -> MoE (sparse upcycling), results
+device: mps
+
+config: {'n_layer': 4, 'd': 256, 'n_head': 8, 'inner': 512, 'block_size': 128}, experts=8, top-k=2
+
+Parameter accounting:
+  dense : total 2.66M   active/token 2.62M
+  MoE   : total 13.68M   active/token 4.20M
+  -> MoE has 5.1x the parameters at 1.60x the per-token compute
+
+Upcycling continuity:
+  |MoE CE - dense CE| at conversion = 8.48e-06  (same prediction, no jump)
+
+Loss (reduces throughout):
+  dense         start 5.5946  final 0.0466
+  MoE upcycled  start 0.0486  final 0.0403
+  MoE scratch   start 5.5898  final 0.0562
+
+wrote results.txt, training_log.txt

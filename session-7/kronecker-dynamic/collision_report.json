@@ -1,0 +1,61 @@
+{
+  "codecs": {
+    "baseline_code_dim": 8192,
+    "functional_code_dim": 4096,
+    "projection_param_ratio": 0.5
+  },
+  "proof1_named_pair": {
+    "word_a": "अंतर्राष्ट्रीयकरण",
+    "word_b": "अंतर्राष्ट्रीयता",
+    "bytes_a": 51,
+    "bytes_b": 48,
+    "baseline_cosine": 1.0,
+    "functional_cosine": 0.9921,
+    "baseline_is_collision": true,
+    "functional_is_collision": false
+  },
+  "proof2_collision_sweep": {
+    "Latin": {
+      "baseline": {
+        "words": 24,
+        "distinct_codes": 24,
+        "collided_words": 0,
+        "collision_rate": 0.0
+      },
+      "functional": {
+        "words": 24,
+        "distinct_codes": 24,
+        "collided_words": 0,
+        "collision_rate": 0.0
+      }
+    },
+    "Devanagari": {
+      "baseline": {
+        "words": 24,
+        "distinct_codes": 3,
+        "collided_words": 21,
+        "collision_rate": 0.875
+      },
+      "functional": {
+        "words": 24,
+        "distinct_codes": 24,
+        "collided_words": 0,
+        "collision_rate": 0.0
+      }
+    },
+    "Telugu": {
+      "baseline": {
+        "words": 24,
+        "distinct_codes": 3,
+        "collided_words": 21,
+        "collision_rate": 0.875
+      },
+      "functional": {
+        "words": 24,
+        "distinct_codes": 24,
+        "collided_words": 0,
+        "collision_rate": 0.0
+      }
+    }
+  }
+}

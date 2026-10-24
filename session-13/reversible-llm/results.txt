@@ -1,0 +1,19 @@
+Session 13 — reversible LLM, results
+device: mps  mode: local-verification
+
+Correctness:
+  reconstruction error      7.15e-07
+  grad vs autograd (input)  1.19e-06
+  grad vs autograd (params) 4.77e-06
+  verdict                   PASS
+
+Memory vs depth (peak activation MB):
+  depths      [4, 8, 16, 24, 32]
+  standard    [88.2, 172.1, 340.0, 507.9, 675.8]
+  reversible  [14.1, 26.7, 52.0, 77.3, 102.5]
+
+Training runs (peak = step high-water incl. activations; floor = after-step: params+optimizer+grads):
+  run                    batch  final loss       tok/s   peak MB  floor MB
+  standard                  16      0.0662       4,781       552       204
+  reversible                16      0.0646       3,300       218       204
+  reversible-maxbatch       64      0.6577       4,852       270       211

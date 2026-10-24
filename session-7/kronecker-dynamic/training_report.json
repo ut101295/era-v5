@@ -1,0 +1,42 @@
+{
+  "config": {
+    "d_model": 128,
+    "steps": 1200,
+    "seq_len": 3,
+    "n_classes": 8,
+    "seed": 0,
+    "vocab": 64
+  },
+  "results": {
+    "baseline": {
+      "accuracy": 0.5625,
+      "perplexity": 2.8547,
+      "accuracy_by_length": {
+        "<=32 bytes": 1.0,
+        ">32 bytes": 0.125
+      },
+      "n_by_length": {
+        "<=32 bytes": 32,
+        ">32 bytes": 32
+      },
+      "final_train_loss": 1.1038,
+      "code_dim": 8192,
+      "projection_params": 1048576
+    },
+    "functional": {
+      "accuracy": 1.0,
+      "perplexity": 1.0013,
+      "accuracy_by_length": {
+        "<=32 bytes": 1.0,
+        ">32 bytes": 1.0
+      },
+      "n_by_length": {
+        "<=32 bytes": 32,
+        ">32 bytes": 32
+      },
+      "final_train_loss": 0.0013,
+      "code_dim": 4096,
+      "projection_params": 524288
+    }
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "meta": {
+    "dataset": "AI4Bharat IndicCorpV2 — Assamese (asm_Beng)",
+    "secondary": [
+      "IndicCorpV2 ben_Beng (mislabel probe, 300 docs)",
+      "indic-align Dolly_T Hindi (2000 pairs, ghost-tag demo)"
+    ],
+    "language": "Assamese (অসমীয়া)",
+    "why": "An Indic web slice from the Session 3 research family; it exercises the sovereign thread end to end — Brahmic joiners, script-aware quality rules, Assamese/Bengali language-ID confusion, and Indic PII false-positives.",
+    "raw_size_mb": 47.1,
+    "created": "2026-07-31T00:00:00Z",
+    "runtime_s": 36.6,
+    "strategies_count": 8
+  },
+  "stages": [
+    {
+      "key": "extraction",
+      "name": "Extraction",
+      "docs_in": 111759,
+      "docs_out": 111759,
+      "tokens_in": 10058642,
+      "tokens_out": 10058642,
+      "note": "Raw web page -> clean prose. Studied in Session 3; treated as the known upstream stage here.",
+      "detail": {}
+    },
+    {
+      "key": "normalization",
+      "name": "Normalization",
+      "docs_in": 111759,
+      "docs_out": 111759,
+      "tokens_in": 10058642,
+      "tokens_out": 10277399,
+      "note": "NFC + strip control/invisible chars + unescape HTML + collapse whitespace, while KEEPING the Brahmic joiners ZWNJ/ZWJ.",
+      "detail": {
+        "docs": 111759,
+        "html_entities": 1,
+        "noise_removed": 34,
+        "control_removed": 3,
+        "joiners_kept": 1752,
+        "ws_chars_collapsed": 9259
+      }
+    },
+    {
+      "key": "format",
+      "name": "Format discipline",
+      "docs_in": 2000,
+      "docs_out": 2000,
+      "tokens_in": null,
+      "tokens_out": null,
+      "note": "Four incompatible conversation formats rewritten into ONE canonical special-token format; pretraining shards scanned for leaked markers.",
+      "detail": {
+        "conversations": 2000,
+        "sources": {
+          "llama": 500,
+          "chatml_literal": 500,
+          "alpaca": 500,
+          "gemma": 500
+        },
+        "ghost_markers_found": 5000,
+        "ghost_marker_families": {
+          "llama_inst": 1000,
+          "chatml_literal": 1000,
+          "alpaca_header": 1000,
+          "gemma_turn": 2000
+        },
+        "unified": 2000,
+        "pretrain_docs_with_ghosts": 0,
+        "pretrain_ghost_markers": 0
+      }
+    },
+    {
+      "key": "quality",
+      "name": "Quality filtering",
+      "docs_in": 111759,
+      "docs_out": 51062,
+      "tokens_in": 10277399,
+      "tokens_out": 10169011,
+      "note": "Script-aware heuristic cascade + educational-value gate. An English-tuned filter would have wrongly dropped good Indic docs.",
+      "detail": {
+        "docs_in": 111759,
+        "dropped_heuristic": 60697,
+        "dropped_by_rule": {
+          "too_short": 57011,
+          "no_terminal_punct": 3642,
+          "not_target_script": 37,
+          "symbol_ratio": 7
+        },
+        "dropped_edu": 0,
+        "kept": 51062,
+        "edu_score_sum": 44037.07420000509,
+        "en_tuned_would_drop": 51062,
+        "avg_edu": 0.8624
+      }
+    },
+    {
+      "key": "dedup",
+      "name": "Deduplication (MinHash + LSH)",
+      "docs_in": 51032,
+      "docs_out": 50748,
+      "tokens_in": null,
+      "tokens_out": 10127858,
+      "note": "Word-5-gram shingles -> 112-hash MinHash -> 14x8 LSH (FineWeb params). Near-duplicates, not just exact copies.",
+      "detail": {
+        "clusters_with_dups": 193,
+        "removed": 284,
+        "cross_shard_dups": 262,
+        "local_dups": 22,
+        "shards": 8,
+        "index_bytes_per_doc": 896,
+        "docs_index_mb": 43.6
+      }
+    },
+    {
+      "key": "langid",
+      "name": "Language ID & validation",
+      "docs_in": 50748,
+      "docs_out": 50452,
+      "tokens_in": null,
+      "tokens_out": 10067819,
+      "note": "Detect language at runtime (script-based, Assamese vs Bengali disambiguated on ৰ/ৱ) instead of trusting the folder path.",
+      "detail": {
+        "docs_in": 50748,
+        "detected": {
+          "asm": 50452,
+          "ben": 296
+        },
+        "mismatches": 296,
+        "mismatch_examples": [
+          {
+            "claimed": "asm",
+            "detected": "ben",
+            "injected": false,
+            "text": "ইফালে, ২০জনকৈ লোক আহত হৈছে এই অগ্নিকাণ্ডত।"
+          },
+          {
+            "claimed": "asm",
+            "detected": "ben",
+            "injected": false,
+            "text": "ইফালে, সুস্থ হৈছে ২৯৬১জন লোক।"
+          },
+          {
+            "claimed": "asm",
+            "detected": "ben",
+            "injected": false,
+            "text": ": হেঃ হেঃ! হয় নেকি? ব’লা ব’লা ইয়াকো লৈ ব’লা।"
+          },
+          {
+            "claimed": "asm",
+            "detected": "ben",
+            "injected": false,
+            "text": "থিতাতে নিহত হয়..."
+          },
+          {
+            "claimed": "asm",
+            "detected": "ben",
+            "injected": false,
+            "text": "কৈ তেওঁ মিঠা আলু কেইটা সিজাবলৈ হাতত ল’লে।"
+          },
+          {
+            "claimed": "asm",
+            "detected": "ben",
+            "injected": false,
+            "text": "যিজনে খেলটো খেলাব, তেওঁ মাজলৈ আহিব।"
+          }
+        ],
+        "code_switched": 62,
+        "removed_mismatch": 296,
+        "removed_injected": 246,
+        "removed_genuine_fp": 50
+      }
+    },
+    {
+      "key": "pii",
+      "name": "PII removal",
+      "docs_in": 50452,
+      "docs_out": 50452,
+      "tokens_in": null,
+      "tokens_out": 10081113,
+      "note": "Regex layer masks emails/phones/IPs/IDs cleanly; name layer shows the precision/recall tension (Indic place-names caught as names).",
+      "detail": {
+        "docs": 50452,
+        "emails": 4,
+        "phones": 156,
+        "ips": 0,
+        "urls": 13,
+        "ids": 1,
+        "names_masked": 33207,
+        "name_false_positives": 24325
+      }
+    },
+    {
+      "key": "decontam",
+      "name": "Decontamination",
+      "docs_in": 50452,
+      "docs_out": 48526,
+      "tokens_in": null,
+      "tokens_out": 9525589,
+      "note": "Fingerprint the held-out eval set (word-13-grams), remove any training doc that overlaps it, plant a canary for later leak detection.",
+      "detail": {
+        "eval_items": 30,
+        "fingerprint_ngrams": 2761,
+        "docs_scanned": 50452,
+        "contaminated_removed": 1926,
+        "canary_planted": 1,
+        "canary_detected": 1
+      }
+    },
+    {
+      "key": "manifest",
+      "name": "Manifest & reproducibility",
+      "docs_in": 48526,
+      "docs_out": 48526,
+      "tokens_in": 9525589,
+      "tokens_out": 9525589,
+      "note": "Content-addressed IDs + a provenance manifest per shard; content hash computed AFTER cleaning; unsafe/unknown licenses block the shard.",
+      "detail": {
+        "manifest": {
+          "source": "ai4bharat/IndicCorpV2 :: asm_Beng (+ ben_Beng injection probe)",
+          "license": "CC-BY-4.0",
+          "contributor": "era-v5 / session-4",
+          "cleaning_script_sha256": "dc3e0a05e50f5cf0d4f7d89cb592ab74159a69411548ab37c197e4164b5cf2b9",
+          "content_sha256": "8a4100c95affc433f56831a16ea4cb6bf396adf9177554650ecf967c67d608b6",
+          "token_count": 9525589,
+          "language_breakdown": {
+            "asm": 48526
+          },
+          "created": "2026-07-31T00:00:00Z",
+          "blocked": null,
+          "content_sha256_recomputed": "8a4100c95affc433f56831a16ea4cb6bf396adf9177554650ecf967c67d608b6",
+          "deterministic": true,
+          "determinism_ok": true
+        },
+        "example_doc_id": "sha256:8a4100c95affc433"
+      }
+    }
+  ],
+  "final_stats": {
+    "raw_docs": 111759,
+    "raw_tokens": 10058642,
+    "final_docs": 48526,
+    "final_tokens": 9525589,
+    "docs_removed": 63233,
+    "tokens_removed": 533053,
+    "docs_removed_pct": 56.6,
+    "tokens_removed_pct": 5.3,
+    "garbage_chars_removed": 37,
+    "html_entities_fixed": 1,
+    "joiners_preserved": 1752,
+    "ghost_markers_unified": 5000,
+    "near_dups_removed": 284,
+    "cross_shard_dups": 262,
+    "lang_mismatches_removed": 296,
+    "lang_injected_caught": 246,
+    "lang_genuine_false_positives": 50,
+    "pii_structured_masked": 174,
+    "pii_names_masked": 33207,
+    "pii_name_false_positives": 24325,
+    "canary_detected": true,
+    "contaminated_removed": 1926,
+    "avg_edu_score": 0.8624,
+    "deterministic": true
+  },
+  "extra_defects": [
+    {
+      "title": "Half the raw crawl is empty rows",
+      "detail": "55,729 of 111,759 raw IndicCorpV2 Assamese rows (49.9%) are blank or whitespace-only — pure wasted tokens that only the cleaning pipeline removes.",
+      "metric": 55729
+    }
+  ],
+  "samples": {
+    "normalization": {
+      "before": "লগতে পঢ়ক : আগষ্টৰ পৰা পুনৰ খুলিব নেকি দেশৰ শিক্ষানুষ্ঠানসমূহ! : কি ক&#8217;লে মানৱ সম্পদ মন্ত্ৰী পোখ্ৰিয়ালে",
+      "after": "লগতে পঢ়ক : আগষ্টৰ পৰা পুনৰ খুলিব নেকি দেশৰ শিক্ষানুষ্ঠানসমূহ! : কি ক’লে মানৱ সম্পদ মন্ত্ৰী পোখ্ৰিয়ালে"
+    },
+    "ghost_tags": {
+      "source_format": "llama",
+      "before": "[INST] वर्जिन ऑस्ट्रेलिया ने कब काम करना शुरू किया? [/INST] वर्जिन ऑस्ट्रेलिया ने 31 अगस्त 2000 को वर्जिन ब्लू के रूप में एक ही मार्ग पर दो विमानों के साथ सेवाएँ शुरू कीं।",
+      "after": "<|im_start|>user\nवर्जिन ऑस्ट्रेलिया ने कब काम करना शुरू किया?<|im_end|>\n<|im_start|>assistant\nवर्जिन ऑस्ट्रेलिया ने 31 अगस्त 2000 को वर्जिन ब्लू के रूप में एक ही मार्ग पर दो विमानों के साथ सेवाएँ शुरू कीं।<|im_end|>"
+    },
+    "pii": {
+      "before": "উল্লেখ্য পৰিবৰ্তনৰ শ্লোগান দিয়া বিজেপি চৰকাৰে অসম তথা দেশৰ গুৰুত্বপূৰ্ণ বিভাগ সমূহ ব্যক্তিগত খণ্ডলৈ নিয়াৰ প্ৰচেষ্টা চলাইছে৷ অসমৰ তেল শোধানাগাৰো ব্যক্তিগত কোম্পানীসমূহৰ হাতত বিক্ৰী কৰিব বিচৰাৰ সময়তে",
+      "after": "উল্লেখ্য পৰিবৰ্তনৰ শ্লোগান দিয়া বিজেপি চৰকাৰে [NAME] তথা দেশৰ গুৰুত্বপূৰ্ণ বিভাগ সমূহ ব্যক্তিগত খণ্ডলৈ নিয়াৰ প্ৰচেষ্টা চলাইছে৷ [NAME]ৰ তেল শোধানাগাৰো ব্যক্তিগত কোম্পানীসমূহৰ হাতত বিক্ৰী কৰিব বিচৰাৰ "
+    }
+  }
+}

@@ -1,0 +1,5 @@
+# Session 4 cleaning pipeline — deliberately dependency-light.
+# Only `datasets` is needed (for fetching); every cleaning stage uses the stdlib
+# (unicodedata, html, hashlib, re) so the pipeline is fully reproducible and the
+# language detector is script-based (no fasttext build required).
+datasets==5.0.1
